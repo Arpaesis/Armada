@@ -31,24 +31,27 @@ public final class CommandManager
 
 	public static void execute(String in)
 	{
-		String registryName = in.split(" ")[0].substring(prefix.length());
+		if (in.startsWith(CommandManager.getPrefix()))
+		{
+			String registryName = in.split(" ")[0].substring(prefix.length());
 
-		if (REGISTRY.containsKey(registryName))
-		{
-			REGISTRY.get(registryName).execute(null, in);
-		}
-		else
-		{
-			for (Map.Entry<String, CommandImpl> entry : REGISTRY.entrySet())
+			if (REGISTRY.containsKey(registryName))
 			{
-				if (entry.getValue().getAliases() != null)
+				REGISTRY.get(registryName).execute(null, in);
+			}
+			else
+			{
+				for (Map.Entry<String, CommandImpl> entry : REGISTRY.entrySet())
 				{
-					for (String alias : entry.getValue().getAliases())
+					if (entry.getValue().getAliases() != null)
 					{
-						if (registryName.equals(alias))
+						for (String alias : entry.getValue().getAliases())
 						{
-							entry.getValue().execute(null, in);
-							break;
+							if (registryName.equals(alias))
+							{
+								entry.getValue().execute(null, in);
+								break;
+							}
 						}
 					}
 				}

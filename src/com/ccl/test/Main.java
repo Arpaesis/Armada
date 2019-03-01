@@ -20,10 +20,7 @@ public class Main
 		{
 			in = scanner.nextLine();
 
-			if (in.startsWith(CommandManager.getPrefix()))
-			{
-				CommandManager.execute(in);
-			}
+			CommandManager.execute(in);
 		}
 		while (!in.equalsIgnoreCase("END"));
 
