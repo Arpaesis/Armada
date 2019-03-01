@@ -43,4 +43,10 @@ public class ToggleDownfallCommand extends CommandImpl
 
 		System.out.println(isRaining);
 	}
+	
+	@Override
+	public void onError(String errorMessage)
+	{
+		System.out.println(errorMessage);
+	}
 }

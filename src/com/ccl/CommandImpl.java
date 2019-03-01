@@ -33,22 +33,28 @@ public abstract class CommandImpl implements Command<DataInterface>
 	public void execute(DataInterface obj, String in)
 	{
 		this.processInput(in);
-		
-		if(this.shouldExecute && this.isCooldownReady())
+
+		if (this.shouldExecute && this.isCooldownReady())
 		{
 			String[] temp = in.split(" ");
 			String[] rawArgs = Arrays.copyOfRange(temp, 1, temp.length);
 			this.onExecute(obj, rawArgs);
-			
+
 			timesUsed++;
 			System.out.println(this.timesUsed);
 			this.lastUsage = System.currentTimeMillis();
-		}else {
-			//TODO: Handle the error in executing the command here.
 		}
-		
+		else
+		{
+			this.onError("Command " + this.name + " has failed to execute!");
+		}
+
 		// reset the command for usage.
 		this.shouldExecute = true;
+	}
+	
+	public void onError(String errorMessage)
+	{
 	}
 
 	public String getName()
