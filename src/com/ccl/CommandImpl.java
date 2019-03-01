@@ -17,6 +17,8 @@ public abstract class CommandImpl implements Command<DataInterface>
 	private int cooldown = 0;
 	private long lastUsage = 0;
 	
+	private int timesUsed = 0;
+	
 	private boolean shouldExecute = true;
 
 	public CommandImpl()
@@ -37,6 +39,9 @@ public abstract class CommandImpl implements Command<DataInterface>
 			String[] temp = in.split(" ");
 			String[] rawArgs = Arrays.copyOfRange(temp, 1, temp.length);
 			this.onExecute(obj, rawArgs);
+			
+			timesUsed++;
+			System.out.println(this.timesUsed);
 			this.lastUsage = System.currentTimeMillis();
 		}else {
 			//TODO: Handle the error in executing the command here.
