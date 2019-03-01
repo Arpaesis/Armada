@@ -14,6 +14,9 @@ public abstract class CommandImpl implements Command<DataInterface>
 	private String help = "";
 	private String[] aliases;
 	
+	private int cooldown = 0;
+	private long lastUsage = 0;
+	
 	private boolean shouldExecute = true;
 
 	public CommandImpl()
@@ -29,11 +32,12 @@ public abstract class CommandImpl implements Command<DataInterface>
 	{
 		this.processInput(in);
 		
-		if(this.shouldExecute)
+		if(this.shouldExecute && this.isCooldownReady())
 		{
 			String[] temp = in.split(" ");
 			String[] rawArgs = Arrays.copyOfRange(temp, 1, temp.length);
 			this.onExecute(obj, rawArgs);
+			this.lastUsage = System.currentTimeMillis();
 		}else {
 			//TODO: Handle the error in executing the command here.
 		}
@@ -75,6 +79,28 @@ public abstract class CommandImpl implements Command<DataInterface>
 	public void setAliases(String[] aliases)
 	{
 		this.aliases = aliases;
+	}
+
+	public int getCooldown()
+	{
+		return cooldown;
+	}
+
+	public void setCooldown(int cooldown)
+	{
+		this.cooldown = cooldown;
+	}
+	
+	public boolean isCooldownReady()
+	{
+		long currentTime = System.currentTimeMillis();
+
+		if (((currentTime - lastUsage) / 1000) >= this.cooldown)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	private void processInput(String input)

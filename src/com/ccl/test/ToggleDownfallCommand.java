@@ -14,6 +14,7 @@ public class ToggleDownfallCommand extends CommandImpl
 		this.setName("toggleDownfall");
 		this.setAliases(new String[]
 		{ "isRaining" });
+		this.setCooldown(3);
 		this.optionalParams.add(ParamType.STRING); // is raining
 	}
 
