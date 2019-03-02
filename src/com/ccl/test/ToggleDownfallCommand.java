@@ -15,7 +15,7 @@ public class ToggleDownfallCommand extends Command<Object>
 		this.setName("toggleDownfall");
 		this.setAliases(new String[]
 		{ "isRaining" });
-		this.setCooldown(3);
+		this.setGlobalCooldown(3);
 		this.addArgument(new OptionalArgument("flag", ParamType.STRING)); // is raining
 		Categories.WORLD.addToCategory(this);
 	}

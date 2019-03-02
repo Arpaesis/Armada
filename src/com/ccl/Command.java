@@ -21,7 +21,7 @@ public abstract class Command<T extends Object>
 	private String help = "";
 	private String[] aliases;
 
-	private int cooldown = 0;
+	private int globalGlobalCooldown = 0;
 	private long lastUsage = 0;
 	private int timesUsed = 0;
 	private int maxUsage = -1;
@@ -42,7 +42,7 @@ public abstract class Command<T extends Object>
 	{
 		String[] processedInput = this.processInput(in);
 
-		if (this.shouldExecute && this.isCooldownReady() && this.timesUsed != maxUsage)
+		if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage)
 		{
 			this.onExecute(obj, processedInput);
 
@@ -50,7 +50,7 @@ public abstract class Command<T extends Object>
 			this.lastUsage = System.currentTimeMillis();
 			this.shutdown(Result.SUCCESS, "The command has successfully been executed.");
 		}
-		else if (!this.isCooldownReady())
+		else if (!this.isGlobalCooldownReady())
 		{
 			this.shutdown(Result.FAILURE, "The command is currently under cooldown!");
 		}
@@ -98,21 +98,21 @@ public abstract class Command<T extends Object>
 		this.aliases = aliases;
 	}
 
-	public int getCooldown()
+	public int getGlobalCooldown()
 	{
-		return cooldown;
+		return globalGlobalCooldown;
 	}
 
-	public void setCooldown(int cooldown)
+	public void setGlobalCooldown(int cooldown)
 	{
-		this.cooldown = cooldown;
+		this.globalGlobalCooldown = cooldown;
 	}
 
-	public boolean isCooldownReady()
+	public boolean isGlobalCooldownReady()
 	{
 		long currentTime = System.currentTimeMillis();
 
-		if (((currentTime - lastUsage) / 1000) >= this.cooldown)
+		if (((currentTime - lastUsage) / 1000) >= this.globalGlobalCooldown)
 		{
 			return true;
 		}
