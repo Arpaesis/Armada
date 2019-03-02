@@ -2,7 +2,7 @@ package com.ccl.args;
 
 import com.ccl.enumerations.ParamType;
 
-public class Argument
+public abstract class Argument
 {
 
 	private final String argName;
