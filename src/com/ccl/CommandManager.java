@@ -27,11 +27,14 @@ public final class CommandManager<T>
 			{
 				for (String alias : com.getValue().getAliases())
 				{
-					for (String toCheck : command.getAliases())
+					if (command.getAliases() != null)
 					{
-						if (alias.equals(toCheck))
+						for (String toCheck : command.getAliases())
 						{
-							System.err.println("Warning: command (" + command.getName() + ") has an alias (" + alias + ") that is already used by another command (" + com.getValue().getName() + ")!");
+							if (alias.equals(toCheck))
+							{
+								System.err.println("Warning: command (" + command.getName() + ") has an alias (" + alias + ") that is already used by another command (" + com.getValue().getName() + ")!");
+							}
 						}
 					}
 				}
