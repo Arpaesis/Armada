@@ -1,6 +1,7 @@
 package com.ccl.test;
 
 import com.ccl.Command;
+import com.ccl.args.Arguments;
 import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.ParamType;
@@ -32,17 +33,19 @@ public class SpawnEntityCommand extends Command<Object>
 	}
 
 	@Override
-	public void onExecute(Object obj, String[] in)
+	public void onExecute(Object obj, Arguments args)
 	{
-		this.registryName = in[0];
-		this.posX = Integer.parseInt(in[1]);
-		this.posY = Integer.parseInt(in[2]);
-		this.posZ = Integer.parseInt(in[3]);
+
+		this.registryName = args.getString();
+		this.posX = args.getInt();
+		this.posY = args.getInt();
+		this.posZ = args.getInt();
 
 		// optionals
-		this.spawnCount = 4 == in.length - 2 ? Integer.parseInt(in[4]) : 1;
-		this.health = 5 == in.length - 1 ? Integer.parseInt(in[5]) : 100;
+		this.spawnCount = 4 == args.size() - 2 ? args.getInt() : 1;
+		this.health = 5 == args.size() - 1 ? args.getInt() : 100;
 
 		System.out.println("Spawning " + this.registryName + " at " + this.posX + ", " + this.posY + ", " + this.posZ + " with a spawn count of " + this.spawnCount + " with health " + health);
+
 	}
 }

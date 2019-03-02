@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ccl.args.Argument;
+import com.ccl.args.Arguments;
 import com.ccl.args.OptionalArgument;
+import com.ccl.args.ProcessedArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.Result;
 import com.ccl.utils.MathUtils;
@@ -34,13 +36,13 @@ public abstract class Command<T extends Object>
 	{
 	}
 
-	public void onExecute(T obj, String[] in)
+	public void onExecute(T obj, Arguments in)
 	{
 	}
 
 	public void execute(T obj, String in)
 	{
-		String[] processedInput = this.processInput(in);
+		Arguments processedInput = this.processInput(in);
 
 		if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage)
 		{
@@ -161,10 +163,11 @@ public abstract class Command<T extends Object>
 		this.parameters.add(argument);
 	}
 
-	private String[] processInput(String input)
+	private Arguments processInput(String input)
 	{
 
 		String[] rawArgs = Arrays.copyOfRange(input.split(" "), 1, input.split(" ").length);
+		List<ProcessedArgument<?>> arguments = new ArrayList<>();
 
 		for (int i = 0; i < rawArgs.length; i++)
 		{
@@ -185,6 +188,15 @@ public abstract class Command<T extends Object>
 				case BOOLEAN:
 					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
 					{
+						if (rawArgs[i].equals("1"))
+						{
+							rawArgs[i] = "true";
+						}
+						else if (rawArgs[i].equals("0"))
+						{
+							rawArgs[i] = "false";
+						}
+						arguments.add(new ProcessedArgument<Boolean>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Boolean.parseBoolean(rawArgs[i])));
 					}
 					else
 					{
@@ -194,32 +206,45 @@ public abstract class Command<T extends Object>
 				case BYTE:
 					byte bValue = Byte.parseByte(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Byte.parseByte(rawArgs[i])));
 					break;
 				case CHAR:
 					if (rawArgs[i].length() >= 2)
 					{
 						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
 					}
+					else
+					{
+						arguments.add(new ProcessedArgument<Character>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i].charAt(0)));
+					}
 					break;
 				case DOUBLE:
 					double dValue = Double.parseDouble(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampd(dValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Double>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Double.parseDouble(rawArgs[i])));
 					break;
 				case FLOAT:
 					float fValue = Float.parseFloat(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampf(fValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Float>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Float.parseFloat(rawArgs[i])));
 					break;
 				case INT:
 					int iValue = Integer.parseInt(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
 					break;
 				case LONG:
 					long lValue = Long.parseLong(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampl(lValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Long>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Long.parseLong(rawArgs[i])));
 					break;
 				case SHORT:
 					short sValue = Short.parseShort(rawArgs[i]);
 					rawArgs[i] = MathUtils.clamps(sValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Short.parseShort(rawArgs[i])));
+					break;
+				case STRING:
+					arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i]));
 					break;
 				default:
 					break;
@@ -232,6 +257,6 @@ public abstract class Command<T extends Object>
 				this.shutdown(Result.FAILURE, "Expected a numerical value from a parameter " + rawArgs[i] + ", but the given value was not a number!");
 			}
 		}
-		return rawArgs;
+		return new Arguments(arguments);
 	}
 }

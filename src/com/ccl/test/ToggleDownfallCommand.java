@@ -1,6 +1,7 @@
 package com.ccl.test;
 
 import com.ccl.Command;
+import com.ccl.args.Arguments;
 import com.ccl.args.OptionalArgument;
 import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
@@ -21,28 +22,33 @@ public class ToggleDownfallCommand extends Command<Object>
 	}
 
 	@Override
-	public void onExecute(Object obj, String[] in)
+	public void onExecute(Object obj, Arguments args)
 	{
-		if (in.length != 0)
+		
+		String flag = "";
+		if(!args.isEmpty())
 		{
-			if (in[0].equals("on") || in[0].equals("1"))
+			flag = args.getString();
+			
+			if (flag.equals("on") || flag.equals("1"))
 			{
 				this.isRaining = true;
 			}
-			else if (in[0].equals("off") || in[0].equals("0"))
+			else if (flag.equals("off") || flag.equals("0"))
 			{
 				this.isRaining = false;
 			}
 			else
 			{
-				this.isRaining = Boolean.parseBoolean(in[0]);
+				this.isRaining = Boolean.parseBoolean(flag);
 			}
 		}
-		else
-		{
-			isRaining = !isRaining;
+		
+		
+		else {
+			this.isRaining = !this.isRaining;
 		}
-
+		
 		System.out.println(isRaining);
 	}
 	
