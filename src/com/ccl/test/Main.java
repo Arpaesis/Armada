@@ -6,12 +6,14 @@ import com.ccl.CommandManager;
 public class Main
 {
 
+	private static final CommandManager<Object> manager = new CommandManager<>();
+	
 	public static void main(String[] arguments)
 	{
 
-		CommandManager.setPrefix("!");
-		CommandManager.register(new SpawnEntityCommand());
-		CommandManager.register(new ToggleDownfallCommand());
+		manager.setPrefix("!");
+		manager.register(new SpawnEntityCommand());
+		manager.register(new ToggleDownfallCommand());
 
 		Scanner scanner = new Scanner(System.in);
 
@@ -20,7 +22,7 @@ public class Main
 		{
 			in = scanner.nextLine();
 
-			CommandManager.execute(in);
+			manager.execute(new Object(), in);
 		}
 		while (!in.equalsIgnoreCase("END"));
 

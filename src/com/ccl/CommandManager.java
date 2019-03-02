@@ -3,45 +3,45 @@ package com.ccl;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class CommandManager
+public final class CommandManager<T>
 {
-	protected static final Map<String, CommandImpl> REGISTRY = new HashMap<>();
+	protected final Map<String, CommandImpl<T>> REGISTRY = new HashMap<>();
 
-	private static String prefix = "";
+	private String prefix = "";
 
-	private CommandManager()
+	public CommandManager()
 	{
 
 	}
 
-	public static CommandImpl register(CommandImpl command)
+	public CommandImpl<T> register(CommandImpl<T> command)
 	{
 		return REGISTRY.put(command.getName(), command);
 	}
 
-	public static String getPrefix()
+	public String getPrefix()
 	{
 		return prefix;
 	}
 
-	public static void setPrefix(String prefix)
+	public void setPrefix(String prefix)
 	{
-		CommandManager.prefix = prefix;
+		this.prefix = prefix;
 	}
 
-	public static void execute(String in)
+	public void execute(T obj, String in)
 	{
-		if (in.startsWith(CommandManager.getPrefix()))
+		if (in.startsWith(this.getPrefix()))
 		{
 			String registryName = in.split(" ")[0].substring(prefix.length());
 
 			if (REGISTRY.containsKey(registryName))
 			{
-				REGISTRY.get(registryName).execute(null, in);
+				REGISTRY.get(registryName).execute(obj, in);
 			}
 			else
 			{
-				for (Map.Entry<String, CommandImpl> entry : REGISTRY.entrySet())
+				for (Map.Entry<String, CommandImpl<T>> entry : REGISTRY.entrySet())
 				{
 					if (entry.getValue().getAliases() != null)
 					{
@@ -49,7 +49,7 @@ public final class CommandManager
 						{
 							if (registryName.equals(alias))
 							{
-								entry.getValue().execute(null, in);
+								entry.getValue().execute(obj, in);
 								break;
 							}
 						}

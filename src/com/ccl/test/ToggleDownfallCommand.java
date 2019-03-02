@@ -1,10 +1,10 @@
 package com.ccl.test;
 
 import com.ccl.CommandImpl;
-import com.ccl.DataInterface;
-import com.ccl.ParamType;
+import com.ccl.enumerations.ParamType;
+import com.ccl.enumerations.Result;
 
-public class ToggleDownfallCommand extends CommandImpl
+public class ToggleDownfallCommand extends CommandImpl<Object>
 {
 
 	boolean isRaining;
@@ -19,7 +19,7 @@ public class ToggleDownfallCommand extends CommandImpl
 	}
 
 	@Override
-	public void onExecute(DataInterface obj, String[] in)
+	public void onExecute(Object obj, String[] in)
 	{
 		if (in.length != 0)
 		{
@@ -45,8 +45,13 @@ public class ToggleDownfallCommand extends CommandImpl
 	}
 	
 	@Override
-	public void onError(String errorMessage)
+	public void result(Result result)
 	{
-		System.out.println(errorMessage);
+		if(result == Result.FAILURE)
+		{
+			System.out.println("THE COMMAND HAS FAILED!");
+		}else {
+			System.out.println("THE COMMAND HAS SUCCEEDED!");
+		}
 	}
 }

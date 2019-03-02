@@ -1,10 +1,9 @@
 package com.ccl.test;
 
 import com.ccl.CommandImpl;
-import com.ccl.DataInterface;
-import com.ccl.ParamType;
+import com.ccl.enumerations.ParamType;
 
-public class SpawnEntityCommand extends CommandImpl
+public class SpawnEntityCommand extends CommandImpl<Object>
 {
 	
 	String registryName;
@@ -28,7 +27,7 @@ public class SpawnEntityCommand extends CommandImpl
 	}
 	
 	@Override
-	public void onExecute(DataInterface obj, String[] in)
+	public void onExecute(Object obj, String[] in)
 	{
 		this.registryName = in[0];
 		this.posX = Integer.parseInt(in[1]);

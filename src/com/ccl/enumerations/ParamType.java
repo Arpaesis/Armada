@@ -1,4 +1,4 @@
-package com.ccl;
+package com.ccl.enumerations;
 
 public enum ParamType
 {

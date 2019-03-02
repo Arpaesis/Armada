@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class CommandImpl implements Command<DataInterface>
+import com.ccl.enumerations.ParamType;
+import com.ccl.enumerations.Result;
+
+public abstract class CommandImpl<T extends Object>
 {
 
 	public final List<ParamType> requiredParams = new ArrayList<>();
@@ -13,24 +16,23 @@ public abstract class CommandImpl implements Command<DataInterface>
 	private String name = "";
 	private String help = "";
 	private String[] aliases;
-	
+
 	private int cooldown = 0;
 	private long lastUsage = 0;
-	
+
 	private int timesUsed = 0;
-	
+
 	private boolean shouldExecute = true;
 
 	public CommandImpl()
 	{
 	}
-	
-	public void onExecute(DataInterface obj, String[] in)
+
+	public void onExecute(T obj, String[] in)
 	{
 	}
 
-	@Override
-	public void execute(DataInterface obj, String in)
+	public void execute(T obj, String in)
 	{
 		this.processInput(in);
 
@@ -41,27 +43,23 @@ public abstract class CommandImpl implements Command<DataInterface>
 			this.onExecute(obj, rawArgs);
 
 			timesUsed++;
-			System.out.println(this.timesUsed);
 			this.lastUsage = System.currentTimeMillis();
+			this.shutdown(Result.SUCCESS);
 		}
 		else
 		{
-			this.onError("Command " + this.name + " has failed to execute!");
+			this.shutdown(Result.FAILURE);
 		}
 
 		// reset the command for usage.
 		this.shouldExecute = true;
-	}
-	
-	public void onError(String errorMessage)
-	{
 	}
 
 	public String getName()
 	{
 		return name;
 	}
-	
+
 	public void setName(String name)
 	{
 		this.name = name;
@@ -101,7 +99,7 @@ public abstract class CommandImpl implements Command<DataInterface>
 	{
 		this.cooldown = cooldown;
 	}
-	
+
 	public boolean isCooldownReady()
 	{
 		long currentTime = System.currentTimeMillis();
@@ -114,109 +112,121 @@ public abstract class CommandImpl implements Command<DataInterface>
 		return false;
 	}
 
+	public void result(Result result)
+	{
+
+	}
+
+	private void shutdown(Result result)
+	{
+		this.result(result);
+		this.shouldExecute = false;
+	}
+
 	private void processInput(String input)
 	{
-		String[] rawInput = input.split(" ");
-		String[] rawArgs = Arrays.copyOfRange(rawInput, 1, rawInput.length);
-
-		for (int i = 0; i < rawArgs.length; i++)
+		try
 		{
-			if(!this.shouldExecute || i > requiredParams.size() - 1)
+			String[] rawInput = input.split(" ");
+			String[] rawArgs = Arrays.copyOfRange(rawInput, 1, rawInput.length);
+
+			for (int i = 0; i < rawArgs.length; i++)
 			{
-				break;
-			}else if(rawArgs.length < requiredParams.size())
-			{
-				this.shouldExecute = false;
-				break;
+				if (!this.shouldExecute || i > requiredParams.size() - 1 || rawArgs.length < requiredParams.size())
+				{
+					this.shutdown(Result.FAILURE);
+					break;
+				}
+
+				switch (requiredParams.get(i))
+				{
+				case BOOLEAN:
+					if (!(rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0")))
+					{
+						this.shutdown(Result.FAILURE);
+					}
+					break;
+				case BYTE:
+					Byte.parseByte(rawArgs[i]);
+					break;
+				case CHAR:
+					if (rawArgs[i].length() >= 2)
+					{
+						this.shutdown(Result.FAILURE);
+					}
+					break;
+				case DOUBLE:
+					Double.parseDouble(rawArgs[i]);
+					break;
+				case FLOAT:
+					Float.parseFloat(rawArgs[i]);
+					break;
+				case INT:
+					Integer.parseInt(rawArgs[i]);
+
+					break;
+				case LONG:
+					Long.parseLong(rawArgs[i]);
+					break;
+				case SHORT:
+					Short.parseShort(rawArgs[i]);
+					break;
+				default:
+					break;
+				}
 			}
-			
-			switch(requiredParams.get(i))
+
+			for (int i = this.requiredParams.size() - 1; i < rawArgs.length - 1 && rawArgs.length - requiredParams.size() != 0; i++)
 			{
-			case BOOLEAN:
-				if(rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
+				if (!this.shouldExecute || i > (optionalParams.size() + requiredParams.size() - 1))
 				{
 					break;
 				}
-				else {
-					this.shouldExecute = false;
+
+				switch (optionalParams.get(rawArgs.length - i - 2))
+				{
+				case BOOLEAN:
+					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
+					{
+						break;
+					}
+					else
+					{
+						this.shutdown(Result.FAILURE);
+						break;
+					}
+				case BYTE:
+					Byte.parseByte(rawArgs[i]);
+					break;
+				case CHAR:
+					if (rawArgs[i].length() >= 2)
+					{
+						this.shutdown(Result.FAILURE);
+					}
+					break;
+				case DOUBLE:
+					Double.parseDouble(rawArgs[i]);
+					break;
+				case FLOAT:
+					Float.parseFloat(rawArgs[i]);
+					break;
+				case INT:
+					Integer.parseInt(rawArgs[i]);
+					break;
+				case LONG:
+					Long.parseLong(rawArgs[i]);
+					break;
+				case SHORT:
+					Short.parseShort(rawArgs[i]);
+					break;
+				default:
 					break;
 				}
-			case BYTE:
-				try { Byte.parseByte(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case CHAR:
-				if(rawArgs[i].length() >= 2)
-				{
-					this.shouldExecute = false;
-				}
-				break;
-			case DOUBLE:
-				try { Double.parseDouble(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case FLOAT:
-				try { Float.parseFloat(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case INT:
-				try { Integer.parseInt(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				
-				break;
-			case LONG:
-				try { Long.parseLong(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case SHORT:
-				try { Short.parseShort(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			default:
-				break;
 			}
 		}
-		
-		for (int i = this.requiredParams.size() - 1; i < rawArgs.length - 1 && rawArgs.length - requiredParams.size() != 0; i++)
+		catch (Exception e)
 		{
-			if(!this.shouldExecute || i > (optionalParams.size() + requiredParams.size() - 1))
-			{
-				break;
-			}
-			
-			switch(optionalParams.get(rawArgs.length - i - 2))
-			{
-			case BOOLEAN:
-				if(rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
-				{
-					break;
-				}
-				else {
-					this.shouldExecute = false;
-					break;
-				}
-			case BYTE:
-				try { Byte.parseByte(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case CHAR:
-				if(rawArgs[i].length() >= 2)
-				{
-					this.shouldExecute = false;
-				}
-				break;
-			case DOUBLE:
-				try { Double.parseDouble(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case FLOAT:
-				try { Float.parseFloat(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case INT:
-				try { Integer.parseInt(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				
-				break;
-			case LONG:
-				try { Long.parseLong(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			case SHORT:
-				try { Short.parseShort(rawArgs[i]); } catch(Exception e) { this.shouldExecute = false;}
-				break;
-			default:
-				break;
-			}
+			this.shutdown(Result.FAILURE);
 		}
 	}
 }
