@@ -235,7 +235,19 @@ public abstract class Command<T extends Object>
 					arguments.add(new ProcessedArgument<Float>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Float.parseFloat(rawArgs[i])));
 					break;
 				case INT:
-					int iValue = Integer.parseInt(rawArgs[i]);
+					int iValue = 0;
+					if(rawArgs[i].startsWith("0b"))
+					{
+						iValue = Integer.parseInt(rawArgs[i].substring(2), 2);
+					}else if(rawArgs[i].startsWith("0x"))
+					{
+						iValue = Integer.parseInt(rawArgs[i].substring(2), 16);
+					}else if(rawArgs[i].startsWith("0"))
+					{
+						iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
+					}else {
+						iValue = Integer.parseInt(rawArgs[i]);
+					}
 					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
 					break;
