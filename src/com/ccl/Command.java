@@ -20,8 +20,10 @@ public abstract class Command<T extends Object>
 
 	private int cooldown = 0;
 	private long lastUsage = 0;
-
 	private int timesUsed = 0;
+	private int maxUsage = -1;
+
+	private int level = 0;
 
 	private boolean shouldExecute = true;
 
@@ -37,7 +39,7 @@ public abstract class Command<T extends Object>
 	{
 		String[] processedInput = this.processInput(in);
 
-		if (this.shouldExecute && this.isCooldownReady())
+		if (this.shouldExecute && this.isCooldownReady() && this.timesUsed != maxUsage)
 		{
 			this.onExecute(obj, processedInput);
 
@@ -120,6 +122,26 @@ public abstract class Command<T extends Object>
 	{
 		this.result(result);
 		this.shouldExecute = false;
+	}
+
+	public int getMaxUsage()
+	{
+		return maxUsage;
+	}
+
+	public void setMaxUsage(int maxUsage)
+	{
+		this.maxUsage = maxUsage;
+	}
+
+	public int getLevel()
+	{
+		return level;
+	}
+
+	public void setLevel(int level)
+	{
+		this.level = level;
 	}
 
 	private String[] processInput(String input)
