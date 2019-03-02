@@ -42,7 +42,7 @@ public abstract class Command<T extends Object>
 
 	public void execute(T obj, String in)
 	{
-		Arguments processedInput = this.processInput(in);
+		Arguments processedInput = this.processInput(obj, in);
 
 		if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage)
 		{
@@ -50,15 +50,15 @@ public abstract class Command<T extends Object>
 
 			timesUsed++;
 			this.lastUsage = System.currentTimeMillis();
-			this.shutdown(Result.SUCCESS, "The command has successfully been executed.");
+			this.shutdown(obj, Result.SUCCESS, "The command has successfully been executed.");
 		}
 		else if (!this.isGlobalCooldownReady())
 		{
-			this.shutdown(Result.FAILURE, "The command is currently under cooldown!");
+			this.shutdown(obj, Result.FAILURE, "The command is currently under cooldown!");
 		}
 		else if (this.timesUsed == maxUsage)
 		{
-			this.shutdown(Result.FAILURE, "The has reached the maximum amount of uses!");
+			this.shutdown(obj, Result.FAILURE, "The has reached the maximum amount of uses!");
 		}
 
 		// reset the command for usage.
@@ -122,14 +122,14 @@ public abstract class Command<T extends Object>
 		return false;
 	}
 
-	public void result(Result result, String response)
+	public void result(T obj, Result result, String response)
 	{
 
 	}
 
-	private void shutdown(Result result, String response)
+	private void shutdown(T obj, Result result, String response)
 	{
-		this.result(result, response);
+		this.result(obj, result, response);
 		this.shouldExecute = false;
 	}
 
@@ -163,7 +163,7 @@ public abstract class Command<T extends Object>
 		this.parameters.add(argument);
 	}
 
-	private Arguments processInput(String input)
+	private Arguments processInput(T obj, String input)
 	{
 
 		String[] rawArgs = Arrays.copyOfRange(input.split(" "), 1, input.split(" ").length);
@@ -179,7 +179,7 @@ public abstract class Command<T extends Object>
 				}
 				else if (rawArgs.length < parameters.size() - this.optArgCount || rawArgs.length > this.parameters.size())
 				{
-					this.shutdown(Result.FAILURE, "The command has an invalid number of parameters!");
+					this.shutdown(obj, Result.FAILURE, "The command has an invalid number of parameters!");
 					break;
 				}
 
@@ -200,7 +200,7 @@ public abstract class Command<T extends Object>
 					}
 					else
 					{
-						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+						this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
 					}
 					break;
 				case BYTE:
@@ -211,7 +211,7 @@ public abstract class Command<T extends Object>
 				case CHAR:
 					if (rawArgs[i].length() >= 2)
 					{
-						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
+						this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
 					}
 					else
 					{
@@ -254,7 +254,7 @@ public abstract class Command<T extends Object>
 			catch (NumberFormatException e)
 			{
 				e.printStackTrace();
-				this.shutdown(Result.FAILURE, "Expected a numerical value from a parameter " + rawArgs[i] + ", but the given value was not a number!");
+				this.shutdown(obj, Result.FAILURE, "Expected a numerical value from a parameter " + rawArgs[i] + ", but the given value was not a number!");
 			}
 		}
 		return new Arguments(arguments);

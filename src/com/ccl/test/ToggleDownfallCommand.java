@@ -53,7 +53,7 @@ public class ToggleDownfallCommand extends Command<Object>
 	}
 	
 	@Override
-	public void result(Result result, String response)
+	public void result(Object obj, Result result, String response)
 	{
 		if(result == Result.FAILURE) System.err.println(response);
 	}
