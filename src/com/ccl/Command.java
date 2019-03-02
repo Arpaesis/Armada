@@ -153,7 +153,8 @@ public abstract class Command<T extends Object>
 					}
 					break;
 				case BYTE:
-					Byte.parseByte(rawArgs[i]);
+					byte bValue = Byte.parseByte(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampb(bValue, optionalParams.get(i));
 					break;
 				case CHAR:
 					if (rawArgs[i].length() >= 2)
@@ -162,20 +163,24 @@ public abstract class Command<T extends Object>
 					}
 					break;
 				case DOUBLE:
-					Double.parseDouble(rawArgs[i]);
+					double dValue = Double.parseDouble(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampd(dValue, optionalParams.get(i));
 					break;
 				case FLOAT:
-					Float.parseFloat(rawArgs[i]);
+					float fValue = Float.parseFloat(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampf(fValue, optionalParams.get(i));
 					break;
 				case INT:
-					Integer.parseInt(rawArgs[i]);
-
+					int iValue = Integer.parseInt(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampi(iValue, optionalParams.get(i));
 					break;
 				case LONG:
-					Long.parseLong(rawArgs[i]);
+					long lValue = Long.parseLong(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampl(lValue, optionalParams.get(i));
 					break;
 				case SHORT:
-					Short.parseShort(rawArgs[i]);
+					short sValue = Short.parseShort(rawArgs[i]);
+					rawArgs[i] = MathUtils.clamps(sValue, optionalParams.get(i));
 					break;
 				default:
 					break;
@@ -205,7 +210,8 @@ public abstract class Command<T extends Object>
 						break;
 					}
 				case BYTE:
-					Byte.parseByte(rawArgs[i]);
+					byte bValue = Byte.parseByte(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampb(bValue, optionalParams.get(counter));
 					break;
 				case CHAR:
 					if (rawArgs[i].length() >= 2)
@@ -214,20 +220,24 @@ public abstract class Command<T extends Object>
 					}
 					break;
 				case DOUBLE:
-					Double.parseDouble(rawArgs[i]);
+					double dValue = Double.parseDouble(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampd(dValue, optionalParams.get(counter));
 					break;
 				case FLOAT:
-					Float.parseFloat(rawArgs[i]);
+					float fValue = Float.parseFloat(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampf(fValue, optionalParams.get(counter));
 					break;
 				case INT:
-					int value = Integer.parseInt(rawArgs[i]);
-					rawArgs[i] = MathUtils.clamp(value, optionalParams.get(counter));
+					int iValue = Integer.parseInt(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampi(iValue, optionalParams.get(counter));
 					break;
 				case LONG:
-					Long.parseLong(rawArgs[i]);
+					long lValue = Long.parseLong(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampl(lValue, optionalParams.get(counter));
 					break;
 				case SHORT:
-					Short.parseShort(rawArgs[i]);
+					short sValue = Short.parseShort(rawArgs[i]);
+					rawArgs[i] = MathUtils.clamps(sValue, optionalParams.get(counter));
 					break;
 				default:
 					break;
