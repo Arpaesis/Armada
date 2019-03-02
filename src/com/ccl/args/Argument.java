@@ -5,12 +5,14 @@ import com.ccl.enumerations.ParamType;
 public class Argument
 {
 
+	private final String argName;
 	private final ParamType type;
-	private int min;
-	private int max;
+	private int min = Integer.MIN_VALUE;
+	private int max = Integer.MAX_VALUE;
 	
-	public Argument(ParamType type)
+	public Argument(String argName, ParamType type)
 	{
+		this.argName = argName;
 		this.type = type;
 	}
 
@@ -19,7 +21,7 @@ public class Argument
 		return type;
 	}
 	
-	public Argument setClamp(int min, int max)
+	public Argument setRange(int min, int max)
 	{
 		this.min = min;
 		this.max = max;
@@ -34,5 +36,10 @@ public class Argument
 	public int getMax()
 	{
 		return max;
+	}
+
+	public String getArgName()
+	{
+		return argName;
 	}
 }
