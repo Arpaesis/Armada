@@ -168,59 +168,68 @@ public abstract class Command<T extends Object>
 
 		for (int i = 0; i < rawArgs.length; i++)
 		{
-			if (!this.shouldExecute)
+			try
 			{
-				break;
-			}
-			else if (rawArgs.length < parameters.size() - this.optArgCount)
-			{
-				this.shutdown(Result.FAILURE, "The command is missing required parameters!");
-				break;
-			}
+				if (!this.shouldExecute)
+				{
+					break;
+				}
+				else if (rawArgs.length < parameters.size() - this.optArgCount)
+				{
+					this.shutdown(Result.FAILURE, "The command is missing required parameters!");
+					break;
+				}
 
-			switch (this.parameters.get(i).getType())
+				switch (this.parameters.get(i).getType())
+				{
+				case BOOLEAN:
+					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
+					{
+					}
+					else
+					{
+						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+					}
+					break;
+				case BYTE:
+					byte bValue = Byte.parseByte(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
+					break;
+				case CHAR:
+					if (rawArgs[i].length() >= 2)
+					{
+						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
+					}
+					break;
+				case DOUBLE:
+					double dValue = Double.parseDouble(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampd(dValue, parameters.get(i));
+					break;
+				case FLOAT:
+					float fValue = Float.parseFloat(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampf(fValue, parameters.get(i));
+					break;
+				case INT:
+					int iValue = Integer.parseInt(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
+					break;
+				case LONG:
+					long lValue = Long.parseLong(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampl(lValue, parameters.get(i));
+					break;
+				case SHORT:
+					short sValue = Short.parseShort(rawArgs[i]);
+					rawArgs[i] = MathUtils.clamps(sValue, parameters.get(i));
+					break;
+				default:
+					break;
+				}
+
+			}
+			catch (NumberFormatException e)
 			{
-			case BOOLEAN:
-				if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
-				{
-				}
-				else
-				{
-					this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
-				}
-				break;
-			case BYTE:
-				byte bValue = Byte.parseByte(rawArgs[i]);
-				rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
-				break;
-			case CHAR:
-				if (rawArgs[i].length() >= 2)
-				{
-					this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
-				}
-				break;
-			case DOUBLE:
-				double dValue = Double.parseDouble(rawArgs[i]);
-				rawArgs[i] = MathUtils.clampd(dValue, parameters.get(i));
-				break;
-			case FLOAT:
-				float fValue = Float.parseFloat(rawArgs[i]);
-				rawArgs[i] = MathUtils.clampf(fValue, parameters.get(i));
-				break;
-			case INT:
-				int iValue = Integer.parseInt(rawArgs[i]);
-				rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
-				break;
-			case LONG:
-				long lValue = Long.parseLong(rawArgs[i]);
-				rawArgs[i] = MathUtils.clampl(lValue, parameters.get(i));
-				break;
-			case SHORT:
-				short sValue = Short.parseShort(rawArgs[i]);
-				rawArgs[i] = MathUtils.clamps(sValue, parameters.get(i));
-				break;
-			default:
-				break;
+				e.printStackTrace();
+				this.shutdown(Result.FAILURE, "Expected a numerical value from a parameter " + rawArgs[i] + ", but the given value was not a number!");
 			}
 		}
 		return rawArgs;
