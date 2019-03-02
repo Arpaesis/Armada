@@ -157,7 +157,7 @@ public abstract class Command<T extends Object>
 			for (int i = 0; i < rawArgs.length; i++)
 			{
 
-				if (!this.shouldExecute || i > requiredParams.size() - 1)
+				if (!this.shouldExecute || i >= requiredParams.size() - 1)
 				{
 					break;
 				}
