@@ -174,9 +174,9 @@ public abstract class Command<T extends Object>
 				{
 					break;
 				}
-				else if (rawArgs.length < parameters.size() - this.optArgCount)
+				else if (rawArgs.length < parameters.size() - this.optArgCount || rawArgs.length > this.parameters.size())
 				{
-					this.shutdown(Result.FAILURE, "The command is missing required parameters!");
+					this.shutdown(Result.FAILURE, "The command has an invalid number of parameters!");
 					break;
 				}
 

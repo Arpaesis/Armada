@@ -49,11 +49,6 @@ public class ToggleDownfallCommand extends Command<Object>
 	@Override
 	public void result(Result result, String response)
 	{
-		if(result == Result.FAILURE)
-		{
-			System.out.println("THE COMMAND HAS FAILED!");
-		}else {
-			System.out.println("THE COMMAND HAS SUCCEEDED!");
-		}
+		if(result == Result.FAILURE) System.err.println(response);
 	}
 }
