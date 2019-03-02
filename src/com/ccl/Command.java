@@ -45,11 +45,15 @@ public abstract class Command<T extends Object>
 
 			timesUsed++;
 			this.lastUsage = System.currentTimeMillis();
-			this.shutdown(Result.SUCCESS);
+			this.shutdown(Result.SUCCESS, "The command has successfully been executed.");
 		}
-		else
+		else if (!this.isCooldownReady())
 		{
-			this.shutdown(Result.FAILURE);
+			this.shutdown(Result.FAILURE, "The command is currently under cooldown!");
+		}
+		else if (this.timesUsed == maxUsage)
+		{
+			this.shutdown(Result.FAILURE, "The has reached the maximum amount of uses!");
 		}
 
 		// reset the command for usage.
@@ -113,14 +117,14 @@ public abstract class Command<T extends Object>
 		return false;
 	}
 
-	public void result(Result result)
+	public void result(Result result, String response)
 	{
 
 	}
 
-	private void shutdown(Result result)
+	private void shutdown(Result result, String response)
 	{
-		this.result(result);
+		this.result(result, response);
 		this.shouldExecute = false;
 	}
 
@@ -159,7 +163,7 @@ public abstract class Command<T extends Object>
 				}
 				else if (rawArgs.length < requiredParams.size())
 				{
-					this.shutdown(Result.FAILURE);
+					this.shutdown(Result.FAILURE, "The command is missing required parameters!");
 					break;
 				}
 
@@ -171,7 +175,7 @@ public abstract class Command<T extends Object>
 					}
 					else
 					{
-						this.shutdown(Result.FAILURE);
+						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
 					}
 					break;
 				case BYTE:
@@ -181,7 +185,7 @@ public abstract class Command<T extends Object>
 				case CHAR:
 					if (rawArgs[i].length() >= 2)
 					{
-						this.shutdown(Result.FAILURE);
+						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
 					}
 					break;
 				case DOUBLE:
@@ -228,7 +232,7 @@ public abstract class Command<T extends Object>
 					}
 					else
 					{
-						this.shutdown(Result.FAILURE);
+						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
 						break;
 					}
 				case BYTE:
@@ -238,7 +242,7 @@ public abstract class Command<T extends Object>
 				case CHAR:
 					if (rawArgs[i].length() >= 2)
 					{
-						this.shutdown(Result.FAILURE);
+						this.shutdown(Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
 					}
 					break;
 				case DOUBLE:
@@ -269,7 +273,7 @@ public abstract class Command<T extends Object>
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			this.shutdown(Result.FAILURE);
+			this.shutdown(Result.FAILURE, "An unknown error occured in parsing the command!");
 		}
 
 		return rawArgs;
