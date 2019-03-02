@@ -17,7 +17,7 @@ public class SpawnEntityCommand extends Command<Object>
 	public SpawnEntityCommand()
 	{
 		this.setName("spawnEntity");
-		this.setHelp("params: (entityName) (posX) (posY) (posZ) opt(spawnCount)");
+		this.setHelp("Spawns an entity in the world at the given coordinates. Can also take a spawn count and health value.");
 		Categories.ENTITIES.addToCategory(this);
 
 		this.requiredParams.add(new Argument("registryName", ParamType.STRING));
