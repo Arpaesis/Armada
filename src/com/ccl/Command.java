@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.ccl.args.Argument;
 import com.ccl.enumerations.Result;
+import com.ccl.utils.MathUtils;
 
 public abstract class Command<T extends Object>
 {
@@ -34,13 +35,11 @@ public abstract class Command<T extends Object>
 
 	public void execute(T obj, String in)
 	{
-		this.processInput(in);
+		String[] processedInput = this.processInput(in);
 
 		if (this.shouldExecute && this.isCooldownReady())
 		{
-			String[] temp = in.split(" ");
-			String[] rawArgs = Arrays.copyOfRange(temp, 1, temp.length);
-			this.onExecute(obj, rawArgs);
+			this.onExecute(obj, processedInput);
 
 			timesUsed++;
 			this.lastUsage = System.currentTimeMillis();
@@ -123,16 +122,20 @@ public abstract class Command<T extends Object>
 		this.shouldExecute = false;
 	}
 
-	private void processInput(String input)
+	private String[] processInput(String input)
 	{
+
+		String[] rawArgs = Arrays.copyOfRange(input.split(" "), 1, input.split(" ").length);
 		try
 		{
-			String[] rawInput = input.split(" ");
-			String[] rawArgs = Arrays.copyOfRange(rawInput, 1, rawInput.length);
-
 			for (int i = 0; i < rawArgs.length; i++)
 			{
-				if (!this.shouldExecute || i > requiredParams.size() - 1 || rawArgs.length < requiredParams.size())
+
+				if (!this.shouldExecute || i > requiredParams.size() - 1)
+				{
+					break;
+				}
+				else if (rawArgs.length < requiredParams.size())
 				{
 					this.shutdown(Result.FAILURE);
 					break;
@@ -141,7 +144,10 @@ public abstract class Command<T extends Object>
 				switch (requiredParams.get(i).getType())
 				{
 				case BOOLEAN:
-					if (!(rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0")))
+					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
+					{
+					}
+					else
 					{
 						this.shutdown(Result.FAILURE);
 					}
@@ -176,14 +182,17 @@ public abstract class Command<T extends Object>
 				}
 			}
 
-			for (int i = this.requiredParams.size() - 1; i < rawArgs.length - 1 && rawArgs.length - requiredParams.size() != 0; i++)
+			int counter = -1;
+			for (int i = this.requiredParams.size(); i < rawArgs.length && rawArgs.length - requiredParams.size() != 0; i++)
 			{
+				counter++;
+
 				if (!this.shouldExecute || i > (optionalParams.size() + requiredParams.size() - 1))
 				{
 					break;
 				}
 
-				switch (optionalParams.get(rawArgs.length - i - 2).getType())
+				switch (optionalParams.get(counter).getType())
 				{
 				case BOOLEAN:
 					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
@@ -211,7 +220,8 @@ public abstract class Command<T extends Object>
 					Float.parseFloat(rawArgs[i]);
 					break;
 				case INT:
-					Integer.parseInt(rawArgs[i]);
+					int value = Integer.parseInt(rawArgs[i]);
+					rawArgs[i] = MathUtils.clamp(value, optionalParams.get(counter));
 					break;
 				case LONG:
 					Long.parseLong(rawArgs[i]);
@@ -226,7 +236,10 @@ public abstract class Command<T extends Object>
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			this.shutdown(Result.FAILURE);
 		}
+
+		return rawArgs;
 	}
 }
