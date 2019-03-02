@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ccl.enumerations.ParamType;
+import com.ccl.args.Argument;
 import com.ccl.enumerations.Result;
 
 public abstract class Command<T extends Object>
 {
 
-	public final List<ParamType> requiredParams = new ArrayList<>();
-	public final List<ParamType> optionalParams = new ArrayList<>();
+	public final List<Argument> requiredParams = new ArrayList<>();
+	public final List<Argument> optionalParams = new ArrayList<>();
 
 	private String name = "";
 	private String help = "";
@@ -138,7 +138,7 @@ public abstract class Command<T extends Object>
 					break;
 				}
 
-				switch (requiredParams.get(i))
+				switch (requiredParams.get(i).getType())
 				{
 				case BOOLEAN:
 					if (!(rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0")))
@@ -183,7 +183,7 @@ public abstract class Command<T extends Object>
 					break;
 				}
 
-				switch (optionalParams.get(rawArgs.length - i - 2))
+				switch (optionalParams.get(rawArgs.length - i - 2).getType())
 				{
 				case BOOLEAN:
 					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))

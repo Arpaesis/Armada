@@ -1,6 +1,7 @@
 package com.ccl.test;
 
 import com.ccl.Command;
+import com.ccl.args.Argument;
 import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
 
@@ -15,7 +16,7 @@ public class ToggleDownfallCommand extends Command<Object>
 		this.setAliases(new String[]
 		{ "isRaining" });
 		this.setCooldown(3);
-		this.optionalParams.add(ParamType.STRING); // is raining
+		this.optionalParams.add(new Argument(ParamType.STRING)); // is raining
 		Categories.WORLD.addToCategory(this);
 	}
 

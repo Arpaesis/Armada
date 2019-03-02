@@ -1,6 +1,7 @@
 package com.ccl.test;
 
 import com.ccl.Command;
+import com.ccl.args.Argument;
 import com.ccl.enumerations.ParamType;
 
 public class SpawnEntityCommand extends Command<Object>
@@ -18,14 +19,14 @@ public class SpawnEntityCommand extends Command<Object>
 		this.setHelp("params: (entityName) (posX) (posY) (posZ) opt(spawnCount)");
 		Categories.ENTITIES.addToCategory(this);
 		
-		this.requiredParams.add(ParamType.STRING); // registryName
-		this.requiredParams.add(ParamType.INT); // xPos
-		this.requiredParams.add(ParamType.INT); // yPos
-		this.requiredParams.add(ParamType.INT); // zPos
+		this.requiredParams.add(new Argument(ParamType.STRING)); // registryName
+		this.requiredParams.add(new Argument(ParamType.INT)); // xPos
+		this.requiredParams.add(new Argument(ParamType.INT)); // yPos
+		this.requiredParams.add(new Argument(ParamType.INT)); // zPos
 		
 		//Optional parameters
-		this.optionalParams.add(ParamType.INT); // Spawn count
-		this.optionalParams.add(ParamType.INT); // health
+		this.optionalParams.add(new Argument(ParamType.INT)); // Spawn count
+		this.optionalParams.add(new Argument(ParamType.INT)); // health
 	}
 	
 	@Override
