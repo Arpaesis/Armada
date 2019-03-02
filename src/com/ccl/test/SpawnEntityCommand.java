@@ -1,9 +1,9 @@
 package com.ccl.test;
 
-import com.ccl.CommandImpl;
+import com.ccl.Command;
 import com.ccl.enumerations.ParamType;
 
-public class SpawnEntityCommand extends CommandImpl<Object>
+public class SpawnEntityCommand extends Command<Object>
 {
 	
 	String registryName;
@@ -16,6 +16,8 @@ public class SpawnEntityCommand extends CommandImpl<Object>
 	{
 		this.setName("spawnEntity");
 		this.setHelp("params: (entityName) (posX) (posY) (posZ) opt(spawnCount)");
+		Categories.ENTITIES.addToCategory(this);
+		
 		this.requiredParams.add(ParamType.STRING); // registryName
 		this.requiredParams.add(ParamType.INT); // xPos
 		this.requiredParams.add(ParamType.INT); // yPos
