@@ -7,7 +7,7 @@ import java.util.List;
 import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
 
-public abstract class CommandImpl<T extends Object>
+public abstract class Command<T extends Object>
 {
 
 	public final List<ParamType> requiredParams = new ArrayList<>();
@@ -24,7 +24,7 @@ public abstract class CommandImpl<T extends Object>
 
 	private boolean shouldExecute = true;
 
-	public CommandImpl()
+	public Command()
 	{
 	}
 

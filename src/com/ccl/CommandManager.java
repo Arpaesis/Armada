@@ -5,7 +5,7 @@ import java.util.Map;
 
 public final class CommandManager<T>
 {
-	protected final Map<String, CommandImpl<T>> REGISTRY = new HashMap<>();
+	protected final Map<String, Command<T>> REGISTRY = new HashMap<>();
 
 	private String prefix = "";
 
@@ -14,7 +14,7 @@ public final class CommandManager<T>
 
 	}
 
-	public CommandImpl<T> register(CommandImpl<T> command)
+	public Command<T> register(Command<T> command)
 	{
 		return REGISTRY.put(command.getName(), command);
 	}
@@ -41,7 +41,7 @@ public final class CommandManager<T>
 			}
 			else
 			{
-				for (Map.Entry<String, CommandImpl<T>> entry : REGISTRY.entrySet())
+				for (Map.Entry<String, Command<T>> entry : REGISTRY.entrySet())
 				{
 					if (entry.getValue().getAliases() != null)
 					{

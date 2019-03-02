@@ -1,10 +1,10 @@
 package com.ccl.test;
 
-import com.ccl.CommandImpl;
+import com.ccl.Command;
 import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
 
-public class ToggleDownfallCommand extends CommandImpl<Object>
+public class ToggleDownfallCommand extends Command<Object>
 {
 
 	boolean isRaining;
