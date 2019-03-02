@@ -130,7 +130,13 @@ public abstract class Command<T extends Object>
 	private void shutdown(T obj, Result result, String response)
 	{
 		this.result(obj, result, response);
+		this.result(result, response);
 		this.shouldExecute = false;
+	}
+	
+	public void result(Result result, String response)
+	{
+
 	}
 
 	public int getMaxUsage()
