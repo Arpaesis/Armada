@@ -16,6 +16,28 @@ public final class CommandManager<T>
 
 	public Command<T> register(Command<T> command)
 	{
+		if (REGISTRY.containsKey(command.getName()))
+		{
+			throw new RuntimeException("The command " + command.getName() + " has already been registered!");
+		}
+
+		for (Map.Entry<String, Command<T>> com : REGISTRY.entrySet())
+		{
+			if (com.getValue().getAliases() != null)
+			{
+				for (String alias : com.getValue().getAliases())
+				{
+					for (String toCheck : command.getAliases())
+					{
+						if (alias.equals(toCheck))
+						{
+							System.err.println("Warning: command (" + command.getName() + ") has an alias (" + alias + ") that is already used by another command (" + com.getValue().getName() + ")!");
+						}
+					}
+				}
+			}
+		}
+
 		return REGISTRY.put(command.getName(), command);
 	}
 
