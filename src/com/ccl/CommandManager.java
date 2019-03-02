@@ -1,5 +1,6 @@
 package com.ccl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,14 @@ public final class CommandManager<T>
 		}
 
 		return REGISTRY.put(command.getName(), command);
+	}
+
+	public void registerAll(Collection<? extends Command<T>> commands)
+	{
+		for (Command<T> command : commands)
+		{
+			this.register(command);
+		}
 	}
 
 	public String getPrefix()
