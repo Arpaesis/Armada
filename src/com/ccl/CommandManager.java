@@ -72,6 +72,11 @@ public final class CommandManager<T, R>
 
 		return REGISTRY.remove(command.getName().toLowerCase());
 	}
+	
+	public void unregisterAll()
+	{
+		REGISTRY.clear();
+	}
 
 	public String getPrefix()
 	{
