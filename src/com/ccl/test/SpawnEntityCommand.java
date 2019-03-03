@@ -6,7 +6,7 @@ import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.ParamType;
 
-public class SpawnEntityCommand extends Command<Object>
+public class SpawnEntityCommand extends Command<String>
 {
 
 	String registryName;
@@ -33,7 +33,7 @@ public class SpawnEntityCommand extends Command<Object>
 	}
 
 	@Override
-	public void onExecute(Object obj, Arguments args)
+	public <R> R onExecute(String obj, Arguments args)
 	{
 
 		this.registryName = args.getString();
@@ -47,5 +47,6 @@ public class SpawnEntityCommand extends Command<Object>
 
 		System.out.println("Spawning " + this.registryName + " at " + this.posX + ", " + this.posY + ", " + this.posZ + " with a spawn count of " + this.spawnCount + " with health " + health);
 
+		return null;
 	}
 }

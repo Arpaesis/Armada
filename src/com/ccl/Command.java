@@ -3,6 +3,8 @@ package com.ccl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.ccl.args.Argument;
 import com.ccl.args.Arguments;
@@ -11,6 +13,7 @@ import com.ccl.args.ProcessedArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.Result;
 import com.ccl.utils.MathUtils;
+import com.ccl.utils.StringUtils;
 
 public abstract class Command<T extends Object>
 {
@@ -36,21 +39,23 @@ public abstract class Command<T extends Object>
 	{
 	}
 
-	public void onExecute(T obj, Arguments in)
-	{
-	}
+	public abstract <R> R onExecute(T obj, Arguments in);
 
-	public void execute(T obj, String in)
+	public <R> R execute(T obj, String in)
 	{
 		Arguments processedInput = this.processInput(obj, in);
+		
+		R result = null;
 
 		if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage)
 		{
-			this.onExecute(obj, processedInput);
+			result = this.onExecute(obj, processedInput);
 
 			timesUsed++;
 			this.lastUsage = System.currentTimeMillis();
 			this.shutdown(obj, Result.SUCCESS, "The command has successfully been executed.");
+			
+			return result;
 		}
 		else if (!this.isGlobalCooldownReady())
 		{
@@ -63,6 +68,8 @@ public abstract class Command<T extends Object>
 
 		// reset the command for usage.
 		this.shouldExecute = true;
+		
+		return result;
 	}
 
 	public String getName()
@@ -133,7 +140,7 @@ public abstract class Command<T extends Object>
 		this.result(result, response);
 		this.shouldExecute = false;
 	}
-	
+
 	public void result(Result result, String response)
 	{
 
@@ -172,7 +179,16 @@ public abstract class Command<T extends Object>
 	private Arguments processInput(T obj, String input)
 	{
 
-		String[] rawArgs = Arrays.copyOfRange(input.split(" "), 1, input.split(" ").length);
+		List<String> list = new ArrayList<>();
+		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
+		while (m.find())
+			list.add(m.group(1));
+
+		String[] tempArr = new String[list.size()];
+		String[] preArgs = list.toArray(tempArr);
+
+		String[] rawArgs = Arrays.copyOfRange(preArgs, 1, preArgs.length);
+
 		List<ProcessedArgument<?>> arguments = new ArrayList<>();
 
 		for (int i = 0; i < rawArgs.length; i++)
@@ -236,18 +252,42 @@ public abstract class Command<T extends Object>
 					break;
 				case INT:
 					int iValue = 0;
-					if(rawArgs[i].startsWith("0b"))
+
+					boolean neg = false;
+
+					if (rawArgs[i].startsWith("-"))
 					{
-						iValue = Integer.parseInt(rawArgs[i].substring(2), 2);
-					}else if(rawArgs[i].startsWith("0x"))
+						neg = true;
+						rawArgs[i] = rawArgs[i].substring(1);
+					}
+
+					if (rawArgs[i].startsWith("+"))
 					{
-						iValue = Integer.parseInt(rawArgs[i].substring(2), 16);
-					}else if(rawArgs[i].startsWith("0"))
+						rawArgs[i] = rawArgs[i].substring(1);
+					}
+
+					if (rawArgs[i].startsWith("0b"))
+					{
+						iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
+					}
+					else if (rawArgs[i].startsWith("0x"))
+					{
+						iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
+					}
+					else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
 					{
 						iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
-					}else {
+					}
+					else
+					{
 						iValue = Integer.parseInt(rawArgs[i]);
 					}
+
+					if (neg)
+					{
+						iValue = 0 - iValue;
+					}
+
 					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
 					break;
@@ -262,6 +302,15 @@ public abstract class Command<T extends Object>
 					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Short.parseShort(rawArgs[i])));
 					break;
 				case STRING:
+					if (rawArgs[i].startsWith("\""))
+					{
+						rawArgs[i] = rawArgs[i].substring(1);
+					}
+
+					if (rawArgs[i].endsWith("\""))
+					{
+						rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
+					}
 					arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i]));
 					break;
 				default:

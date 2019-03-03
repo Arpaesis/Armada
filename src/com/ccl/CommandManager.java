@@ -42,7 +42,7 @@ public final class CommandManager<T>
 			}
 		}
 
-		return REGISTRY.put(command.getName(), command);
+		return REGISTRY.put(command.getName().toLowerCase(), command);
 	}
 
 	public void registerAll(Collection<? extends Command<T>> commands)
@@ -63,33 +63,32 @@ public final class CommandManager<T>
 		this.prefix = prefix;
 	}
 
-	public void execute(T obj, String in)
+	public <R> R execute(T obj, String in)
 	{
-		if (in.startsWith(this.getPrefix()))
-		{
-			String registryName = in.split(" ")[0].substring(prefix.length());
 
-			if (REGISTRY.containsKey(registryName))
+		if (!in.startsWith(this.getPrefix()))
+			return null;
+
+		String registryName = in.split(" ")[0].substring(prefix.length()).toLowerCase();
+
+		if (REGISTRY.containsKey(registryName))
+		{
+			return REGISTRY.get(registryName).execute(obj, in);
+		}
+		else
+		{
+			for (Map.Entry<String, Command<T>> entry : REGISTRY.entrySet())
 			{
-				REGISTRY.get(registryName).execute(obj, in);
-			}
-			else
-			{
-				for (Map.Entry<String, Command<T>> entry : REGISTRY.entrySet())
+				if (entry.getValue().getAliases() != null)
 				{
-					if (entry.getValue().getAliases() != null)
+					for (String alias : entry.getValue().getAliases())
 					{
-						for (String alias : entry.getValue().getAliases())
-						{
-							if (registryName.equals(alias))
-							{
-								entry.getValue().execute(obj, in);
-								break;
-							}
-						}
+						if (registryName.equals(alias))
+							return entry.getValue().execute(obj, in);
 					}
 				}
 			}
 		}
+		return null;
 	}
 }

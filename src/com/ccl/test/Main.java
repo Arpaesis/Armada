@@ -6,7 +6,7 @@ import com.ccl.CommandManager;
 public class Main
 {
 
-	private static final CommandManager<Object> manager = new CommandManager<>();
+	private static final CommandManager<String> manager = new CommandManager<>();
 	
 	public static void main(String[] arguments)
 	{
@@ -22,7 +22,7 @@ public class Main
 		{
 			in = scanner.nextLine();
 
-			manager.execute(new Object(), in);
+			manager.execute(new String(), in);
 		}
 		while (!in.equalsIgnoreCase("END"));
 
