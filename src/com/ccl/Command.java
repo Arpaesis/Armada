@@ -37,13 +37,13 @@ public abstract class Command<T extends Object, R extends Object>
 	private Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
 	private boolean shouldExecute = true;
-	
+
 	private CommandManager<T, R> manager;
 
 	public Command()
 	{
 	}
-	
+
 	public Command(CommandManager<T, R> manager)
 	{
 		this.manager = manager;
@@ -201,146 +201,149 @@ public abstract class Command<T extends Object, R extends Object>
 
 		for (int i = 0; i < rawArgs.length; i++)
 		{
-			try
-			{
-				if (!this.shouldExecute)
-				{
-					break;
-				}
-				else if (rawArgs.length < parameters.size() - this.optArgCount || rawArgs.length > this.parameters.size())
-				{
-					this.shutdown(obj, Result.FAILURE, "The command has an invalid number of parameters!");
-					break;
-				}
+			Matcher tm = numberPattern.matcher(rawArgs[i]);
 
-				switch (this.parameters.get(i).getType())
+			if (!this.shouldExecute)
+			{
+				break;
+			}
+			else if (rawArgs.length < parameters.size() - this.optArgCount || rawArgs.length > this.parameters.size())
+			{
+				this.shutdown(obj, Result.FAILURE, "The command has an invalid number of parameters!");
+				break;
+			}
+
+			switch (this.parameters.get(i).getType())
+			{
+			case BOOLEAN:
+				if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
 				{
-				case BOOLEAN:
-					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
+					if (rawArgs[i].equals("1"))
 					{
-						if (rawArgs[i].equals("1"))
-						{
-							rawArgs[i] = "true";
-						}
-						else if (rawArgs[i].equals("0"))
-						{
-							rawArgs[i] = "false";
-						}
-						arguments.add(new ProcessedArgument<Boolean>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Boolean.parseBoolean(rawArgs[i])));
+						rawArgs[i] = "true";
 					}
-					else
+					else if (rawArgs[i].equals("0"))
 					{
-						this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+						rawArgs[i] = "false";
 					}
-					break;
-				case BYTE:
-					byte bValue = Byte.parseByte(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Byte.parseByte(rawArgs[i])));
-					break;
-				case CHAR:
-					if (rawArgs[i].length() >= 2)
-					{
-						this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
-					}
-					else
-					{
-						arguments.add(new ProcessedArgument<Character>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i].charAt(0)));
-					}
-					break;
-				case DOUBLE:
+					arguments.add(new ProcessedArgument<Boolean>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Boolean.parseBoolean(rawArgs[i])));
+				}
+				else
+				{
+					this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+				}
+				break;
+			case BYTE:
+				byte bValue = Byte.parseByte(rawArgs[i]);
+				rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
+				arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Byte.parseByte(rawArgs[i])));
+				break;
+			case CHAR:
+				if (rawArgs[i].length() >= 2)
+				{
+					this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
+				}
+				else
+				{
+					arguments.add(new ProcessedArgument<Character>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i].charAt(0)));
+				}
+				break;
+			case DOUBLE:
+				if (tm.find())
+				{
 					double dValue = Double.parseDouble(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampd(dValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Double>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Double.parseDouble(rawArgs[i])));
-					break;
-				case FLOAT:
+				}
+				break;
+			case FLOAT:
+				if (tm.find())
+				{
 					float fValue = Float.parseFloat(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampf(fValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Float>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Float.parseFloat(rawArgs[i])));
-					break;
-				case INT:
-					int iValue = 0;
+				}
+				break;
+			case INT:
+				int iValue = 0;
 
-					boolean neg = false;
+				boolean neg = false;
 
-					Matcher tm = numberPattern.matcher(rawArgs[i]);
+				if (tm.find())
+				{
+					rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
 
-					if (tm.find())
+					if (rawArgs[i].startsWith("-"))
 					{
-						rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
-
-						if (rawArgs[i].startsWith("-"))
-						{
-							neg = true;
-							rawArgs[i] = rawArgs[i].substring(1);
-						}
-
-						if (rawArgs[i].startsWith("+"))
-						{
-							rawArgs[i] = rawArgs[i].substring(1);
-						}
-
-						if (rawArgs[i].startsWith("0b"))
-						{
-							iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
-						}
-						else if (rawArgs[i].startsWith("0x"))
-						{
-							iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
-						}
-						else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
-						{
-							iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
-						}
-						else
-						{
-							iValue = Integer.parseInt(rawArgs[i]);
-						}
-
-						if (neg)
-						{
-							iValue = 0 - iValue;
-						}
-
-						rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
-						arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
+						neg = true;
+						rawArgs[i] = rawArgs[i].substring(1);
 					}
-					else
-					{
-						this.shutdown(obj, Result.FAILURE, "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
-					}
-					break;
-				case LONG:
-					long lValue = Long.parseLong(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampl(lValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Long>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Long.parseLong(rawArgs[i])));
-					break;
-				case SHORT:
-					short sValue = Short.parseShort(rawArgs[i]);
-					rawArgs[i] = MathUtils.clamps(sValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Short.parseShort(rawArgs[i])));
-					break;
-				case STRING:
-					if (rawArgs[i].startsWith("\""))
+
+					if (rawArgs[i].startsWith("+"))
 					{
 						rawArgs[i] = rawArgs[i].substring(1);
 					}
 
-					if (rawArgs[i].endsWith("\""))
+					if (rawArgs[i].startsWith("0b"))
 					{
-						rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
+						iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
 					}
-					arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i]));
-					break;
-				default:
-					break;
+					else if (rawArgs[i].startsWith("0x"))
+					{
+						iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
+					}
+					else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
+					{
+						iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
+					}
+					else
+					{
+						iValue = Integer.parseInt(rawArgs[i]);
+					}
+
+					if (neg)
+					{
+						iValue = 0 - iValue;
+					}
+
+					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
+				}
+				else
+				{
+					this.shutdown(obj, Result.FAILURE, "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
+				}
+				break;
+			case LONG:
+				if (tm.find())
+				{
+					long lValue = Long.parseLong(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampl(lValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Long>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Long.parseLong(rawArgs[i])));
+				}
+				break;
+			case SHORT:
+				if (tm.find())
+				{
+					short sValue = Short.parseShort(rawArgs[i]);
+					rawArgs[i] = MathUtils.clamps(sValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Short.parseShort(rawArgs[i])));
+				}
+				break;
+			case STRING:
+				if (rawArgs[i].startsWith("\""))
+				{
+					rawArgs[i] = rawArgs[i].substring(1);
 				}
 
-			}
-			catch (NumberFormatException e)
-			{
-				e.printStackTrace();
-				this.shutdown(obj, Result.FAILURE, "Expected a numerical value from a parameter " + rawArgs[i] + ", but the given value was not a number!");
+				if (rawArgs[i].endsWith("\""))
+				{
+					rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
+				}
+				arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i]));
+				break;
+			default:
+				break;
 			}
 		}
 		return new Arguments(arguments);
