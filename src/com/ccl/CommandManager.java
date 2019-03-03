@@ -1,7 +1,9 @@
 package com.ccl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.ccl.impl.ScheduleCommand;
@@ -10,6 +12,8 @@ import com.ccl.schedule.Scheduler;
 public final class CommandManager<T, R>
 {
 	protected final Map<String, Command<T, R>> REGISTRY = new HashMap<>();
+
+	protected final List<CommandResponse<T>> responses = new ArrayList<>();
 
 	private String prefix = "";
 
@@ -61,7 +65,7 @@ public final class CommandManager<T, R>
 			this.register(command);
 		}
 	}
-	
+
 	public Command<T, R> unregister(Command<T, R> command)
 	{
 		if (!REGISTRY.containsKey(command.getName()))
@@ -72,7 +76,7 @@ public final class CommandManager<T, R>
 
 		return REGISTRY.remove(command.getName().toLowerCase());
 	}
-	
+
 	public void unregisterAll()
 	{
 		REGISTRY.clear();
@@ -90,6 +94,23 @@ public final class CommandManager<T, R>
 
 	public R execute(T obj, String in)
 	{
+
+		List<CommandResponse<T>> toRemove = new ArrayList<>();
+
+		for (int i = 0; i < responses.size(); i++)
+		{
+			CommandResponse<T> current = responses.get(i);
+
+			boolean flag = current.onResponse(obj, in);
+
+			if (flag)
+			{
+				toRemove.add(current);
+				break;
+			}
+		}
+		this.responses.removeAll(toRemove);
+		
 
 		if (!in.startsWith(this.getPrefix()))
 			return null;
@@ -118,7 +139,7 @@ public final class CommandManager<T, R>
 		}
 		return null;
 	}
-	
+
 	public R executeNoDelay(T obj, String in)
 	{
 
@@ -153,5 +174,10 @@ public final class CommandManager<T, R>
 	public Scheduler<T, R> getScheduler()
 	{
 		return scheduler;
+	}
+
+	public void addWaitingResponse(CommandResponse<T> response)
+	{
+		this.responses.add(response);
 	}
 }

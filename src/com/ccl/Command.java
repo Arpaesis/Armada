@@ -420,4 +420,9 @@ public abstract class Command<T, R>
 	{
 		this.isDisabled = isDisabled;
 	}
+
+	public void onResponse(CommandResponse<T> response)
+	{
+		this.manager.addWaitingResponse(response);
+	}
 }
