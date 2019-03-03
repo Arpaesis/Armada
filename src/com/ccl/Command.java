@@ -273,10 +273,11 @@ public abstract class Command<T, R>
 			case BYTE:
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
-				byte bValue = Byte.parseByte(rawArgs[i]);
-				rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
-				arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
-				}else if(rawArgs[i].contains(":"))
+					byte bValue = Byte.parseByte(rawArgs[i]);
+					rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
+					arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
+				}
+				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
@@ -288,7 +289,8 @@ public abstract class Command<T, R>
 				if (rawArgs[i].length() >= 2)
 				{
 					this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
-				}else if(rawArgs[i].contains(":"))
+				}
+				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
@@ -306,7 +308,8 @@ public abstract class Command<T, R>
 					double dValue = Double.parseDouble(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampd(dValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Double>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Double.parseDouble(rawArgs[i])));
-				}else if(rawArgs[i].contains(":"))
+				}
+				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
@@ -320,7 +323,8 @@ public abstract class Command<T, R>
 					float fValue = Float.parseFloat(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampf(fValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Float>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Float.parseFloat(rawArgs[i])));
-				}else if(rawArgs[i].contains(":"))
+				}
+				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
@@ -335,7 +339,7 @@ public abstract class Command<T, R>
 					int iValue = 0;
 
 					boolean neg = false;
-					
+
 					rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
 
 					if (rawArgs[i].startsWith("-"))
@@ -373,7 +377,8 @@ public abstract class Command<T, R>
 
 					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
-				}else if(rawArgs[i].contains(":"))
+				}
+				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
@@ -391,7 +396,8 @@ public abstract class Command<T, R>
 					long lValue = Long.parseLong(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampl(lValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Long>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
-				}else if(rawArgs[i].contains(":"))
+				}
+				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
@@ -405,7 +411,8 @@ public abstract class Command<T, R>
 					short sValue = Short.parseShort(rawArgs[i]);
 					rawArgs[i] = MathUtils.clamps(sValue, parameters.get(i));
 					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
-				}else if(rawArgs[i].contains(":"))
+				}
+				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
@@ -413,17 +420,37 @@ public abstract class Command<T, R>
 					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, sValue));
 				}
 				break;
-			case STRING: //TODO: Fix optionals that use strings.
-				if (rawArgs[i].startsWith("\""))
-				{
-					rawArgs[i] = rawArgs[i].substring(1);
-				}
+			case STRING: // TODO: Make this not ass.
 
-				if (rawArgs[i].endsWith("\""))
+				if (!rawArgs[i].contains(":"))
 				{
-					rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
+					if (rawArgs[i].startsWith("\""))
+					{
+						rawArgs[i] = rawArgs[i].substring(1);
+					}
+
+					if (rawArgs[i].endsWith("\""))
+					{
+						rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
+					}
+					arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], rawArgs[i]));
 				}
-				arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], rawArgs[i]));
+				else
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					String content = split[1];
+					if (content.startsWith("\""))
+					{
+						content = content.substring(1);
+					}
+
+					if (content.endsWith("\""))
+					{
+						content = StringUtils.removeLastCharOptional(content);
+					}
+					arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, content));
+				}
 				break;
 			default:
 				break;
