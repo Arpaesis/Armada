@@ -95,22 +95,7 @@ public final class CommandManager<T, R>
 	public R execute(T obj, String in)
 	{
 
-		List<CommandResponse<T>> toRemove = new ArrayList<>();
-
-		for (int i = 0; i < responses.size(); i++)
-		{
-			CommandResponse<T> current = responses.get(i);
-
-			boolean flag = current.onResponse(obj, in);
-
-			if (flag)
-			{
-				toRemove.add(current);
-				break;
-			}
-		}
-		this.responses.removeAll(toRemove);
-		
+		this.handleCallbacks(obj, in);
 
 		if (!in.startsWith(this.getPrefix()))
 			return null;
@@ -142,6 +127,8 @@ public final class CommandManager<T, R>
 
 	public R executeNoDelay(T obj, String in)
 	{
+
+		this.handleCallbacks(obj, in);
 
 		if (!in.startsWith(this.getPrefix()))
 			return null;
@@ -179,5 +166,24 @@ public final class CommandManager<T, R>
 	public void addWaitingResponse(CommandResponse<T> response)
 	{
 		this.responses.add(response);
+	}
+
+	private void handleCallbacks(T obj, String in)
+	{
+		List<CommandResponse<T>> toRemove = new ArrayList<>();
+
+		for (int i = 0; i < responses.size(); i++)
+		{
+			CommandResponse<T> current = responses.get(i);
+
+			boolean flag = current.onResponse(obj, in);
+
+			if (flag)
+			{
+				toRemove.add(current);
+				break;
+			}
+		}
+		this.responses.removeAll(toRemove);
 	}
 }
