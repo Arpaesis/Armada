@@ -68,6 +68,114 @@ public class Arguments
 	{
 		return (String) arguments.get(counter++).getValue();
 	}
+	
+	public boolean getBooleanFor(String tag, boolean def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (boolean) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public byte getByteFor(String tag, byte def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (byte) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public char getCharacterFor(String tag, char def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (char) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public double getDoubleFor(String tag, double def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (double) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public float getFloatFor(String tag, float def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (float) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public int getIntFor(String tag, int def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (int) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public long getLongFor(String tag, long def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (long) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public short getShortFor(String tag, short def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().matches(tag))
+			{
+				return (short) argument.getValue();
+			}
+		}
+		return def;
+	}
+	
+	public String getStringFor(String tag, String def)
+	{
+		for(ProcessedArgument<?> argument: arguments)
+		{
+			if(argument.getRawValue().contains(tag))
+			{
+				return (String) argument.getValue();
+			}
+		}
+		return def;
+	}
 
 	public int size()
 	{

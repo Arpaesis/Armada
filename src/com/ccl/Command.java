@@ -263,7 +263,7 @@ public abstract class Command<T, R>
 					{
 						rawArgs[i] = "false";
 					}
-					arguments.add(new ProcessedArgument<Boolean>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Boolean.parseBoolean(rawArgs[i])));
+					arguments.add(new ProcessedArgument<Boolean>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Boolean.parseBoolean(rawArgs[i])));
 				}
 				else
 				{
@@ -271,43 +271,71 @@ public abstract class Command<T, R>
 				}
 				break;
 			case BYTE:
+				if (tm.find() && !rawArgs[i].contains(":"))
+				{
 				byte bValue = Byte.parseByte(rawArgs[i]);
 				rawArgs[i] = MathUtils.clampb(bValue, parameters.get(i));
-				arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Byte.parseByte(rawArgs[i])));
+				arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
+				}else if(rawArgs[i].contains(":"))
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					byte bValue = Byte.parseByte(split[1]);
+					arguments.add(new ProcessedArgument<Byte>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, bValue));
+				}
 				break;
 			case CHAR:
 				if (rawArgs[i].length() >= 2)
 				{
 					this.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
+				}else if(rawArgs[i].contains(":"))
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					char cValue = split[1].charAt(0);
+					arguments.add(new ProcessedArgument<Character>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, cValue));
 				}
 				else
 				{
-					arguments.add(new ProcessedArgument<Character>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i].charAt(0)));
+					arguments.add(new ProcessedArgument<Character>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], rawArgs[i].charAt(0)));
 				}
 				break;
 			case DOUBLE:
-				if (tm.find())
+				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					double dValue = Double.parseDouble(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampd(dValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Double>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Double.parseDouble(rawArgs[i])));
+					arguments.add(new ProcessedArgument<Double>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Double.parseDouble(rawArgs[i])));
+				}else if(rawArgs[i].contains(":"))
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					double dValue = Double.parseDouble(split[1]);
+					arguments.add(new ProcessedArgument<Double>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, dValue));
 				}
 				break;
 			case FLOAT:
-				if (tm.find())
+				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					float fValue = Float.parseFloat(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampf(fValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Float>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Float.parseFloat(rawArgs[i])));
+					arguments.add(new ProcessedArgument<Float>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Float.parseFloat(rawArgs[i])));
+				}else if(rawArgs[i].contains(":"))
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					float fValue = Float.parseFloat(split[1]);
+					arguments.add(new ProcessedArgument<Float>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, fValue));
 				}
 				break;
 			case INT:
-				int iValue = 0;
 
-				boolean neg = false;
-
-				if (tm.find())
+				if (tm.find() && !rawArgs[i].contains(":"))
 				{
+					int iValue = 0;
+
+					boolean neg = false;
+					
 					rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
 
 					if (rawArgs[i].startsWith("-"))
@@ -344,7 +372,13 @@ public abstract class Command<T, R>
 					}
 
 					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
+					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
+				}else if(rawArgs[i].contains(":"))
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					int iValue = Integer.parseInt(split[1]);
+					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, iValue));
 				}
 				else
 				{
@@ -352,22 +386,34 @@ public abstract class Command<T, R>
 				}
 				break;
 			case LONG:
-				if (tm.find())
+				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					long lValue = Long.parseLong(rawArgs[i]);
 					rawArgs[i] = MathUtils.clampl(lValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Long>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Long.parseLong(rawArgs[i])));
+					arguments.add(new ProcessedArgument<Long>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
+				}else if(rawArgs[i].contains(":"))
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					long lValue = Long.parseLong(split[1]);
+					arguments.add(new ProcessedArgument<Long>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, lValue));
 				}
 				break;
 			case SHORT:
-				if (tm.find())
+				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					short sValue = Short.parseShort(rawArgs[i]);
 					rawArgs[i] = MathUtils.clamps(sValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Short.parseShort(rawArgs[i])));
+					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
+				}else if(rawArgs[i].contains(":"))
+				{
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					short sValue = Short.parseShort(split[1]);
+					arguments.add(new ProcessedArgument<Short>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), tag, sValue));
 				}
 				break;
-			case STRING:
+			case STRING: //TODO: Fix optionals that use strings.
 				if (rawArgs[i].startsWith("\""))
 				{
 					rawArgs[i] = rawArgs[i].substring(1);
@@ -377,7 +423,7 @@ public abstract class Command<T, R>
 				{
 					rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
 				}
-				arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i]));
+				arguments.add(new ProcessedArgument<String>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), rawArgs[i], rawArgs[i]));
 				break;
 			default:
 				break;

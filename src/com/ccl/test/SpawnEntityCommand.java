@@ -42,8 +42,8 @@ public class SpawnEntityCommand extends Command<String, String>
 		this.posZ = args.getInt();
 
 		// optionals
-		this.spawnCount = 4 == args.size() - 2 ? args.getInt() : 1;
-		this.health = 5 == args.size() - 1 ? args.getInt() : 100;
+		this.spawnCount = args.getIntFor("count", 1);
+		this.health = args.getIntFor("health", 100);
 
 		System.out.println("Spawning " + this.registryName + " at " + this.posX + ", " + this.posY + ", " + this.posZ + " with a spawn count of " + this.spawnCount + " with health " + health);
 
