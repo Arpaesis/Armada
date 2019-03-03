@@ -26,7 +26,8 @@ public final class CommandManager<T, R>
 	{
 		if (REGISTRY.containsKey(command.getName()))
 		{
-			throw new RuntimeException("The command " + command.getName() + " has already been registered!");
+			System.err.println("The command (" + command.getName() + ") has already been registered!");
+			return null;
 		}
 
 		for (Map.Entry<String, Command<T, R>> com : REGISTRY.entrySet())
@@ -59,6 +60,17 @@ public final class CommandManager<T, R>
 		{
 			this.register(command);
 		}
+	}
+	
+	public Command<T, R> unregister(Command<T, R> command)
+	{
+		if (!REGISTRY.containsKey(command.getName()))
+		{
+			System.err.println("The command (" + command.getName() + ") does not exist within the registry!");
+			return null;
+		}
+
+		return REGISTRY.remove(command.getName().toLowerCase());
 	}
 
 	public String getPrefix()
