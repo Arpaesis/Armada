@@ -22,9 +22,11 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 
 		this.setName("schedule");
 
+		this.setAliases(new String[]
+		{ "sched", "timer" });
+
 		this.addArgument(new RequiredArgument("timeUnit", ParamType.STRING));
 		this.addArgument(new RequiredArgument("count", ParamType.INT));
-		this.addArgument(new RequiredArgument("isInfinite", ParamType.BOOLEAN));
 		this.addArgument(new RequiredArgument("command", ParamType.STRING));
 	}
 
@@ -55,7 +57,7 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 		}
 
 		int count = in.getInt();
-		boolean isInfinite = in.getBoolean();
+		boolean isInfinite = count < 0 ? true : false;
 		String command = in.getString();
 
 		manager.getScheduler().addTask(new Task<T, R>(obj, command, timeAmount, unit).setInfinite(isInfinite).setExecutionCount(count));
