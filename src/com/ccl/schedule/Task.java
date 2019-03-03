@@ -45,8 +45,6 @@ public class Task<T, R>
 	{
 		this.lastTimeGap = value;
 		this.nextExecutionTime = System.currentTimeMillis() + timeUnit.toMillis(value);
-		System.out.println("current time: " + System.currentTimeMillis());
-		System.out.println("next execution time: " + this.nextExecutionTime);
 		return this;
 	}
 
@@ -57,11 +55,11 @@ public class Task<T, R>
 
 	public void execute(Scheduler<T, R> scheduler, CommandManager<T, R> manager)
 	{
-		System.out.println(this.input);
 		manager.execute(this.object, this.input);
 
 		this.setNextExecutionTime(this.lastTimeGap);
-		this.executionCounts = this.executionCounts - 1;
+		
+		this.executionCounts = this.executionCounts > 0 ? this.executionCounts - 1 : 0;
 
 		if (!this.isInfinite && this.executionCounts == 0)
 		{

@@ -32,12 +32,9 @@ public class Scheduler<T, R>
 			{
 				if (System.currentTimeMillis() >= task.getNextExecutionTime())
 				{
-					System.out.println("Executing...");
 					executor.execute(() -> task.execute(this, this.manager));
 				}
 			}
-			System.out.println(System.currentTimeMillis());
-			System.out.println("Remaining tasks: " + tasks.size());
 		}, 0, 1, TimeUnit.SECONDS);
 	}
 
