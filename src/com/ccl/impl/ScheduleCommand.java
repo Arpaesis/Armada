@@ -10,7 +10,7 @@ import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
 import com.ccl.schedule.Task;
 
-public class ScheduleCommand<T, R> extends Command<T, R>
+public final class ScheduleCommand<T, R> extends Command<T, R>
 {
 
 	public final CommandManager<T, R> manager;
@@ -46,6 +46,12 @@ public class ScheduleCommand<T, R> extends Command<T, R>
 			rawTime = rawTime.replace("min", "").replace("m", "");
 			timeAmount = Long.parseLong(rawTime);
 			unit = TimeUnit.MINUTES;
+		}
+		else if (rawTime.contains("hour") || rawTime.contains("hr") || rawTime.contains("h"))
+		{
+			rawTime = rawTime.replace("hour", "").replace("hr", "").replace("h", "");
+			timeAmount = Long.parseLong(rawTime);
+			unit = TimeUnit.HOURS;
 		}
 
 		int count = in.getInt();
