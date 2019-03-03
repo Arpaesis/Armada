@@ -345,4 +345,9 @@ public abstract class Command<T extends Object, R extends Object>
 		}
 		return new Arguments(arguments);
 	}
+
+	public CommandManager<T, R> getCommandManager()
+	{
+		return manager;
+	}
 }
