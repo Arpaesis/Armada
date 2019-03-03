@@ -33,6 +33,9 @@ public abstract class Command<T extends Object, R extends Object>
 
 	private int level = 0;
 
+	private Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
+	private Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+
 	private boolean shouldExecute = true;
 
 	public Command()
@@ -44,7 +47,7 @@ public abstract class Command<T extends Object, R extends Object>
 	public R execute(T obj, String in)
 	{
 		Arguments processedInput = this.processInput(obj, in);
-		
+
 		R result = null;
 
 		if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage)
@@ -66,7 +69,7 @@ public abstract class Command<T extends Object, R extends Object>
 
 		// reset the command for usage.
 		this.shouldExecute = true;
-		
+
 		return result;
 	}
 
@@ -178,7 +181,7 @@ public abstract class Command<T extends Object, R extends Object>
 	{
 
 		List<String> list = new ArrayList<>();
-		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
+		Matcher m = stringPattern.matcher(input);
 		while (m.find())
 			list.add(m.group(1));
 
@@ -253,41 +256,52 @@ public abstract class Command<T extends Object, R extends Object>
 
 					boolean neg = false;
 
-					if (rawArgs[i].startsWith("-"))
-					{
-						neg = true;
-						rawArgs[i] = rawArgs[i].substring(1);
-					}
+					Matcher tm = numberPattern.matcher(rawArgs[i]);
 
-					if (rawArgs[i].startsWith("+"))
+					if (tm.find())
 					{
-						rawArgs[i] = rawArgs[i].substring(1);
-					}
+						rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
 
-					if (rawArgs[i].startsWith("0b"))
-					{
-						iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
-					}
-					else if (rawArgs[i].startsWith("0x"))
-					{
-						iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
-					}
-					else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
-					{
-						iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
+						if (rawArgs[i].startsWith("-"))
+						{
+							neg = true;
+							rawArgs[i] = rawArgs[i].substring(1);
+						}
+
+						if (rawArgs[i].startsWith("+"))
+						{
+							rawArgs[i] = rawArgs[i].substring(1);
+						}
+
+						if (rawArgs[i].startsWith("0b"))
+						{
+							iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
+						}
+						else if (rawArgs[i].startsWith("0x"))
+						{
+							iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
+						}
+						else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
+						{
+							iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
+						}
+						else
+						{
+							iValue = Integer.parseInt(rawArgs[i]);
+						}
+
+						if (neg)
+						{
+							iValue = 0 - iValue;
+						}
+
+						rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
+						arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
 					}
 					else
 					{
-						iValue = Integer.parseInt(rawArgs[i]);
+						this.shutdown(obj, Result.FAILURE, "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
 					}
-
-					if (neg)
-					{
-						iValue = 0 - iValue;
-					}
-
-					rawArgs[i] = MathUtils.clampi(iValue, parameters.get(i));
-					arguments.add(new ProcessedArgument<Integer>(this.parameters.get(i).getArgName(), this.parameters.get(i).getType(), Integer.parseInt(rawArgs[i])));
 					break;
 				case LONG:
 					long lValue = Long.parseLong(rawArgs[i]);
