@@ -55,7 +55,7 @@ public class Task<T, R>
 
 	public void execute(Scheduler<T, R> scheduler, CommandManager<T, R> manager)
 	{
-		manager.execute(this.object, this.input);
+		manager.executeNoDelay(this.object, this.input);
 
 		this.setNextExecutionTime(this.lastTimeGap);
 		

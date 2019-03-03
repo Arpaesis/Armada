@@ -12,14 +12,8 @@ import com.ccl.schedule.Task;
 
 public final class ScheduleCommand<T, R> extends Command<T, R>
 {
-
-	public final CommandManager<T, R> manager;
-
-	public ScheduleCommand(CommandManager<T, R> manager)
+	public ScheduleCommand()
 	{
-		super(manager);
-		this.manager = manager;
-
 		this.setName("schedule");
 
 		this.setAliases(new String[]
@@ -60,7 +54,7 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 		boolean isInfinite = count < 0 ? true : false;
 		String command = in.getString();
 
-		manager.getScheduler().addTask(new Task<T, R>(obj, command, timeAmount, unit).setInfinite(isInfinite).setExecutionCount(count));
+		this.getCommandManager().getScheduler().addTask(new Task<T, R>(obj, command, timeAmount, unit).setInfinite(isInfinite).setExecutionCount(count));
 		return null;
 	}
 

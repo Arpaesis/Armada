@@ -12,8 +12,9 @@ public class Main
 	{
 
 		manager.setPrefix("!");
-		manager.register(new SpawnEntityCommand());
+		manager.register(new DelayCommand());
 		manager.register(new ToggleDownfallCommand());
+		manager.register(new SpawnEntityCommand());
 
 		Scanner scanner = new Scanner(System.in);
 

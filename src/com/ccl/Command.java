@@ -3,6 +3,7 @@ package com.ccl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,10 +13,11 @@ import com.ccl.args.OptionalArgument;
 import com.ccl.args.ProcessedArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.Result;
+import com.ccl.schedule.Task;
 import com.ccl.utils.MathUtils;
 import com.ccl.utils.StringUtils;
 
-public abstract class Command<T extends Object, R extends Object>
+public abstract class Command<T, R>
 {
 
 	public final List<Argument> parameters = new ArrayList<>();
@@ -32,6 +34,8 @@ public abstract class Command<T extends Object, R extends Object>
 	private int maxUsage = -1;
 
 	private int level = 0;
+	
+	private long delay = 0;
 
 	private Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
 	private Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
@@ -39,19 +43,46 @@ public abstract class Command<T extends Object, R extends Object>
 	private boolean shouldExecute = true;
 
 	private CommandManager<T, R> manager;
-
+	
 	public Command()
 	{
-	}
-
-	public Command(CommandManager<T, R> manager)
-	{
-		this.manager = manager;
 	}
 
 	public abstract R onExecute(T obj, Arguments in);
 
 	public R execute(T obj, String in)
+	{
+		Arguments processedInput = this.processInput(obj, in);
+
+		R result = null;
+
+		if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage && !this.hasDelay())
+		{
+			result = this.onExecute(obj, processedInput);
+
+			timesUsed++;
+			this.lastUsage = System.currentTimeMillis();
+			this.shutdown(obj, Result.SUCCESS, "The command has successfully been executed.");
+		}
+		else if (!this.isGlobalCooldownReady())
+		{
+			this.shutdown(obj, Result.FAILURE, "The command is currently under cooldown!");
+		}
+		else if (this.timesUsed == maxUsage)
+		{
+			this.shutdown(obj, Result.FAILURE, "The has reached the maximum amount of uses!");
+		}else if(this.hasDelay())
+		{
+			this.getCommandManager().getScheduler().addTask(new Task<T, R>(obj, in, this.getDelay(), TimeUnit.SECONDS));
+		}
+
+		// reset the command for usage.
+		this.shouldExecute = true;
+
+		return result;
+	}
+	
+	public R executeNoDelay(T obj, String in)
 	{
 		Arguments processedInput = this.processInput(obj, in);
 
@@ -352,5 +383,25 @@ public abstract class Command<T extends Object, R extends Object>
 	public CommandManager<T, R> getCommandManager()
 	{
 		return manager;
+	}
+	
+	public void setCommandManager(CommandManager<T, R> m)
+	{
+		manager = m;
+	}
+
+	public long getDelay()
+	{
+		return delay;
+	}
+
+	public void setDelay(long delay)
+	{
+		this.delay = delay;
+	}
+	
+	public boolean hasDelay()
+	{
+		return this.delay > 0;
 	}
 }

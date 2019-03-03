@@ -19,7 +19,7 @@ public final class CommandManager<T, R>
 	{
 		scheduler = new Scheduler<T, R>(this);
 
-		this.register(new ScheduleCommand<T, R>(this));
+		this.register(new ScheduleCommand<T, R>());
 	}
 
 	public Command<T, R> register(Command<T, R> command)
@@ -49,6 +49,7 @@ public final class CommandManager<T, R>
 			}
 		}
 
+		command.setCommandManager(this);
 		return REGISTRY.put(command.getName().toLowerCase(), command);
 	}
 
@@ -93,6 +94,37 @@ public final class CommandManager<T, R>
 						if (registryName.equals(alias))
 						{
 							return entry.getValue().execute(obj, in);
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public R executeNoDelay(T obj, String in)
+	{
+
+		if (!in.startsWith(this.getPrefix()))
+			return null;
+
+		String registryName = in.split(" ")[0].substring(prefix.length()).toLowerCase();
+
+		if (REGISTRY.containsKey(registryName))
+		{
+			return REGISTRY.get(registryName).executeNoDelay(obj, in);
+		}
+		else
+		{
+			for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
+			{
+				if (entry.getValue().getAliases() != null)
+				{
+					for (String alias : entry.getValue().getAliases())
+					{
+						if (registryName.equals(alias))
+						{
+							return entry.getValue().executeNoDelay(obj, in);
 						}
 					}
 				}
