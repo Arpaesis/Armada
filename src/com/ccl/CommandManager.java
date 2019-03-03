@@ -4,15 +4,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ccl.impl.ScheduleCommand;
+import com.ccl.schedule.Scheduler;
+
 public final class CommandManager<T, R>
 {
 	protected final Map<String, Command<T, R>> REGISTRY = new HashMap<>();
 
 	private String prefix = "";
 
+	private final Scheduler<T, R> scheduler;
+
 	public CommandManager()
 	{
+		scheduler = new Scheduler<T, R>(this);
 
+		this.register(new ScheduleCommand<T, R>(this));
 	}
 
 	public Command<T, R> register(Command<T, R> command)
@@ -92,5 +99,10 @@ public final class CommandManager<T, R>
 			}
 		}
 		return null;
+	}
+
+	public Scheduler<T, R> getScheduler()
+	{
+		return scheduler;
 	}
 }

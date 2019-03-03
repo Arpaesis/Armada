@@ -37,9 +37,16 @@ public abstract class Command<T extends Object, R extends Object>
 	private Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
 	private boolean shouldExecute = true;
+	
+	private CommandManager<T, R> manager;
 
 	public Command()
 	{
+	}
+	
+	public Command(CommandManager<T, R> manager)
+	{
+		this.manager = manager;
 	}
 
 	public abstract R onExecute(T obj, Arguments in);
