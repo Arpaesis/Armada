@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class CommandManager<T>
+public final class CommandManager<T, R>
 {
-	protected final Map<String, Command<T>> REGISTRY = new HashMap<>();
+	protected final Map<String, Command<T, R>> REGISTRY = new HashMap<>();
 
 	private String prefix = "";
 
@@ -15,14 +15,14 @@ public final class CommandManager<T>
 
 	}
 
-	public Command<T> register(Command<T> command)
+	public Command<T, R> register(Command<T, R> command)
 	{
 		if (REGISTRY.containsKey(command.getName()))
 		{
 			throw new RuntimeException("The command " + command.getName() + " has already been registered!");
 		}
 
-		for (Map.Entry<String, Command<T>> com : REGISTRY.entrySet())
+		for (Map.Entry<String, Command<T, R>> com : REGISTRY.entrySet())
 		{
 			if (com.getValue().getAliases() != null)
 			{
@@ -45,9 +45,9 @@ public final class CommandManager<T>
 		return REGISTRY.put(command.getName().toLowerCase(), command);
 	}
 
-	public void registerAll(Collection<? extends Command<T>> commands)
+	public void registerAll(Collection<? extends Command<T, R>> commands)
 	{
-		for (Command<T> command : commands)
+		for (Command<T, R> command : commands)
 		{
 			this.register(command);
 		}
@@ -63,7 +63,7 @@ public final class CommandManager<T>
 		this.prefix = prefix;
 	}
 
-	public <R> R execute(T obj, String in)
+	public R execute(T obj, String in)
 	{
 
 		if (!in.startsWith(this.getPrefix()))
@@ -77,14 +77,16 @@ public final class CommandManager<T>
 		}
 		else
 		{
-			for (Map.Entry<String, Command<T>> entry : REGISTRY.entrySet())
+			for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
 			{
 				if (entry.getValue().getAliases() != null)
 				{
 					for (String alias : entry.getValue().getAliases())
 					{
 						if (registryName.equals(alias))
+						{
 							return entry.getValue().execute(obj, in);
+						}
 					}
 				}
 			}

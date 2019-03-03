@@ -6,7 +6,7 @@ import com.ccl.args.OptionalArgument;
 import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
 
-public class ToggleDownfallCommand extends Command<String>
+public class ToggleDownfallCommand extends Command<String, String>
 {
 
 	boolean isRaining;
@@ -22,7 +22,7 @@ public class ToggleDownfallCommand extends Command<String>
 	}
 
 	@Override
-	public <R> R onExecute(String obj, Arguments args)
+	public String onExecute(String obj, Arguments args)
 	{
 		
 		String flag = "";

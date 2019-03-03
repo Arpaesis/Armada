@@ -15,7 +15,7 @@ import com.ccl.enumerations.Result;
 import com.ccl.utils.MathUtils;
 import com.ccl.utils.StringUtils;
 
-public abstract class Command<T extends Object>
+public abstract class Command<T extends Object, R extends Object>
 {
 
 	public final List<Argument> parameters = new ArrayList<>();
@@ -39,9 +39,9 @@ public abstract class Command<T extends Object>
 	{
 	}
 
-	public abstract <R> R onExecute(T obj, Arguments in);
+	public abstract R onExecute(T obj, Arguments in);
 
-	public <R> R execute(T obj, String in)
+	public R execute(T obj, String in)
 	{
 		Arguments processedInput = this.processInput(obj, in);
 		
@@ -54,8 +54,6 @@ public abstract class Command<T extends Object>
 			timesUsed++;
 			this.lastUsage = System.currentTimeMillis();
 			this.shutdown(obj, Result.SUCCESS, "The command has successfully been executed.");
-			
-			return result;
 		}
 		else if (!this.isGlobalCooldownReady())
 		{

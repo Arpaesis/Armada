@@ -8,16 +8,16 @@ import com.ccl.Command;
 public class Category
 {
 
-	private final List<Command<?>> COMMANDS = new ArrayList<>();
+	private final List<Command<?, ?>> COMMANDS = new ArrayList<>();
 
-	public List<Command<?>> getCommands()
+	public List<Command<?, ?>> getCommands()
 	{
 		return COMMANDS;
 	}
 
-	public void addToCategory(Command<?>... command)
+	public void addToCategory(Command<?, ?>... command)
 	{
-		for (Command<?> com : command)
+		for (Command<?, ?> com : command)
 		{
 			COMMANDS.add(com);
 		}
