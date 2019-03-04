@@ -81,4 +81,9 @@ public class MathUtils
 		
 		return Short.toString(temp);
 	}
+	
+	public static int getPercentageValue(float percentage, int min, int max)
+	{
+		return (int) ((max - min) * percentage + min);
+	}
 }

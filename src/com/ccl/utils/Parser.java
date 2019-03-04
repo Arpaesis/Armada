@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import com.ccl.Command;
+import com.ccl.args.Argument;
 import com.ccl.args.Arguments;
 import com.ccl.args.ProcessedArgument;
 import com.ccl.enumerations.Result;
@@ -65,16 +66,48 @@ public class Parser<T, R>
 			case BYTE:
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
-					byte bValue = Byte.parseByte(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampb(bValue, command.arguments.get(i));
-					arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
+					if (!rawArgs[i].contains("%"))
+					{
+						byte bValue = Byte.parseByte(rawArgs[i]);
+						rawArgs[i] = MathUtils.clampb(bValue, command.arguments.get(i));
+						arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
+					}
+					else
+					{
+						if (command.arguments.get(i).hasRange())
+						{
+							rawArgs[i] = rawArgs[i].replace("%", "");
+
+							float percentage = Byte.parseByte(rawArgs[i]) / 100f;
+							rawArgs[i] = Byte.toString((byte) MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
+							arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
+						}
+					}
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
+					Argument optionalArg = command.getArgumentFor(split[0]);
 					String tag = split[0];
-					byte bValue = Byte.parseByte(split[1]);
-					arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, bValue));
+
+					if (!rawArgs[i].contains("%"))
+					{
+						byte bValue = Byte.parseByte(split[1]);
+						arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, bValue));
+					}
+					else
+					{
+						if (optionalArg.hasRange())
+						{
+							rawArgs[i] = split[1].replace("%", "");
+
+							float percentage = Byte.parseByte(rawArgs[i]) / 100f;
+
+							byte temp = (byte) MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
+
+							arguments.add(new ProcessedArgument<Byte>(split[0], temp));
+						}
+					}
 				}
 				break;
 			case CHAR:
@@ -134,48 +167,81 @@ public class Parser<T, R>
 
 					rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
 
-					if (rawArgs[i].startsWith("-"))
+					if (!rawArgs[i].contains("%"))
 					{
-						neg = true;
-						rawArgs[i] = rawArgs[i].substring(1);
-					}
+						if (rawArgs[i].startsWith("-"))
+						{
+							neg = true;
+							rawArgs[i] = rawArgs[i].substring(1);
+						}
 
-					if (rawArgs[i].startsWith("+"))
-					{
-						rawArgs[i] = rawArgs[i].substring(1);
-					}
+						if (rawArgs[i].startsWith("+"))
+						{
+							rawArgs[i] = rawArgs[i].substring(1);
+						}
 
-					if (rawArgs[i].startsWith("0b"))
-					{
-						iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
-					}
-					else if (rawArgs[i].startsWith("0x"))
-					{
-						iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
-					}
-					else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
-					{
-						iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
+						if (rawArgs[i].startsWith("0b"))
+						{
+							iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
+						}
+						else if (rawArgs[i].startsWith("0x"))
+						{
+							iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
+						}
+						else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
+						{
+							iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
+						}
+						else
+						{
+							iValue = Integer.parseInt(rawArgs[i]);
+						}
+
+						if (neg)
+						{
+							iValue = 0 - iValue;
+						}
+
+						rawArgs[i] = MathUtils.clampi(iValue, command.arguments.get(i));
+						arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
+
 					}
 					else
 					{
-						iValue = Integer.parseInt(rawArgs[i]);
-					}
+						if (command.arguments.get(i).hasRange())
+						{
+							rawArgs[i] = rawArgs[i].replace("%", "");
 
-					if (neg)
-					{
-						iValue = 0 - iValue;
+							float percentage = Integer.parseInt(rawArgs[i]) / 100f;
+							rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
+							arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
+						}
 					}
-
-					rawArgs[i] = MathUtils.clampi(iValue, command.arguments.get(i));
-					arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
+					Argument optionalArg = command.getArgumentFor(split[0]);
 					String tag = split[0];
-					int iValue = Integer.parseInt(split[1]);
-					arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, iValue));
+
+					if (!rawArgs[i].contains("%"))
+					{
+						int iValue = Integer.parseInt(split[1]);
+						arguments.add(new ProcessedArgument<Integer>(tag, iValue));
+					}
+					else
+					{
+						if (optionalArg.hasRange())
+						{
+							rawArgs[i] = split[1].replace("%", "");
+
+							float percentage = Integer.parseInt(rawArgs[i]) / 100f;
+
+							int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
+
+							arguments.add(new ProcessedArgument<Integer>(split[0], temp));
+						}
+					}
 				}
 				else
 				{
@@ -185,31 +251,95 @@ public class Parser<T, R>
 			case LONG:
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
-					long lValue = Long.parseLong(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampl(lValue, command.arguments.get(i));
-					arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
+					if (!rawArgs[i].contains("%"))
+					{
+						long lValue = Long.parseLong(rawArgs[i]);
+						rawArgs[i] = MathUtils.clampl(lValue, command.arguments.get(i));
+						arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
+					}
+					else
+					{
+						if (command.arguments.get(i).hasRange())
+						{
+							rawArgs[i] = rawArgs[i].replace("%", "");
+
+							float percentage = Long.parseLong(rawArgs[i]) / 100f;
+							rawArgs[i] = Long.toString(MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
+							arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
+						}
+					}
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
+					Argument optionalArg = command.getArgumentFor(split[0]);
 					String tag = split[0];
-					long lValue = Long.parseLong(split[1]);
-					arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, lValue));
+
+					if (!rawArgs[i].contains("%"))
+					{
+						long lValue = Long.parseLong(split[1]);
+						arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, lValue));
+					}
+					else
+					{
+						if (optionalArg.hasRange())
+						{
+							rawArgs[i] = split[1].replace("%", "");
+
+							float percentage = Long.parseLong(rawArgs[i]) / 100f;
+
+							long temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
+
+							arguments.add(new ProcessedArgument<Long>(split[0], temp));
+						}
+					}
 				}
 				break;
 			case SHORT:
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
-					short sValue = Short.parseShort(rawArgs[i]);
-					rawArgs[i] = MathUtils.clamps(sValue, command.arguments.get(i));
-					arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
+					if (!rawArgs[i].contains("%"))
+					{
+						short sValue = Short.parseShort(rawArgs[i]);
+						rawArgs[i] = MathUtils.clamps(sValue, command.arguments.get(i));
+						arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
+					}
+					else
+					{
+						if (command.arguments.get(i).hasRange())
+						{
+							rawArgs[i] = rawArgs[i].replace("%", "");
+
+							float percentage = Short.parseShort(rawArgs[i]) / 100f;
+							rawArgs[i] = Short.toString((short) MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
+							arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
+						}
+					}
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
+					Argument optionalArg = command.getArgumentFor(split[0]);
 					String tag = split[0];
-					short sValue = Short.parseShort(split[1]);
-					arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, sValue));
+
+					if (!rawArgs[i].contains("%"))
+					{
+						short sValue = Short.parseShort(split[1]);
+						arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, sValue));
+					}
+					else
+					{
+						if (optionalArg.hasRange())
+						{
+							rawArgs[i] = split[1].replace("%", "");
+
+							float percentage = Short.parseShort(rawArgs[i]) / 100f;
+
+							short temp = (short) MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
+
+							arguments.add(new ProcessedArgument<Short>(split[0], temp));
+						}
+					}
 				}
 				break;
 			case STRING: // TODO: Make command not ass.

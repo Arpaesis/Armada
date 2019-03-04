@@ -283,4 +283,16 @@ public abstract class Command<T, R>
 	{
 		return this.optArgCount;
 	}
+	
+	public Argument getArgumentFor(String name)
+	{
+		for(Argument arg: this.arguments)
+		{
+			if(arg.getName().matches(name))
+			{
+				return arg;
+			}
+		}
+		return null;
+	}
 }

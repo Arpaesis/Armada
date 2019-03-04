@@ -10,13 +10,6 @@ import com.ccl.help.HelpBuilder;
 public class SpawnEntityCommand extends Command<String, String>
 {
 
-	String registryName;
-	int posX;
-	int posY;
-	int posZ;
-	int spawnCount;
-	int health;
-
 	public SpawnEntityCommand()
 	{
 		this.setName("spawnEntity");
@@ -30,23 +23,23 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		// Optional parameters
 		this.addArgument(new OptionalArgument("spawnCount", ParamType.INT).setRange(1, Integer.MAX_VALUE));
-		this.addArgument(new OptionalArgument("health", ParamType.INT).setRange(1, 100));
+		this.addArgument(new OptionalArgument("health", ParamType.SHORT).setRange(0, 200));
 	}
 
 	@Override
 	public String onExecute(String obj, Arguments args)
 	{
 
-		this.registryName = args.getString();
-		this.posX = args.getInt();
-		this.posY = args.getInt();
-		this.posZ = args.getInt();
+		String registryName = args.getString();
+		int posX = args.getInt();
+		int posY = args.getInt();
+		int posZ = args.getInt();
 
 		// optionals
-		this.spawnCount = args.getIntFor("count", 1);
-		this.health = args.getIntFor("health", 100);
+		int spawnCount = args.getIntFor("count", 1);
+		short health = args.getShortFor("health", (short) 100);
 
-		System.out.println("Spawning " + this.registryName + " at " + this.posX + ", " + this.posY + ", " + this.posZ + " with a spawn count of " + this.spawnCount + " with health " + health);
+		System.out.println("Spawning " + registryName + " at " + posX + ", " + posY + ", " + posZ + " with a spawn count of " + spawnCount + " with health " + health);
 
 		System.out.println(HelpBuilder.builder().build(this));
 		return null;

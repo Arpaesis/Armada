@@ -10,10 +10,18 @@ public abstract class Argument
 	private int min = Integer.MIN_VALUE;
 	private int max = Integer.MAX_VALUE;
 	
+	private boolean hasRange = false;
+	
 	public Argument(String argName, ParamType type)
 	{
 		this.argName = argName;
 		this.type = type;
+	}
+	
+	public Argument()
+	{
+		this.argName = null;
+		this.type = null;
 	}
 
 	public ParamType getType()
@@ -25,6 +33,10 @@ public abstract class Argument
 	{
 		this.min = min;
 		this.max = max;
+		
+		if(min != Integer.MIN_VALUE || max != Integer.MAX_VALUE)
+			this.hasRange = true;
+		
 		return this;
 	}
 
@@ -41,5 +53,10 @@ public abstract class Argument
 	public String getName()
 	{
 		return argName;
+	}
+
+	public boolean hasRange()
+	{
+		return hasRange;
 	}
 }
