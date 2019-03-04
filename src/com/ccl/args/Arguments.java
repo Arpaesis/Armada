@@ -31,7 +31,7 @@ public class Arguments
 	
 	public byte getByte()
 	{
-		return (byte) arguments.get(counter++).getValue();
+		return ((Number) arguments.get(counter++).getValue()).byteValue();
 	}
 	
 	public char getCharacter()
@@ -41,27 +41,27 @@ public class Arguments
 	
 	public double getDouble()
 	{
-		return (double) arguments.get(counter++).getValue();
+		return ((Number) arguments.get(counter++).getValue()).doubleValue();
 	}
 	
 	public float getFloat()
 	{
-		return (float) arguments.get(counter++).getValue();
+		return ((Number) arguments.get(counter++).getValue()).floatValue();
 	}
 	
 	public int getInt()
 	{
-		return (int) arguments.get(counter++).getValue();
+		return ((Number) arguments.get(counter++).getValue()).intValue();
 	}
 	
 	public long getLong()
 	{
-		return (long) arguments.get(counter++).getValue();
+		return ((Number) arguments.get(counter++).getValue()).longValue();
 	}
 	
 	public short getShort()
 	{
-		return (short) arguments.get(counter++).getValue();
+		return ((Number) arguments.get(counter++).getValue()).shortValue();
 	}
 	
 	public String getString()
@@ -87,7 +87,7 @@ public class Arguments
 		{
 			if(argument.getRawValue().matches(tag))
 			{
-				return (byte) argument.getValue();
+				return ((Number) argument.getValue()).byteValue();
 			}
 		}
 		return def;
@@ -111,7 +111,7 @@ public class Arguments
 		{
 			if(argument.getRawValue().matches(tag))
 			{
-				return (double) argument.getValue();
+				return ((Number) argument.getValue()).doubleValue();
 			}
 		}
 		return def;
@@ -123,7 +123,7 @@ public class Arguments
 		{
 			if(argument.getRawValue().matches(tag))
 			{
-				return (float) argument.getValue();
+				return ((Number) argument.getValue()).floatValue();
 			}
 		}
 		return def;
@@ -135,7 +135,7 @@ public class Arguments
 		{
 			if(argument.getRawValue().matches(tag))
 			{
-				return (int) argument.getValue();
+				return ((Number) argument.getValue()).intValue();
 			}
 		}
 		return def;
@@ -147,7 +147,7 @@ public class Arguments
 		{
 			if(argument.getRawValue().matches(tag))
 			{
-				return (long) argument.getValue();
+				return ((Number) argument.getValue()).longValue();
 			}
 		}
 		return def;
@@ -159,7 +159,7 @@ public class Arguments
 		{
 			if(argument.getRawValue().matches(tag))
 			{
-				return (short) argument.getValue();
+				return ((Number) argument.getValue()).shortValue();
 			}
 		}
 		return def;
