@@ -2,7 +2,6 @@ package com.ccl.schedule;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +11,6 @@ import com.ccl.CommandManager;
 public class Scheduler<T, R>
 {
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private CommandManager<T, R> manager;
 
@@ -32,7 +30,7 @@ public class Scheduler<T, R>
 			{
 				if (System.currentTimeMillis() >= task.getNextExecutionTime())
 				{
-					executor.execute(() -> task.execute(this, this.manager));
+					task.execute(this, this.manager);
 				}
 			}
 		}, 0, 1, TimeUnit.SECONDS);
