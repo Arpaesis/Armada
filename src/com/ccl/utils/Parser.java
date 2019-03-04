@@ -75,16 +75,6 @@ public class Parser<T, R>
 					command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
 				}
 				break;
-			case BYTE:
-				try
-				{
-					this.parseNumber(arguments, rawArgs, i, tm);
-				}
-				catch (ParseException e)
-				{
-					e.printStackTrace();
-				}
-				break;
 			case CHAR:
 				if (rawArgs[i].length() >= 2)
 				{
@@ -102,36 +92,9 @@ public class Parser<T, R>
 					arguments.add(new ProcessedArgument<Character>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], rawArgs[i].charAt(0)));
 				}
 				break;
+			case BYTE:
 			case DOUBLE:
-				if (tm.find() && !rawArgs[i].contains(":"))
-				{
-					double dValue = Double.parseDouble(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampd(dValue, command.arguments.get(i));
-					arguments.add(new ProcessedArgument<Double>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Double.parseDouble(rawArgs[i])));
-				}
-				else if (rawArgs[i].contains(":"))
-				{
-					String[] split = rawArgs[i].split(":");
-					String tag = split[0];
-					double dValue = Double.parseDouble(split[1]);
-					arguments.add(new ProcessedArgument<Double>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, dValue));
-				}
-				break;
 			case FLOAT:
-				if (tm.find() && !rawArgs[i].contains(":"))
-				{
-					float fValue = Float.parseFloat(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampf(fValue, command.arguments.get(i));
-					arguments.add(new ProcessedArgument<Float>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Float.parseFloat(rawArgs[i])));
-				}
-				else if (rawArgs[i].contains(":"))
-				{
-					String[] split = rawArgs[i].split(":");
-					String tag = split[0];
-					float fValue = Float.parseFloat(split[1]);
-					arguments.add(new ProcessedArgument<Float>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, fValue));
-				}
-				break;
 			case INT:
 			case LONG:
 			case SHORT:
