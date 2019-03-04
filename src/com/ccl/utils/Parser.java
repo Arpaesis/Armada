@@ -76,7 +76,7 @@ public class Parser<T, R>
 				}
 				break;
 			case CHAR:
-				if (rawArgs[i].length() >= 2)
+				if (rawArgs[i].length() > 1)
 				{
 					command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
 				}
@@ -124,7 +124,7 @@ public class Parser<T, R>
 				}
 				else
 				{
-					String[] split = rawArgs[i].split(":");
+					String[] split = rawArgs[i].split(":", 2);
 					String tag = split[0];
 					String content = split[1];
 					if (content.startsWith("\""))
@@ -136,7 +136,7 @@ public class Parser<T, R>
 					{
 						content = StringUtils.removeLastCharOptional(content);
 					}
-					arguments.add(new ProcessedArgument<String>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, content));
+					arguments.add(new ProcessedArgument<String>(tag, content));
 				}
 				break;
 			default:
