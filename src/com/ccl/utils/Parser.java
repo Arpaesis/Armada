@@ -206,7 +206,7 @@ public class Parser<T, R>
 				{
 					rawArgs[i] = rawArgs[i].replace("%", "");
 
-					float percentage = this.format(rawArgs[i]).intValue() / 100f;
+					double percentage = this.format(rawArgs[i]).doubleValue() / 100d;
 					rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
 					arguments.add(new ProcessedArgument<Number>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
 					return arguments;
@@ -221,7 +221,7 @@ public class Parser<T, R>
 
 			if (!rawArgs[i].contains("%"))
 			{
-				Number tempNum = NumberFormat.getInstance().parse(MathUtils.clampi(this.format(split[1]).intValue(), optionalArg));
+				Number tempNum = NumberFormat.getInstance().parse(MathUtils.clampd(this.format(split[1]).doubleValue(), optionalArg));
 
 				arguments.add(new ProcessedArgument<Number>(tag, tempNum));
 				return arguments;
@@ -232,7 +232,7 @@ public class Parser<T, R>
 				{
 					rawArgs[i] = split[1].replace("%", "");
 
-					float percentage = NumberFormat.getInstance().parse(MathUtils.clampi(this.format(rawArgs[i]).intValue(), optionalArg)).intValue() / 100f;
+					double percentage = NumberFormat.getInstance().parse(MathUtils.clampd(this.format(rawArgs[i]).doubleValue(), optionalArg)).intValue() / 100d;
 					int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
 					arguments.add(new ProcessedArgument<Number>(split[0], temp));
 					return arguments;
