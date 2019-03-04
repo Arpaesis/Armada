@@ -22,7 +22,7 @@ public class SpawnEntityCommand extends Command<String, String>
 		this.addArgument(new RequiredArgument("zPos", ParamType.INT));
 
 		// Optional parameters
-		this.addArgument(new OptionalArgument("spawnCount", ParamType.INT).setRange(1, Integer.MAX_VALUE));
+		this.addArgument(new OptionalArgument("count", ParamType.INT).setRange(1, Integer.MAX_VALUE));
 		this.addArgument(new OptionalArgument("health", ParamType.SHORT).setRange(0, 200));
 	}
 
@@ -40,8 +40,6 @@ public class SpawnEntityCommand extends Command<String, String>
 		short health = args.getShortFor("health", (short) 100);
 
 		System.out.println("Spawning " + registryName + " at " + posX + ", " + posY + ", " + posZ + " with a spawn count of " + spawnCount + " with health " + health);
-
-		System.out.println(HelpBuilder.builder().build(this));
 		return null;
 	}
 }
