@@ -92,70 +92,89 @@ public final class CommandManager<T, R>
 		this.prefix = prefix;
 	}
 
-	public R execute(T obj, String in)
+	public List<R> execute(T obj, String in)
 	{
+
+		List<R> results = new ArrayList<>();
 
 		this.handleCallbacks(obj, in);
 
 		if (!in.startsWith(this.getPrefix()))
 			return null;
 
-		String registryName = in.split(" ")[0].substring(prefix.length()).toLowerCase();
+		String[] commands = in.split("&&");
 
-		if (REGISTRY.containsKey(registryName))
+		for (String cmdIn : commands)
 		{
-			return REGISTRY.get(registryName).execute(obj, in);
-		}
-		else
-		{
-			for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
+			String cmdInFormatted = cmdIn.trim();
+			
+			String registryName = cmdInFormatted.split(" ")[0].substring(prefix.length()).toLowerCase();
+
+			if (REGISTRY.containsKey(registryName))
 			{
-				if (entry.getValue().getAliases() != null)
+				results.add(REGISTRY.get(registryName).execute(obj, cmdInFormatted));
+			}
+			else
+			{
+				for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
 				{
-					for (String alias : entry.getValue().getAliases())
+					if (entry.getValue().getAliases() != null)
 					{
-						if (registryName.equals(alias))
+						for (String alias : entry.getValue().getAliases())
 						{
-							return entry.getValue().execute(obj, in);
+							if (registryName.equals(alias))
+							{
+								results.add(entry.getValue().execute(obj, cmdInFormatted));
+							}
 						}
 					}
 				}
 			}
 		}
-		return null;
+		return results;
 	}
 
-	public R executeNoDelay(T obj, String in)
+	public List<R> executeNoDelay(T obj, String in)
 	{
+
+		List<R> results = new ArrayList<>();
 
 		this.handleCallbacks(obj, in);
 
 		if (!in.startsWith(this.getPrefix()))
 			return null;
 
-		String registryName = in.split(" ")[0].substring(prefix.length()).toLowerCase();
+		String[] commands = in.split("&&");
 
-		if (REGISTRY.containsKey(registryName))
+		for (String cmdIn : commands)
 		{
-			return REGISTRY.get(registryName).executeNoDelay(obj, in);
-		}
-		else
-		{
-			for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
+			String cmdInFormatted = cmdIn.trim();
+			
+			String registryName = cmdInFormatted.split(" ")[0].substring(prefix.length()).toLowerCase();
+
+			if (REGISTRY.containsKey(registryName))
 			{
-				if (entry.getValue().getAliases() != null)
+				results.add(REGISTRY.get(registryName).executeNoDelay(obj, cmdInFormatted));
+			}
+			else
+			{
+				for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
 				{
-					for (String alias : entry.getValue().getAliases())
+					if (entry.getValue().getAliases() != null)
 					{
-						if (registryName.equals(alias))
+						for (String alias : entry.getValue().getAliases())
 						{
-							return entry.getValue().executeNoDelay(obj, in);
+							if (registryName.equals(alias))
+							{
+								results.add(entry.getValue().executeNoDelay(obj, cmdInFormatted));
+							}
 						}
 					}
 				}
+
 			}
 		}
-		return null;
+		return results;
 	}
 
 	public Scheduler<T, R> getScheduler()
