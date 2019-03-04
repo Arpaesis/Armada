@@ -23,7 +23,7 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		// Optional parameters
 		this.addArgument(new OptionalArgument("count", ParamType.INT).setRange(1, Integer.MAX_VALUE));
-		this.addArgument(new OptionalArgument("health", ParamType.SHORT).setRange(0, 200));
+		this.addArgument(new OptionalArgument("health", ParamType.SHORT).setRange(0, 100));
 	}
 
 	@Override
