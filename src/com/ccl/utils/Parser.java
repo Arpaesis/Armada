@@ -1,5 +1,7 @@
 package com.ccl.utils;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,8 +15,18 @@ import com.ccl.enumerations.Result;
 
 public class Parser<T, R>
 {
+	private Command<T, R> command;
+	private T obj;
+	private String input;
 
-	public Arguments processInput(Command<T, R> command, T obj, String input)
+	public Parser(Command<T, R> command, T obj, String input)
+	{
+		this.command = command;
+		this.obj = obj;
+		this.input = input;
+	}
+
+	public Arguments processInput()
 	{
 
 		List<String> list = new ArrayList<>();
@@ -64,50 +76,13 @@ public class Parser<T, R>
 				}
 				break;
 			case BYTE:
-				if (tm.find() && !rawArgs[i].contains(":"))
+				try
 				{
-					if (!rawArgs[i].contains("%"))
-					{
-						byte bValue = Byte.parseByte(rawArgs[i]);
-						rawArgs[i] = MathUtils.clampb(bValue, command.arguments.get(i));
-						arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
-					}
-					else
-					{
-						if (command.arguments.get(i).hasRange())
-						{
-							rawArgs[i] = rawArgs[i].replace("%", "");
-
-							float percentage = Byte.parseByte(rawArgs[i]) / 100f;
-							rawArgs[i] = Byte.toString((byte) MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
-							arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
-						}
-					}
+					this.parseNumber(arguments, rawArgs, i, tm);
 				}
-				else if (rawArgs[i].contains(":"))
+				catch (ParseException e)
 				{
-					String[] split = rawArgs[i].split(":");
-					Argument optionalArg = command.getArgumentFor(split[0]);
-					String tag = split[0];
-
-					if (!rawArgs[i].contains("%"))
-					{
-						byte bValue = Byte.parseByte(split[1]);
-						arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, bValue));
-					}
-					else
-					{
-						if (optionalArg.hasRange())
-						{
-							rawArgs[i] = split[1].replace("%", "");
-
-							float percentage = Byte.parseByte(rawArgs[i]) / 100f;
-
-							byte temp = (byte) MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
-
-							arguments.add(new ProcessedArgument<Byte>(split[0], temp));
-						}
-					}
+					e.printStackTrace();
 				}
 				break;
 			case CHAR:
@@ -158,191 +133,18 @@ public class Parser<T, R>
 				}
 				break;
 			case INT:
-
-				if (tm.find() && !rawArgs[i].contains(":"))
-				{
-					int iValue = 0;
-
-					boolean neg = false;
-
-					rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
-
-					if (!rawArgs[i].contains("%"))
-					{
-						if (rawArgs[i].startsWith("-"))
-						{
-							neg = true;
-							rawArgs[i] = rawArgs[i].substring(1);
-						}
-
-						if (rawArgs[i].startsWith("+"))
-						{
-							rawArgs[i] = rawArgs[i].substring(1);
-						}
-
-						if (rawArgs[i].startsWith("0b"))
-						{
-							iValue = Integer.parseInt(rawArgs[i].replace("0b", ""), 2);
-						}
-						else if (rawArgs[i].startsWith("0x"))
-						{
-							iValue = Integer.parseInt(rawArgs[i].replace("0x", ""), 16);
-						}
-						else if (rawArgs[i].startsWith("0") && rawArgs[i].length() != 1)
-						{
-							iValue = Integer.parseInt(rawArgs[i].substring(1), 8);
-						}
-						else
-						{
-							iValue = Integer.parseInt(rawArgs[i]);
-						}
-
-						if (neg)
-						{
-							iValue = 0 - iValue;
-						}
-
-						rawArgs[i] = MathUtils.clampi(iValue, command.arguments.get(i));
-						arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
-
-					}
-					else
-					{
-						if (command.arguments.get(i).hasRange())
-						{
-							rawArgs[i] = rawArgs[i].replace("%", "");
-
-							float percentage = Integer.parseInt(rawArgs[i]) / 100f;
-							rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
-							arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
-						}
-					}
-				}
-				else if (rawArgs[i].contains(":"))
-				{
-					String[] split = rawArgs[i].split(":");
-					Argument optionalArg = command.getArgumentFor(split[0]);
-					String tag = split[0];
-
-					if (!rawArgs[i].contains("%"))
-					{
-						int iValue = Integer.parseInt(split[1]);
-						arguments.add(new ProcessedArgument<Integer>(tag, iValue));
-					}
-					else
-					{
-						if (optionalArg.hasRange())
-						{
-							rawArgs[i] = split[1].replace("%", "");
-
-							float percentage = Integer.parseInt(rawArgs[i]) / 100f;
-
-							int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
-
-							arguments.add(new ProcessedArgument<Integer>(split[0], temp));
-						}
-					}
-				}
-				else
-				{
-					command.shutdown(obj, Result.FAILURE, "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
-				}
-				break;
 			case LONG:
-				if (tm.find() && !rawArgs[i].contains(":"))
-				{
-					if (!rawArgs[i].contains("%"))
-					{
-						long lValue = Long.parseLong(rawArgs[i]);
-						rawArgs[i] = MathUtils.clampl(lValue, command.arguments.get(i));
-						arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
-					}
-					else
-					{
-						if (command.arguments.get(i).hasRange())
-						{
-							rawArgs[i] = rawArgs[i].replace("%", "");
-
-							float percentage = Long.parseLong(rawArgs[i]) / 100f;
-							rawArgs[i] = Long.toString(MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
-							arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
-						}
-					}
-				}
-				else if (rawArgs[i].contains(":"))
-				{
-					String[] split = rawArgs[i].split(":");
-					Argument optionalArg = command.getArgumentFor(split[0]);
-					String tag = split[0];
-
-					if (!rawArgs[i].contains("%"))
-					{
-						long lValue = Long.parseLong(split[1]);
-						arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, lValue));
-					}
-					else
-					{
-						if (optionalArg.hasRange())
-						{
-							rawArgs[i] = split[1].replace("%", "");
-
-							float percentage = Long.parseLong(rawArgs[i]) / 100f;
-
-							long temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
-
-							arguments.add(new ProcessedArgument<Long>(split[0], temp));
-						}
-					}
-				}
-				break;
 			case SHORT:
-				if (tm.find() && !rawArgs[i].contains(":"))
+				try
 				{
-					if (!rawArgs[i].contains("%"))
-					{
-						short sValue = Short.parseShort(rawArgs[i]);
-						rawArgs[i] = MathUtils.clamps(sValue, command.arguments.get(i));
-						arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
-					}
-					else
-					{
-						if (command.arguments.get(i).hasRange())
-						{
-							rawArgs[i] = rawArgs[i].replace("%", "");
-
-							float percentage = Short.parseShort(rawArgs[i]) / 100f;
-							rawArgs[i] = Short.toString((short) MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
-							arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
-						}
-					}
+					arguments = this.parseNumber(arguments, rawArgs, i, tm);
 				}
-				else if (rawArgs[i].contains(":"))
+				catch (ParseException e)
 				{
-					String[] split = rawArgs[i].split(":");
-					Argument optionalArg = command.getArgumentFor(split[0]);
-					String tag = split[0];
-
-					if (!rawArgs[i].contains("%"))
-					{
-						short sValue = Short.parseShort(split[1]);
-						arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, sValue));
-					}
-					else
-					{
-						if (optionalArg.hasRange())
-						{
-							rawArgs[i] = split[1].replace("%", "");
-
-							float percentage = Short.parseShort(rawArgs[i]) / 100f;
-
-							short temp = (short) MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
-
-							arguments.add(new ProcessedArgument<Short>(split[0], temp));
-						}
-					}
+					e.printStackTrace();
 				}
 				break;
-			case STRING: // TODO: Make command not ass.
+			case STRING:
 
 				if (!rawArgs[i].contains(":"))
 				{
@@ -379,5 +181,118 @@ public class Parser<T, R>
 			}
 		}
 		return new Arguments(arguments);
+	}
+
+	public List<ProcessedArgument<?>> parseNumber(List<ProcessedArgument<?>> arguments, String[] rawArgs, int i, Matcher tm) throws ParseException
+	{
+		if (tm.find() && !rawArgs[i].contains(":"))
+		{
+			Number num = 0;
+
+			rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
+
+			if (!rawArgs[i].contains("%"))
+			{
+				num = this.format(rawArgs[i]);
+
+				rawArgs[i] = MathUtils.clampi(num.intValue(), command.arguments.get(i));
+				arguments.add(new ProcessedArgument<Number>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
+				return arguments;
+
+			}
+			else
+			{
+				if (command.arguments.get(i).hasRange())
+				{
+					rawArgs[i] = rawArgs[i].replace("%", "");
+
+					float percentage = this.format(rawArgs[i]).intValue() / 100f;
+					rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
+					arguments.add(new ProcessedArgument<Number>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
+					return arguments;
+				}
+			}
+		}
+		else if (rawArgs[i].contains(":"))
+		{
+			String[] split = rawArgs[i].split(":");
+			Argument optionalArg = command.getArgumentFor(split[0]);
+			String tag = split[0];
+
+			if (!rawArgs[i].contains("%"))
+			{
+				Number tempNum = NumberFormat.getInstance().parse(MathUtils.clampi(this.format(split[1]).intValue(), optionalArg));
+
+				arguments.add(new ProcessedArgument<Number>(tag, tempNum));
+				return arguments;
+			}
+			else
+			{
+				if (optionalArg.hasRange())
+				{
+					rawArgs[i] = split[1].replace("%", "");
+
+					float percentage = NumberFormat.getInstance().parse(MathUtils.clampi(this.format(rawArgs[i]).intValue(), optionalArg)).intValue() / 100f;
+					int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
+					arguments.add(new ProcessedArgument<Number>(split[0], temp));
+					return arguments;
+					//
+				}
+			}
+		}
+		else
+		{
+			command.shutdown(this.obj, Result.FAILURE, "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
+		}
+
+		return arguments;
+	}
+
+	public Number format(String rawArgs)
+	{
+		Number num = 0;
+		boolean neg = false;
+
+		if (rawArgs.startsWith("-"))
+		{
+			neg = true;
+			rawArgs = rawArgs.substring(1);
+		}
+
+		if (rawArgs.startsWith("+"))
+		{
+			rawArgs = rawArgs.substring(1);
+		}
+
+		if (rawArgs.startsWith("0b"))
+		{
+			num = Integer.parseInt(rawArgs.replace("0b", ""), 2);
+		}
+		else if (rawArgs.startsWith("0x"))
+		{
+			num = Integer.parseInt(rawArgs.replace("0x", ""), 16);
+		}
+		else if (rawArgs.startsWith("0") && rawArgs.length() != 1)
+		{
+			num = Integer.parseInt(rawArgs.substring(1), 8);
+		}
+		else
+		{
+			try
+			{
+				num = NumberFormat.getInstance().parse(rawArgs);
+			}
+			catch (ParseException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		if (neg)
+		{
+			num = 0 - num.intValue();
+		}
+
+		return num;
 	}
 }

@@ -42,8 +42,6 @@ public abstract class Command<T, R>
 
 	private CommandManager<T, R> manager;
 
-	private Parser<T, R> parser = new Parser<>();
-
 	public Command()
 	{
 	}
@@ -221,7 +219,8 @@ public abstract class Command<T, R>
 
 	private Arguments processInput(T obj, String input)
 	{
-		return this.parser.processInput(this, obj, input);
+		Parser<T, R> parser = new Parser<>(this, obj, input);
+		return parser.processInput();
 	}
 
 	public CommandManager<T, R> getCommandManager()
@@ -283,12 +282,12 @@ public abstract class Command<T, R>
 	{
 		return this.optArgCount;
 	}
-	
+
 	public Argument getArgumentFor(String name)
 	{
-		for(Argument arg: this.arguments)
+		for (Argument arg : this.arguments)
 		{
-			if(arg.getName().matches(name))
+			if (arg.getName().matches(name))
 			{
 				return arg;
 			}
