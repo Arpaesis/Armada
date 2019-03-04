@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.ccl.Command;
 import com.ccl.args.Arguments;
+import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
@@ -18,15 +19,18 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 		this.setAliases(new String[]
 		{ "sched", "timer" });
 
-		this.addArgument(new RequiredArgument("timeUnit", ParamType.STRING));
-		this.addArgument(new RequiredArgument("count", ParamType.INT));
 		this.addArgument(new RequiredArgument("command", ParamType.STRING));
+
+		this.addArgument(new OptionalArgument("time", ParamType.STRING));
+		this.addArgument(new OptionalArgument("count", ParamType.INT));
+		
 	}
 
 	@Override
 	public R onExecute(T obj, Arguments in)
 	{
-		String rawTime = in.getString();
+		String command = in.getString();
+		String rawTime = in.getStringFor("time", "1min");
 		long timeAmount = 0;
 		TimeUnit unit = null;
 
@@ -49,9 +53,8 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 			unit = TimeUnit.HOURS;
 		}
 
-		int count = in.getInt();
+		int count = in.getIntFor("count", 1);
 		boolean isInfinite = count < 0 ? true : false;
-		String command = in.getString();
 
 		this.getCommandManager().getScheduler().addTask(new Task<T, R>(obj, command, timeAmount, unit).setInfinite(isInfinite).setExecutionCount(count));
 		return null;
