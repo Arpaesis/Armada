@@ -5,6 +5,7 @@ import com.ccl.args.Arguments;
 import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.ParamType;
+import com.ccl.help.HelpBuilder;
 
 public class SpawnEntityCommand extends Command<String, String>
 {
@@ -28,8 +29,8 @@ public class SpawnEntityCommand extends Command<String, String>
 		this.addArgument(new RequiredArgument("zPos", ParamType.INT));
 
 		// Optional parameters
-		this.addArgument(new OptionalArgument("spawnCount", ParamType.INT));
-		this.addArgument(new OptionalArgument("health", ParamType.INT).setRange(0, 100));
+		this.addArgument(new OptionalArgument("spawnCount", ParamType.INT).setRange(1, Integer.MAX_VALUE));
+		this.addArgument(new OptionalArgument("health", ParamType.INT).setRange(1, 100));
 	}
 
 	@Override
@@ -47,6 +48,7 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		System.out.println("Spawning " + this.registryName + " at " + this.posX + ", " + this.posY + ", " + this.posZ + " with a spawn count of " + this.spawnCount + " with health " + health);
 
+		System.out.println(HelpBuilder.builder().build(this));
 		return null;
 	}
 }

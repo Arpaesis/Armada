@@ -36,13 +36,13 @@ public class Parser<T, R>
 			{
 				break;
 			}
-			else if (rawArgs.length < command.parameters.size() - command.getOptArgCount() || rawArgs.length > command.parameters.size())
+			else if (rawArgs.length < command.arguments.size() - command.getOptArgCount() || rawArgs.length > command.arguments.size())
 			{
 				command.shutdown(obj, Result.FAILURE, "The command has an invalid number of parameters!");
 				break;
 			}
 
-			switch (command.parameters.get(i).getType())
+			switch (command.arguments.get(i).getType())
 			{
 			case BOOLEAN:
 				if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
@@ -55,7 +55,7 @@ public class Parser<T, R>
 					{
 						rawArgs[i] = "false";
 					}
-					arguments.add(new ProcessedArgument<Boolean>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], Boolean.parseBoolean(rawArgs[i])));
+					arguments.add(new ProcessedArgument<Boolean>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Boolean.parseBoolean(rawArgs[i])));
 				}
 				else
 				{
@@ -66,15 +66,15 @@ public class Parser<T, R>
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					byte bValue = Byte.parseByte(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampb(bValue, command.parameters.get(i));
-					arguments.add(new ProcessedArgument<Byte>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
+					rawArgs[i] = MathUtils.clampb(bValue, command.arguments.get(i));
+					arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Byte.parseByte(rawArgs[i])));
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
 					byte bValue = Byte.parseByte(split[1]);
-					arguments.add(new ProcessedArgument<Byte>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, bValue));
+					arguments.add(new ProcessedArgument<Byte>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, bValue));
 				}
 				break;
 			case CHAR:
@@ -87,41 +87,41 @@ public class Parser<T, R>
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
 					char cValue = split[1].charAt(0);
-					arguments.add(new ProcessedArgument<Character>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, cValue));
+					arguments.add(new ProcessedArgument<Character>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, cValue));
 				}
 				else
 				{
-					arguments.add(new ProcessedArgument<Character>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], rawArgs[i].charAt(0)));
+					arguments.add(new ProcessedArgument<Character>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], rawArgs[i].charAt(0)));
 				}
 				break;
 			case DOUBLE:
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					double dValue = Double.parseDouble(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampd(dValue, command.parameters.get(i));
-					arguments.add(new ProcessedArgument<Double>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], Double.parseDouble(rawArgs[i])));
+					rawArgs[i] = MathUtils.clampd(dValue, command.arguments.get(i));
+					arguments.add(new ProcessedArgument<Double>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Double.parseDouble(rawArgs[i])));
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
 					double dValue = Double.parseDouble(split[1]);
-					arguments.add(new ProcessedArgument<Double>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, dValue));
+					arguments.add(new ProcessedArgument<Double>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, dValue));
 				}
 				break;
 			case FLOAT:
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					float fValue = Float.parseFloat(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampf(fValue, command.parameters.get(i));
-					arguments.add(new ProcessedArgument<Float>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], Float.parseFloat(rawArgs[i])));
+					rawArgs[i] = MathUtils.clampf(fValue, command.arguments.get(i));
+					arguments.add(new ProcessedArgument<Float>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Float.parseFloat(rawArgs[i])));
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
 					float fValue = Float.parseFloat(split[1]);
-					arguments.add(new ProcessedArgument<Float>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, fValue));
+					arguments.add(new ProcessedArgument<Float>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, fValue));
 				}
 				break;
 			case INT:
@@ -167,15 +167,15 @@ public class Parser<T, R>
 						iValue = 0 - iValue;
 					}
 
-					rawArgs[i] = MathUtils.clampi(iValue, command.parameters.get(i));
-					arguments.add(new ProcessedArgument<Integer>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
+					rawArgs[i] = MathUtils.clampi(iValue, command.arguments.get(i));
+					arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Integer.parseInt(rawArgs[i])));
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
 					int iValue = Integer.parseInt(split[1]);
-					arguments.add(new ProcessedArgument<Integer>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, iValue));
+					arguments.add(new ProcessedArgument<Integer>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, iValue));
 				}
 				else
 				{
@@ -186,30 +186,30 @@ public class Parser<T, R>
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					long lValue = Long.parseLong(rawArgs[i]);
-					rawArgs[i] = MathUtils.clampl(lValue, command.parameters.get(i));
-					arguments.add(new ProcessedArgument<Long>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
+					rawArgs[i] = MathUtils.clampl(lValue, command.arguments.get(i));
+					arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Long.parseLong(rawArgs[i])));
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
 					long lValue = Long.parseLong(split[1]);
-					arguments.add(new ProcessedArgument<Long>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, lValue));
+					arguments.add(new ProcessedArgument<Long>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, lValue));
 				}
 				break;
 			case SHORT:
 				if (tm.find() && !rawArgs[i].contains(":"))
 				{
 					short sValue = Short.parseShort(rawArgs[i]);
-					rawArgs[i] = MathUtils.clamps(sValue, command.parameters.get(i));
-					arguments.add(new ProcessedArgument<Short>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
+					rawArgs[i] = MathUtils.clamps(sValue, command.arguments.get(i));
+					arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Short.parseShort(rawArgs[i])));
 				}
 				else if (rawArgs[i].contains(":"))
 				{
 					String[] split = rawArgs[i].split(":");
 					String tag = split[0];
 					short sValue = Short.parseShort(split[1]);
-					arguments.add(new ProcessedArgument<Short>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, sValue));
+					arguments.add(new ProcessedArgument<Short>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, sValue));
 				}
 				break;
 			case STRING: // TODO: Make command not ass.
@@ -225,7 +225,7 @@ public class Parser<T, R>
 					{
 						rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
 					}
-					arguments.add(new ProcessedArgument<String>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), rawArgs[i], rawArgs[i]));
+					arguments.add(new ProcessedArgument<String>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], rawArgs[i]));
 				}
 				else
 				{
@@ -241,7 +241,7 @@ public class Parser<T, R>
 					{
 						content = StringUtils.removeLastCharOptional(content);
 					}
-					arguments.add(new ProcessedArgument<String>(command.parameters.get(i).getArgName(), command.parameters.get(i).getType(), tag, content));
+					arguments.add(new ProcessedArgument<String>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, content));
 				}
 				break;
 			default:

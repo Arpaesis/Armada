@@ -38,7 +38,7 @@ public abstract class Argument
 		return max;
 	}
 
-	public String getArgName()
+	public String getName()
 	{
 		return argName;
 	}

@@ -16,7 +16,7 @@ import com.ccl.utils.Parser;
 public abstract class Command<T, R>
 {
 
-	public final List<Argument> parameters = new ArrayList<>();
+	public final List<Argument> arguments = new ArrayList<>();
 	private int reqArgCount = 0;
 	private int optArgCount = 0;
 
@@ -216,7 +216,7 @@ public abstract class Command<T, R>
 		if (argument instanceof OptionalArgument)
 			this.optArgCount++;
 
-		this.parameters.add(argument);
+		this.arguments.add(argument);
 	}
 
 	private Arguments processInput(T obj, String input)
