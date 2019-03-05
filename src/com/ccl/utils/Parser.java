@@ -69,15 +69,7 @@ public class Parser<T, R>
 				{
 					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
 					{
-						if (rawArgs[i].equals("1"))
-						{
-							rawArgs[i] = "true";
-						}
-						else if (rawArgs[i].equals("0"))
-						{
-							rawArgs[i] = "false";
-						}
-						arguments.add(new ProcessedArgument<Boolean>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], Boolean.parseBoolean(rawArgs[i])));
+						arguments.add(new ProcessedArgument<Boolean>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], this.formatToBoolean(rawArgs[i])));
 					}
 					else
 					{
@@ -93,15 +85,8 @@ public class Parser<T, R>
 
 					if (bool.equals("true") || bool.equals("false") || bool.equals("1") || bool.equals("0"))
 					{
-						if (bool.equals("1"))
-						{
-							bool = "true";
-						}
-						else if (bool.equals("0"))
-						{
-							bool = "false";
-						}
-						arguments.add(new ProcessedArgument<Boolean>(tag, Boolean.parseBoolean(bool)));
+						
+						arguments.add(new ProcessedArgument<Boolean>(tag, this.formatToBoolean(bool)));
 					}
 					else
 					{
@@ -345,5 +330,17 @@ public class Parser<T, R>
 		}
 
 		return result;
+	}
+
+	public boolean formatToBoolean(String toFormat)
+	{
+		if (toFormat.equals("true") || toFormat.equals("false") || toFormat.equals("1") || toFormat.equals("0"))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
