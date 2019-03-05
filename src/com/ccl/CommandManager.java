@@ -17,6 +17,8 @@ public final class CommandManager<T, R>
 
 	private String prefix = "";
 
+	private boolean isEnabled = true;
+
 	private final Scheduler<T, R> scheduler;
 
 	public CommandManager()
@@ -28,6 +30,9 @@ public final class CommandManager<T, R>
 
 	public Command<T, R> register(Command<T, R> command)
 	{
+		if (!this.isEnabled())
+			return null;
+
 		if (REGISTRY.containsKey(command.getName()))
 		{
 			System.err.println("The command (" + command.getName() + ") has already been registered!");
@@ -60,6 +65,9 @@ public final class CommandManager<T, R>
 
 	public void registerAll(Collection<? extends Command<T, R>> commands)
 	{
+		if (!this.isEnabled())
+			return;
+
 		for (Command<T, R> command : commands)
 		{
 			this.register(command);
@@ -68,6 +76,9 @@ public final class CommandManager<T, R>
 
 	public Command<T, R> unregister(Command<T, R> command)
 	{
+		if (!this.isEnabled())
+			return null;
+
 		if (!REGISTRY.containsKey(command.getName()))
 		{
 			System.err.println("The command (" + command.getName() + ") does not exist within the registry!");
@@ -79,6 +90,9 @@ public final class CommandManager<T, R>
 
 	public void unregisterAll()
 	{
+		if (!this.isEnabled())
+			return;
+
 		REGISTRY.clear();
 	}
 
@@ -89,11 +103,16 @@ public final class CommandManager<T, R>
 
 	public void setPrefix(String prefix)
 	{
+		if (!this.isEnabled())
+			return;
+
 		this.prefix = prefix;
 	}
 
 	public List<R> execute(T obj, String in)
 	{
+		if (!this.isEnabled())
+			return null;
 
 		List<R> results = new ArrayList<>();
 
@@ -107,7 +126,7 @@ public final class CommandManager<T, R>
 		for (String cmdIn : commands)
 		{
 			String cmdInFormatted = cmdIn.trim();
-			
+
 			String registryName = cmdInFormatted.split(" ")[0].substring(prefix.length()).toLowerCase();
 
 			if (REGISTRY.containsKey(registryName))
@@ -136,6 +155,8 @@ public final class CommandManager<T, R>
 
 	public List<R> executeNoDelay(T obj, String in)
 	{
+		if (!this.isEnabled())
+			return null;
 
 		List<R> results = new ArrayList<>();
 
@@ -149,7 +170,7 @@ public final class CommandManager<T, R>
 		for (String cmdIn : commands)
 		{
 			String cmdInFormatted = cmdIn.trim();
-			
+
 			String registryName = cmdInFormatted.split(" ")[0].substring(prefix.length()).toLowerCase();
 
 			if (REGISTRY.containsKey(registryName))
@@ -184,11 +205,17 @@ public final class CommandManager<T, R>
 
 	public void addWaitingResponse(CommandResponse<T> response)
 	{
+		if (!this.isEnabled())
+			return;
+
 		this.responses.add(response);
 	}
 
 	private void handleCallbacks(T obj, String in)
 	{
+		if (!this.isEnabled())
+			return;
+
 		List<CommandResponse<T>> toRemove = new ArrayList<>();
 
 		for (int i = 0; i < responses.size(); i++)
@@ -204,5 +231,15 @@ public final class CommandManager<T, R>
 			}
 		}
 		this.responses.removeAll(toRemove);
+	}
+
+	public boolean isEnabled()
+	{
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean isEnabled)
+	{
+		this.isEnabled = isEnabled;
 	}
 }
