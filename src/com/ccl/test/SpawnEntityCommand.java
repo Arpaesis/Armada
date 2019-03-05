@@ -2,8 +2,10 @@ package com.ccl.test;
 
 import com.ccl.Command;
 import com.ccl.args.Arguments;
+import com.ccl.args.GroupArgument;
 import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
+import com.ccl.args.processed.ProcessedGroupArgument;
 import com.ccl.enumerations.ParamType;
 
 public class SpawnEntityCommand extends Command<String, String>
@@ -16,9 +18,7 @@ public class SpawnEntityCommand extends Command<String, String>
 		Categories.ENTITIES.addToCategory(this);
 
 		this.addArgument(new RequiredArgument("registryName", ParamType.STRING));
-		this.addArgument(new RequiredArgument("xPos", ParamType.INT));
-		this.addArgument(new RequiredArgument("yPos", ParamType.INT));
-		this.addArgument(new RequiredArgument("zPos", ParamType.INT));
+		this.addArgument(new GroupArgument("coords", new RequiredArgument("xPos", ParamType.INT), new RequiredArgument("yos", ParamType.INT), new RequiredArgument("zPos", ParamType.INT)));
 
 		// Optional parameters
 		this.addArgument(new OptionalArgument("count", ParamType.INT).setRange(1, Integer.MAX_VALUE));
@@ -30,9 +30,12 @@ public class SpawnEntityCommand extends Command<String, String>
 	{
 
 		String registryName = args.getString();
-		int posX = args.getInt();
-		int posY = args.getInt();
-		int posZ = args.getInt();
+
+		ProcessedGroupArgument<String> coords = args.getGroup();
+
+		String posX = coords.getNextArg().getValue();
+		String posY = coords.getNextArg().getValue();
+		String posZ = coords.getNextArg().getValue();
 
 		// optionals
 		int spawnCount = args.getIntFor("count", 1);

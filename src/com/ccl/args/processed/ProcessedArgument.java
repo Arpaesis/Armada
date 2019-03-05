@@ -1,5 +1,6 @@
-package com.ccl.args;
+package com.ccl.args.processed;
 
+import com.ccl.args.Argument;
 import com.ccl.enumerations.ParamType;
 
 public class ProcessedArgument<T> extends Argument

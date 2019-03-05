@@ -10,7 +10,9 @@ import java.util.regex.Matcher;
 import com.ccl.Command;
 import com.ccl.args.Argument;
 import com.ccl.args.Arguments;
-import com.ccl.args.ProcessedArgument;
+import com.ccl.args.GroupArgument;
+import com.ccl.args.processed.ProcessedArgument;
+import com.ccl.args.processed.ProcessedGroupArgument;
 import com.ccl.enumerations.Result;
 
 public class Parser<T, R>
@@ -138,6 +140,23 @@ public class Parser<T, R>
 					}
 					arguments.add(new ProcessedArgument<String>(tag, content));
 				}
+				break;
+			case GROUP:
+
+				ProcessedGroupArgument<String> group = new ProcessedGroupArgument<>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs, null);
+				
+				GroupArgument arg = (GroupArgument) command.arguments.get(i);
+				
+				List<ProcessedArgument<String>> temp = new ArrayList<>();
+				for(int j = i; j < arg.size() + 1; j++)
+				{
+					temp.add(new ProcessedArgument<String>(group.getName(), rawArgs[j]));
+					i++;
+				}
+				
+				group.setValues(temp);
+				
+				arguments.add(group);
 				break;
 			default:
 				break;
