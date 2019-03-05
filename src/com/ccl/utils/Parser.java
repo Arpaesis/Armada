@@ -52,7 +52,6 @@ public class Parser<T, R>
 		{
 			Matcher tm = command.getNumberPattern().matcher(rawArgs[i]);
 
-			System.out.println(rawArgs.length + " : " + this.arguments.size());
 			if (!command.isShouldExecute())
 			{
 				break;

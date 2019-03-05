@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import com.ccl.args.Argument;
 import com.ccl.args.GroupArgument;
+import com.ccl.args.processed.ProcessedArgument;
 import com.ccl.enumerations.ParamType;
 
 public class OrArgument extends Argument
@@ -70,6 +71,14 @@ public class OrArgument extends Argument
 					{
 						this.arguments.put(entry.getKey(), entry.getValue() + 1);
 					}
+					else if (this.isBoolean(args.get(i + this.position)) && entry.getKey().getType() == ParamType.BOOLEAN)
+					{
+						this.arguments.put(entry.getKey(), entry.getValue() + 1);
+					}
+					else if (this.isChar(args.get(i + this.position)) && entry.getKey().getType() == ParamType.CHAR)
+					{
+						this.arguments.put(entry.getKey(), entry.getValue() + 1);
+					}
 					else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING)
 					{
 						this.arguments.put(entry.getKey(), entry.getValue() + 1);
@@ -124,7 +133,29 @@ public class OrArgument extends Argument
 		return mostMatchingArg;
 	}
 
-	public boolean isNumber(Argument arg)
+	private boolean isChar(String arg)
+	{
+		return arg.length() == 1;
+	}
+
+	private boolean isBoolean(String arg)
+	{
+		if (arg.equals("true") || arg.equals("false") || arg.equals("1") || arg.equals("0"))
+		{
+			if (arg.equals("1"))
+			{
+				arg = "true";
+			}
+			else if (arg.equals("0"))
+			{
+				arg = "false";
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isNumber(Argument arg)
 	{
 		return arg.getType() == ParamType.BYTE || arg.getType() == ParamType.DOUBLE || arg.getType() == ParamType.FLOAT || arg.getType() == ParamType.INT || arg.getType() == ParamType.LONG || arg.getType() == ParamType.SHORT;
 	}
