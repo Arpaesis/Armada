@@ -171,6 +171,14 @@ public class Parser<T, R>
 					{
 						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatString(rawArgs[j])));
 					}
+					else if (arg.getArg(k).getType() == ParamType.CHAR)
+					{
+						temp.add(new ProcessedArgument<Object>(group.getName(), rawArgs[j]));
+					}
+					else if (arg.getArg(k).getType() == ParamType.BOOLEAN)
+					{
+						temp.add(new ProcessedArgument<Object>(group.getName(), rawArgs[j]));
+					}
 					else
 					{
 						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatToNumber(rawArgs[j])));
