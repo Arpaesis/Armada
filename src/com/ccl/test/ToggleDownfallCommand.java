@@ -4,7 +4,7 @@ import com.ccl.Command;
 import com.ccl.args.Arguments;
 import com.ccl.args.OptionalArgument;
 import com.ccl.enumerations.ParamType;
-import com.ccl.enumerations.Result;
+import com.ccl.enumerations.Status;
 
 public class ToggleDownfallCommand extends Command<String, String>
 {
@@ -55,8 +55,8 @@ public class ToggleDownfallCommand extends Command<String, String>
 	}
 	
 	@Override
-	public void result(String obj, Result result, String response)
+	public void result(String obj, Status result, String response)
 	{
-		if(result == Result.FAILURE) System.err.println(response);
+		if(result == Status.FAILED) System.err.println(response);
 	}
 }

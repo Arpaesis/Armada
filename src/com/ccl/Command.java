@@ -9,7 +9,7 @@ import com.ccl.args.Argument;
 import com.ccl.args.Arguments;
 import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
-import com.ccl.enumerations.Result;
+import com.ccl.enumerations.Status;
 import com.ccl.schedule.Task;
 import com.ccl.utils.Parser;
 
@@ -62,15 +62,15 @@ public abstract class Command<T, R>
 
 				timesUsed++;
 				this.lastUsage = System.currentTimeMillis();
-				this.shutdown(obj, Result.SUCCESS, "The command has successfully been executed.");
+				this.shutdown(obj, Status.SUCCESSFUL, "The command has successfully been executed.");
 			}
 			else if (!this.isGlobalCooldownReady())
 			{
-				this.shutdown(obj, Result.FAILURE, "The command is currently under cooldown!");
+				this.shutdown(obj, Status.FAILED, "The command is currently under cooldown!");
 			}
 			else if (this.timesUsed == maxUsage)
 			{
-				this.shutdown(obj, Result.FAILURE, "The has reached the maximum amount of uses!");
+				this.shutdown(obj, Status.FAILED, "The has reached the maximum amount of uses!");
 			}
 			else if (this.hasDelay())
 			{
@@ -96,15 +96,15 @@ public abstract class Command<T, R>
 
 			timesUsed++;
 			this.lastUsage = System.currentTimeMillis();
-			this.shutdown(obj, Result.SUCCESS, "The command has successfully been executed.");
+			this.shutdown(obj, Status.SUCCESSFUL, "The command has successfully been executed.");
 		}
 		else if (!this.isGlobalCooldownReady())
 		{
-			this.shutdown(obj, Result.FAILURE, "The command is currently under cooldown!");
+			this.shutdown(obj, Status.FAILED, "The command is currently under cooldown!");
 		}
 		else if (this.timesUsed == maxUsage)
 		{
-			this.shutdown(obj, Result.FAILURE, "The has reached the maximum amount of uses!");
+			this.shutdown(obj, Status.FAILED, "The has reached the maximum amount of uses!");
 		}
 
 		// reset the command for usage.
@@ -170,19 +170,19 @@ public abstract class Command<T, R>
 		return false;
 	}
 
-	public void result(T obj, Result result, String response)
+	public void result(T obj, Status result, String response)
 	{
 
 	}
 
-	public void shutdown(T obj, Result result, String response)
+	public void shutdown(T obj, Status result, String response)
 	{
 		this.result(obj, result, response);
 		this.result(result, response);
 		this.shouldExecute = false;
 	}
 
-	public void result(Result result, String response)
+	public void result(Status result, String response)
 	{
 
 	}

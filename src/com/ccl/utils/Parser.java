@@ -14,7 +14,7 @@ import com.ccl.args.GroupArgument;
 import com.ccl.args.processed.ProcessedArgument;
 import com.ccl.args.processed.ProcessedGroupArgument;
 import com.ccl.enumerations.ParamType;
-import com.ccl.enumerations.Result;
+import com.ccl.enumerations.Status;
 
 public class Parser<T, R>
 {
@@ -54,7 +54,7 @@ public class Parser<T, R>
 			}
 			else if (rawArgs.length < command.arguments.size() - command.getOptArgCount() || rawArgs.length > command.arguments.size())
 			{
-				command.shutdown(obj, Result.FAILURE, "The command has an invalid number of parameters!");
+				command.shutdown(obj, Status.FAILED, "The command has an invalid number of parameters!");
 				break;
 			}
 
@@ -77,7 +77,7 @@ public class Parser<T, R>
 					}
 					else
 					{
-						command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+						command.shutdown(obj, Status.FAILED, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
 					}
 
 				}
@@ -101,7 +101,7 @@ public class Parser<T, R>
 					}
 					else
 					{
-						command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+						command.shutdown(obj, Status.FAILED, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
 					}
 				}
 				break;
@@ -110,7 +110,7 @@ public class Parser<T, R>
 				{
 					if (rawArgs[i].length() > 1)
 					{
-						command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
+						command.shutdown(obj, Status.FAILED, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
 					}
 				}
 				else if (rawArgs[i].contains(":"))
@@ -257,7 +257,7 @@ public class Parser<T, R>
 		}
 		else
 		{
-			command.shutdown(this.obj, Result.FAILURE, "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
+			command.shutdown(this.obj, Status.FAILED, "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
 		}
 
 		return arguments;

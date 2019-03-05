@@ -7,7 +7,7 @@ import com.ccl.args.Arguments;
 import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
 import com.ccl.enumerations.ParamType;
-import com.ccl.enumerations.Result;
+import com.ccl.enumerations.Status;
 import com.ccl.schedule.Task;
 
 public final class ScheduleCommand<T, R> extends Command<T, R>
@@ -61,9 +61,9 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 	}
 
 	@Override
-	public void result(Result result, String response)
+	public void result(Status result, String response)
 	{
-		if (result == Result.SUCCESS)
+		if (result == Status.SUCCESSFUL)
 			System.out.println("Successfully added command to tasks!");
 		super.result(result, response);
 	}
