@@ -111,18 +111,9 @@ public class Parser<T, R>
 				}
 				break;
 			case STRING:
-
 				if (!rawArgs[i].contains(":"))
 				{
-					if (rawArgs[i].startsWith("\""))
-					{
-						rawArgs[i] = rawArgs[i].substring(1);
-					}
-
-					if (rawArgs[i].endsWith("\""))
-					{
-						rawArgs[i] = StringUtils.removeLastCharOptional(rawArgs[i]);
-					}
+					rawArgs[i] = this.formatString(rawArgs[i]);
 					arguments.add(new ProcessedArgument<String>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], rawArgs[i]));
 				}
 				else
@@ -130,15 +121,8 @@ public class Parser<T, R>
 					String[] split = rawArgs[i].split(":", 2);
 					String tag = split[0];
 					String content = split[1];
-					if (content.startsWith("\""))
-					{
-						content = content.substring(1);
-					}
-
-					if (content.endsWith("\""))
-					{
-						content = StringUtils.removeLastCharOptional(content);
-					}
+					
+					content = this.formatString(content);
 					arguments.add(new ProcessedArgument<String>(tag, content));
 				}
 				break;
@@ -155,7 +139,7 @@ public class Parser<T, R>
 				{
 					if (arg.getArg(k).getType() == ParamType.STRING)
 					{
-						temp.add(new ProcessedArgument<Object>(group.getName(), rawArgs[j]));
+						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatString(rawArgs[j])));
 					}
 					else
 					{
@@ -261,9 +245,9 @@ public class Parser<T, R>
 		{
 			num = Integer.parseInt(rawArgs.replace("0b", ""), 2);
 		}
-		else if (rawArgs.startsWith("0x"))
+		else if (rawArgs.startsWith("0x") || rawArgs.startsWith("#"))
 		{
-			num = Integer.parseInt(rawArgs.replace("0x", ""), 16);
+			num = Integer.parseInt(rawArgs.replace("0x", "").replace("#", ""), 16);
 		}
 		else if (rawArgs.startsWith("0") && rawArgs.length() != 1)
 		{
@@ -287,5 +271,22 @@ public class Parser<T, R>
 		}
 
 		return num;
+	}
+
+	public String formatString(String toFormat)
+	{
+		String result = toFormat;
+		
+		if (toFormat.startsWith("\""))
+		{
+			result = result.substring(1);
+		}
+
+		if (toFormat.endsWith("\""))
+		{
+			result = StringUtils.removeLastCharOptional(result);
+		}
+
+		return result;
 	}
 }
