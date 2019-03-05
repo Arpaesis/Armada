@@ -35,7 +35,7 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		String registryName = args.getString();
 
-		ProcessedGroupArgument<?> coords = args.getGroup();
+		ProcessedGroupArgument coords = args.getGroup();
 
 		int posX = coords.getInt();
 		int posY = coords.getInt();

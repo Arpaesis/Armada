@@ -144,7 +144,7 @@ public class Parser<T, R>
 				break;
 			case GROUP:
 
-				ProcessedGroupArgument<Object> group = new ProcessedGroupArgument<>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs, null);
+				ProcessedGroupArgument group = new ProcessedGroupArgument(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs, null);
 
 				GroupArgument arg = (GroupArgument) command.arguments.get(i);
 

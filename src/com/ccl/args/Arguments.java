@@ -27,9 +27,9 @@ public class Arguments
 		return this.arguments.isEmpty();
 	}
 
-	public <T> ProcessedGroupArgument<T> getGroup()
+	public <T> ProcessedGroupArgument getGroup()
 	{
-		return (ProcessedGroupArgument<T>) arguments.get(counter++);
+		return (ProcessedGroupArgument) arguments.get(counter++);
 	}
 
 	public boolean getBoolean()

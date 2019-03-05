@@ -4,22 +4,22 @@ import java.util.List;
 
 import com.ccl.enumerations.ParamType;
 
-public class ProcessedGroupArgument<T> extends ProcessedArgument<T>
+public class ProcessedGroupArgument extends ProcessedArgument<Object>
 {
 
-	private List<ProcessedArgument<T>> arguments;
+	private List<ProcessedArgument<Object>> arguments;
 	private String[] rawValues;
 	
 	private int counter = 0;
 
-	public ProcessedGroupArgument(String argName, ParamType type, String[] rawValues, List<ProcessedArgument<T>> values)
+	public ProcessedGroupArgument(String argName, ParamType type, String[] rawValues, List<ProcessedArgument<Object>> values)
 	{
 		super(argName, type, argName, null); //TODO: Solve how to not pass in null here.
 		this.rawValues = rawValues;
 		this.arguments = values;
 	}
 
-	public List<ProcessedArgument<T>> getValues()
+	public List<ProcessedArgument<Object>> getValues()
 	{
 		return arguments;
 	}
@@ -182,7 +182,7 @@ public class ProcessedGroupArgument<T> extends ProcessedArgument<T>
 		return def;
 	}
 	
-	public void setValues(List<ProcessedArgument<T>> values)
+	public void setValues(List<ProcessedArgument<Object>> values)
 	{
 		this.arguments = values;
 	}
