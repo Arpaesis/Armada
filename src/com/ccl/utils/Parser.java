@@ -83,7 +83,7 @@ public class Parser<T, R>
 				}
 				else
 				{
-					String[] split = rawArgs[i].split(":");
+					String[] split = rawArgs[i].split(":", 2);
 					String tag = split[0];
 					String bool = split[1];
 
@@ -115,7 +115,7 @@ public class Parser<T, R>
 				}
 				else if (rawArgs[i].contains(":"))
 				{
-					String[] split = rawArgs[i].split(":");
+					String[] split = rawArgs[i].split(":", 2);
 					String tag = split[0];
 					char cValue = split[1].charAt(0);
 					arguments.add(new ProcessedArgument<Character>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), tag, cValue));
@@ -222,7 +222,7 @@ public class Parser<T, R>
 		}
 		else if (rawArgs[i].contains(":"))
 		{
-			String[] split = rawArgs[i].split(":");
+			String[] split = rawArgs[i].split(":", 2);
 			Argument optionalArg = command.getArgumentFor(split[0]);
 			String tag = split[0];
 
