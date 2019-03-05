@@ -58,7 +58,7 @@ public class Task<T, R>
 		manager.executeNoDelay(this.object, this.input);
 
 		this.setNextExecutionTime(this.lastTimeGap);
-		
+
 		this.executionCounts = this.executionCounts > 0 ? this.executionCounts - 1 : 0;
 
 		if (!this.isInfinite && this.executionCounts == 0)

@@ -11,7 +11,7 @@ public class DelayCommand extends Command<String, String>
 		this.setName("delay");
 		this.setDelay(3);
 	}
-	
+
 	@Override
 	public String onExecute(String obj, Arguments in)
 	{

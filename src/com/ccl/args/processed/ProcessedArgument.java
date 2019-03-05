@@ -15,7 +15,7 @@ public class ProcessedArgument<T> extends Argument
 		this.rawValue = rawValue;
 		this.value = value;
 	}
-	
+
 	public ProcessedArgument(String rawValue, T value)
 	{
 		this.rawValue = rawValue;

@@ -24,12 +24,12 @@ public class ToggleDownfallCommand extends Command<String, String>
 	@Override
 	public String onExecute(String obj, Arguments args)
 	{
-		
+
 		String flag = "";
-		if(!args.isEmpty())
+		if (!args.isEmpty())
 		{
 			flag = args.getString();
-			
+
 			if (flag.equals("on") || flag.equals("1"))
 			{
 				this.isRaining = true;
@@ -43,20 +43,21 @@ public class ToggleDownfallCommand extends Command<String, String>
 				this.isRaining = Boolean.parseBoolean(flag);
 			}
 		}
-		
-		
-		else {
+
+		else
+		{
 			this.isRaining = !this.isRaining;
 		}
-		
+
 		System.out.println(isRaining);
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public void result(String obj, Status result, String response)
 	{
-		if(result == Status.FAILED) System.err.println(response);
+		if (result == Status.FAILED)
+			System.err.println(response);
 	}
 }

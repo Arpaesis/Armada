@@ -7,8 +7,10 @@ import java.util.regex.Pattern;
 
 import com.ccl.args.Argument;
 import com.ccl.args.Arguments;
+import com.ccl.args.GroupArgument;
 import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
+import com.ccl.args.logical.OrArgument;
 import com.ccl.enumerations.Status;
 import com.ccl.schedule.Task;
 import com.ccl.utils.Parser;
@@ -211,7 +213,11 @@ public abstract class Command<T, R>
 	{
 		if (argument instanceof RequiredArgument)
 			this.reqArgCount++;
-		if (argument instanceof OptionalArgument)
+		else if (argument instanceof OrArgument)
+			this.reqArgCount++;
+		else if (argument instanceof GroupArgument)
+			this.reqArgCount++;
+		else if (argument instanceof OptionalArgument)
 			this.optArgCount++;
 
 		this.arguments.add(argument);
@@ -287,7 +293,7 @@ public abstract class Command<T, R>
 	{
 		for (Argument arg : this.arguments)
 		{
-			if (arg.getName().matches(name))
+			if (arg.getName() != null && arg.getName().matches(name))
 			{
 				return arg;
 			}

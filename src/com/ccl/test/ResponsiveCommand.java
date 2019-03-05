@@ -39,17 +39,21 @@ public class ResponsiveCommand extends Command<String, String>
 					else if (input2.matches("no"))
 					{
 						System.out.println("Changed your mind, huh? Well, alright.");
-					}else {
+					}
+					else
+					{
 						return false; // The response isn't the desired response, so we await the valid response.
 					}
-					
+
 					return true;
 				});
 			}
 			else if (input.matches("no"))
 			{
 				System.out.println("Aw... well please come again some time soon!");
-			}else {
+			}
+			else
+			{
 				return false; // The response isn't the desired response, so we await the valid response.
 			}
 

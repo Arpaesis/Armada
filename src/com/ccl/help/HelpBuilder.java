@@ -25,7 +25,7 @@ public class HelpBuilder
 		this.displayArgTypes = false;
 		return this;
 	}
-	
+
 	public HelpBuilder disableOptionals()
 	{
 		this.showOptionals = false;

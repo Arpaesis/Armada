@@ -23,7 +23,7 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 
 		this.addArgument(new OptionalArgument("time", ParamType.STRING));
 		this.addArgument(new OptionalArgument("count", ParamType.INT));
-		
+
 	}
 
 	@Override

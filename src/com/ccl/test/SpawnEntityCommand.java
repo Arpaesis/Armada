@@ -19,14 +19,9 @@ public class SpawnEntityCommand extends Command<String, String>
 		Categories.ENTITIES.addToCategory(this);
 
 		this.addArgument(new RequiredArgument("registryName", ParamType.STRING));
-		this.addArgument(
-				new OrArgument(
-					new GroupArgument("coords", 
-							new RequiredArgument("xPos", ParamType.INT), 
-							new RequiredArgument("yPos", ParamType.INT), 
-							new RequiredArgument("zPos", ParamType.INT)), 
-					
-					new RequiredArgument("playerName", ParamType.STRING)));
+		this.addArgument(new OrArgument(new GroupArgument("coords", new RequiredArgument("xPos", ParamType.INT), new RequiredArgument("yPos", ParamType.INT), new RequiredArgument("zPos", ParamType.INT)),
+
+				new RequiredArgument("playerName", ParamType.STRING)));
 
 		// Optional parameters
 		this.addArgument(new OptionalArgument("count", ParamType.INT).setRange(1, Integer.MAX_VALUE));
@@ -53,7 +48,7 @@ public class SpawnEntityCommand extends Command<String, String>
 
 			System.out.println("Spawning " + registryName + " at " + posX + ", " + posY + ", " + posZ + " with a spawn count of " + spawnCount + " with health " + health);
 		}
-		else if(args.getBranchUsed().equals("playerName"))
+		else if (args.getBranchUsed().equals("playerName"))
 		{
 			String playerName = args.getString();
 			System.out.println("Spawning " + registryName + " at " + playerName + " with a spawn count of " + spawnCount + " with health " + health);

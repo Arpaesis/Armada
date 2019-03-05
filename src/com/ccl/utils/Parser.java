@@ -34,7 +34,6 @@ public class Parser<T, R>
 
 	public Arguments processInput()
 	{
-
 		List<String> list = new ArrayList<>();
 		Matcher m = command.getStringPattern().matcher(input);
 		while (m.find())
@@ -53,11 +52,12 @@ public class Parser<T, R>
 		{
 			Matcher tm = command.getNumberPattern().matcher(rawArgs[i]);
 
+			System.out.println(rawArgs.length + " : " + this.arguments.size());
 			if (!command.isShouldExecute())
 			{
 				break;
 			}
-			else if (rawArgs.length < this.arguments.size() - command.getOptArgCount() || rawArgs.length > this.arguments.size())
+			else if (rawArgs.length < this.arguments.size() - command.getOptArgCount())
 			{
 				command.shutdown(obj, Status.FAILED, "The command has an invalid number of parameters!");
 				break;
@@ -189,9 +189,12 @@ public class Parser<T, R>
 					{
 						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatToNumber(rawArgs[j])));
 					}
-					i++;
+					this.arguments.add(j + 1, groupArg.getArg(k));
 					k++;
 				}
+
+				this.arguments.remove(groupArg.getPosition());
+				i++;
 
 				group.setValues(temp);
 

@@ -1,6 +1,10 @@
 package com.ccl.args.logical;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,11 +29,23 @@ public class OrArgument extends Argument
 		}
 	}
 
-	public Argument getLikelyBranch(String[] args)
+	public Argument getLikelyBranch(String[] rawArgs)
 	{
 
 		int largest = 0;
 		Argument mostMatchingArg = null;
+
+		List<String> args = new ArrayList<String>(Arrays.asList(rawArgs));
+		Iterator<String> iterator = args.iterator();
+		while (iterator.hasNext())
+		{
+			String current = iterator.next();
+			if (current.contains(":"))
+			{
+				iterator.remove();
+			}
+			// other operations
+		}
 
 		int j = 0;
 
@@ -38,17 +54,17 @@ public class OrArgument extends Argument
 			if (entry.getKey() instanceof GroupArgument)
 			{
 
+				if (((GroupArgument) entry.getKey()).getArgs().size() > args.size())
+				{
+					continue; // Don't bother dealing with the group, it doesn't fit!!!
+				}
+
 				for (int i = 0; i < ((GroupArgument) entry.getKey()).getArgs().size(); i++)
 				{
 					Argument tempArg = ((GroupArgument) entry.getKey()).getArgs().get(i);
 
-					if (args[i + this.position].contains(":"))
-					{
-						break;
-					}
-
-					Matcher stringMatcher = stringPattern.matcher(args[i + this.position]);
-					Matcher numberMatcher = numberPattern.matcher(args[i + this.position]);
+					Matcher stringMatcher = stringPattern.matcher(args.get(i + this.position));
+					Matcher numberMatcher = numberPattern.matcher(args.get(i + this.position));
 
 					if (numberMatcher.matches() && this.isNumber(tempArg))
 					{
@@ -72,13 +88,8 @@ public class OrArgument extends Argument
 			}
 			else
 			{
-				if (args[j].contains(":"))
-				{
-					break;
-				}
-
-				Matcher stringMatcher = stringPattern.matcher(args[j]);
-				Matcher numberMatcher = numberPattern.matcher(args[j]);
+				Matcher stringMatcher = stringPattern.matcher(args.get(j));
+				Matcher numberMatcher = numberPattern.matcher(args.get(j));
 
 				if (numberMatcher.matches())
 				{

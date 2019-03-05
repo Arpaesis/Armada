@@ -1,4 +1,5 @@
 package com.ccl.test;
+
 import java.util.Scanner;
 
 import com.ccl.CommandManager;
@@ -7,7 +8,7 @@ public class Main
 {
 
 	private static final CommandManager<String, String> manager = new CommandManager<>();
-	
+
 	public static void main(String[] arguments)
 	{
 
