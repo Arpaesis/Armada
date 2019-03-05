@@ -31,11 +31,11 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		String registryName = args.getString();
 
-		ProcessedGroupArgument<String> coords = args.getGroup();
+		ProcessedGroupArgument<?> coords = args.getGroup();
 
-		String posX = coords.getNextArg().getValue();
-		String posY = coords.getNextArg().getValue();
-		String posZ = coords.getNextArg().getValue();
+		int posX = coords.getInt();
+		int posY = coords.getInt();
+		int posZ = coords.getInt();
 
 		// optionals
 		int spawnCount = args.getIntFor("count", 1);

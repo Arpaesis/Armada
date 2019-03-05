@@ -16,7 +16,7 @@ public class GroupArgument extends Argument
 		this.arguments.addAll(Arrays.asList(arguments));
 	}
 
-	public Argument getNextArg(int i)
+	public Argument getArg(int i)
 	{
 		return arguments.get(i);
 

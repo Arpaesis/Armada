@@ -13,6 +13,7 @@ import com.ccl.args.Arguments;
 import com.ccl.args.GroupArgument;
 import com.ccl.args.processed.ProcessedArgument;
 import com.ccl.args.processed.ProcessedGroupArgument;
+import com.ccl.enumerations.ParamType;
 import com.ccl.enumerations.Result;
 
 public class Parser<T, R>
@@ -143,19 +144,26 @@ public class Parser<T, R>
 				break;
 			case GROUP:
 
-				ProcessedGroupArgument<String> group = new ProcessedGroupArgument<>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs, null);
-				
+				ProcessedGroupArgument<Object> group = new ProcessedGroupArgument<>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs, null);
+
 				GroupArgument arg = (GroupArgument) command.arguments.get(i);
-				
-				List<ProcessedArgument<String>> temp = new ArrayList<>();
-				for(int j = i; j < arg.size() + 1; j++)
+
+				List<ProcessedArgument<Object>> temp = new ArrayList<>();
+				for (int j = i; j < arg.size() + 1; j++)
 				{
-					temp.add(new ProcessedArgument<String>(group.getName(), rawArgs[j]));
+					if (command.arguments.get(i).getType() == ParamType.STRING)
+					{
+						temp.add(new ProcessedArgument<Object>(group.getName(), rawArgs[j]));
+					}
+					else
+					{
+						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatToNumber(rawArgs[j])));
+					}
 					i++;
 				}
-				
+
 				group.setValues(temp);
-				
+
 				arguments.add(group);
 				break;
 			default:
@@ -175,7 +183,7 @@ public class Parser<T, R>
 
 			if (!rawArgs[i].contains("%"))
 			{
-				num = this.format(rawArgs[i]);
+				num = this.formatToNumber(rawArgs[i]);
 
 				rawArgs[i] = MathUtils.clampi(num.intValue(), command.arguments.get(i));
 				arguments.add(new ProcessedArgument<Number>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
@@ -188,7 +196,7 @@ public class Parser<T, R>
 				{
 					rawArgs[i] = rawArgs[i].replace("%", "");
 
-					double percentage = this.format(rawArgs[i]).doubleValue() / 100d;
+					double percentage = this.formatToNumber(rawArgs[i]).doubleValue() / 100d;
 					rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage, command.arguments.get(i).getMin(), command.arguments.get(i).getMax()));
 					arguments.add(new ProcessedArgument<Number>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
 					return arguments;
@@ -203,7 +211,7 @@ public class Parser<T, R>
 
 			if (!rawArgs[i].contains("%"))
 			{
-				Number tempNum = NumberFormat.getInstance().parse(MathUtils.clampd(this.format(split[1]).doubleValue(), optionalArg));
+				Number tempNum = NumberFormat.getInstance().parse(MathUtils.clampd(this.formatToNumber(split[1]).doubleValue(), optionalArg));
 
 				arguments.add(new ProcessedArgument<Number>(tag, tempNum));
 				return arguments;
@@ -214,7 +222,7 @@ public class Parser<T, R>
 				{
 					rawArgs[i] = split[1].replace("%", "");
 
-					double percentage = NumberFormat.getInstance().parse(MathUtils.clampd(this.format(rawArgs[i]).doubleValue(), optionalArg)).intValue() / 100d;
+					double percentage = NumberFormat.getInstance().parse(MathUtils.clampd(this.formatToNumber(rawArgs[i]).doubleValue(), optionalArg)).intValue() / 100d;
 					int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
 					arguments.add(new ProcessedArgument<Number>(split[0], temp));
 					return arguments;
@@ -230,7 +238,7 @@ public class Parser<T, R>
 		return arguments;
 	}
 
-	public Number format(String rawArgs)
+	public Number formatToNumber(String rawArgs)
 	{
 		Number num = 0;
 		boolean neg = false;
