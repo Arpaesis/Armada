@@ -31,58 +31,26 @@ public class OrArgument extends Argument
 		int largest = 0;
 		Argument mostMatchingArg = null;
 
+		int j = 0;
+
 		for (Map.Entry<Argument, Integer> entry : this.arguments.entrySet())
 		{
 			if (entry.getKey() instanceof GroupArgument)
 			{
-				for (Argument groupArg : ((GroupArgument) entry.getKey()).getArgs())
+
+				for (int i = 0; i < ((GroupArgument) entry.getKey()).getArgs().size(); i++)
 				{
-					for (String arg : args)
-					{
+					Argument tempArg = ((GroupArgument) entry.getKey()).getArgs().get(i);
 
-						if (arg.contains(":"))
-						{
-							break;
-						}
-
-						Matcher stringMatcher = stringPattern.matcher(arg);
-						Matcher numberMatcher = numberPattern.matcher(arg);
-
-						if (numberMatcher.matches() && this.isNumber(groupArg))
-						{
-							this.arguments.put(entry.getKey(), entry.getValue() + 1);
-						}
-						else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING)
-						{
-							this.arguments.put(entry.getKey(), entry.getValue() + 1);
-						}
-						else
-						{
-							this.arguments.put(entry.getKey(), entry.getValue());
-						}
-
-						if (entry.getValue() > largest)
-						{
-							largest = entry.getValue();
-							mostMatchingArg = entry.getKey();
-						}
-					}
-				}
-			}
-			else
-			{
-				for (String arg : args)
-				{
-
-					if (arg.contains(":"))
+					if (args[i + this.position].contains(":"))
 					{
 						break;
 					}
 
-					Matcher stringMatcher = stringPattern.matcher(arg);
-					Matcher numberMatcher = numberPattern.matcher(arg);
+					Matcher stringMatcher = stringPattern.matcher(args[i + this.position]);
+					Matcher numberMatcher = numberPattern.matcher(args[i + this.position]);
 
-					if (numberMatcher.matches())
+					if (numberMatcher.matches() && this.isNumber(tempArg))
 					{
 						this.arguments.put(entry.getKey(), entry.getValue() + 1);
 					}
@@ -102,11 +70,41 @@ public class OrArgument extends Argument
 					}
 				}
 			}
+			else
+			{
+				if (args[j].contains(":"))
+				{
+					break;
+				}
+
+				Matcher stringMatcher = stringPattern.matcher(args[j]);
+				Matcher numberMatcher = numberPattern.matcher(args[j]);
+
+				if (numberMatcher.matches())
+				{
+					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+				}
+				else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING)
+				{
+					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+				}
+				else
+				{
+					this.arguments.put(entry.getKey(), entry.getValue());
+				}
+
+				if (entry.getValue() > largest)
+				{
+					largest = entry.getValue();
+					mostMatchingArg = entry.getKey();
+				}
+				j++;
+			}
 			this.arguments.put(entry.getKey(), 0);
 		}
-		
+
 		largest = 0;
-		
+
 		for (Map.Entry<Argument, Integer> entry : this.arguments.entrySet())
 		{
 			this.arguments.put(entry.getKey(), 0);
@@ -115,7 +113,7 @@ public class OrArgument extends Argument
 		return mostMatchingArg;
 	}
 
-	public boolean isNumber(Argument arg) // TODO: use this in the method above. DOES NOT ACCOUNT FOR GROUPING. YET. :(
+	public boolean isNumber(Argument arg)
 	{
 		return arg.getType() == ParamType.BYTE || arg.getType() == ParamType.DOUBLE || arg.getType() == ParamType.FLOAT || arg.getType() == ParamType.INT || arg.getType() == ParamType.LONG || arg.getType() == ParamType.SHORT;
 	}

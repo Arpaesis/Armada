@@ -9,12 +9,12 @@ public class ProcessedGroupArgument extends ProcessedArgument<Object>
 
 	private List<ProcessedArgument<Object>> arguments;
 	private String[] rawValues;
-	
+
 	private int counter = 0;
 
 	public ProcessedGroupArgument(String argName, ParamType type, String[] rawValues, List<ProcessedArgument<Object>> values)
 	{
-		super(argName, type, argName, null); //TODO: Solve how to not pass in null here.
+		super(argName, type, argName, null); // TODO: Solve how to not pass in null here.
 		this.rawValues = rawValues;
 		this.arguments = values;
 	}
@@ -28,7 +28,7 @@ public class ProcessedGroupArgument extends ProcessedArgument<Object>
 	{
 		return rawValues;
 	}
-	
+
 	public boolean getBoolean()
 	{
 		return (boolean) arguments.get(counter++).getValue();
@@ -181,7 +181,7 @@ public class ProcessedGroupArgument extends ProcessedArgument<Object>
 		}
 		return def;
 	}
-	
+
 	public void setValues(List<ProcessedArgument<Object>> values)
 	{
 		this.arguments = values;

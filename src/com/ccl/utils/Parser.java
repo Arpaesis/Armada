@@ -170,7 +170,8 @@ public class Parser<T, R>
 				List<ProcessedArgument<Object>> temp = new ArrayList<>();
 
 				int k = 0;
-				for (int j = i; j < groupArg.size() + 1; j++)
+
+				for (int j = i; j < groupArg.size() + groupArg.getPosition(); j++)
 				{
 					if (groupArg.getArg(k).getType() == ParamType.STRING)
 					{
@@ -197,9 +198,10 @@ public class Parser<T, R>
 				arguments.add(group);
 				break;
 			case OR:
-				OrArgument orArg = (OrArgument) this.arguments.get(i);
+				OrArgument orArg = ((OrArgument) this.arguments.get(i));
 
 				Argument usedArgSet = orArg.getLikelyBranch(rawArgs);
+				usedArgSet.setPosition(i);
 				this.arguments.set(i, usedArgSet);
 
 				branchUsed = usedArgSet.getName();
