@@ -9,17 +9,19 @@ public abstract class Argument
 	private final ParamType type;
 	private int min = Integer.MIN_VALUE;
 	private int max = Integer.MAX_VALUE;
-	
+
+	protected int position = 0;
+
 	private String parentName = "";
-	
+
 	private boolean hasRange = false;
-	
+
 	public Argument(String argName, ParamType type)
 	{
 		this.argName = argName;
 		this.type = type;
 	}
-	
+
 	public Argument()
 	{
 		this.argName = null;
@@ -30,15 +32,15 @@ public abstract class Argument
 	{
 		return type;
 	}
-	
+
 	public Argument setRange(int min, int max)
 	{
 		this.min = min;
 		this.max = max;
-		
-		if(min != Integer.MIN_VALUE || max != Integer.MAX_VALUE)
+
+		if (min != Integer.MIN_VALUE || max != Integer.MAX_VALUE)
 			this.hasRange = true;
-		
+
 		return this;
 	}
 
@@ -70,6 +72,17 @@ public abstract class Argument
 	public Argument setParentName(String parentName)
 	{
 		this.parentName = parentName;
+		return this;
+	}
+
+	public int getPosition()
+	{
+		return this.position;
+	}
+
+	public Argument setPosition(int position)
+	{
+		this.position = position;
 		return this;
 	}
 }
