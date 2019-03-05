@@ -65,7 +65,6 @@ public class OrArgument extends Argument
 						{
 							largest = entry.getValue();
 							mostMatchingArg = entry.getKey();
-							System.out.println("Found largest value of " + largest + " for argument with name " + entry.getKey().getName());
 						}
 					}
 				}
@@ -100,11 +99,9 @@ public class OrArgument extends Argument
 					{
 						largest = entry.getValue();
 						mostMatchingArg = entry.getKey();
-						System.out.println("Found largest value of " + largest + " for argument with name " + entry.getKey().getName());
 					}
 				}
 			}
-			System.out.println(entry.getKey().getName() + " : " + entry.getValue());
 			this.arguments.put(entry.getKey(), 0);
 		}
 		
