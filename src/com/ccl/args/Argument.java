@@ -35,8 +35,16 @@ public abstract class Argument
 
 	public Argument setRange(int min, int max)
 	{
-		this.min = min;
-		this.max = max;
+		if (this.getType() != ParamType.STRING)
+		{
+			this.min = min;
+			this.max = max;
+		}
+		else
+		{
+			this.min = 0;
+			this.max = max;
+		}
 
 		if (min != Integer.MIN_VALUE || max != Integer.MAX_VALUE)
 			this.hasRange = true;

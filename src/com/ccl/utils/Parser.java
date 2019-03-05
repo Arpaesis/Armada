@@ -85,7 +85,7 @@ public class Parser<T, R>
 
 					if (bool.equals("true") || bool.equals("false") || bool.equals("1") || bool.equals("0"))
 					{
-						
+
 						arguments.add(new ProcessedArgument<Boolean>(tag, this.formatToBoolean(bool)));
 					}
 					else
@@ -130,8 +130,16 @@ public class Parser<T, R>
 				}
 				break;
 			case STRING:
+
 				if (!rawArgs[i].contains(":"))
 				{
+
+					if (rawArgs[i].length() > this.arguments.get(i).getMax())
+					{
+						command.shutdown(obj, Status.FAILED, "A string parameter (" + rawArgs[i] + ") was given that exceed its maximum value of " + this.arguments.get(i).getMax() + "!");
+						break;
+					}
+
 					rawArgs[i] = this.formatString(rawArgs[i]);
 					arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], rawArgs[i]));
 				}
@@ -139,7 +147,14 @@ public class Parser<T, R>
 				{
 					String[] split = rawArgs[i].split(":", 2);
 					String tag = split[0];
+					Argument optionalArg = command.getArgumentFor(tag);
 					String content = split[1];
+
+					if (rawArgs[i].length() > optionalArg.getMax())
+					{
+						command.shutdown(obj, Status.FAILED, "A string parameter (" + split[1] + ") was given that exceed its maximum value of " + optionalArg.getMax() + "!");
+						break;
+					}
 
 					content = this.formatString(content);
 					arguments.add(new ProcessedArgument<String>(tag, content));
