@@ -1,7 +1,6 @@
 package com.ccl.args;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.ccl.enumerations.ParamType;
@@ -13,13 +12,23 @@ public class GroupArgument extends Argument
 	public GroupArgument(String argName, Argument... arguments)
 	{
 		super(argName, ParamType.GROUP);
-		this.arguments.addAll(Arrays.asList(arguments));
+
+		for (Argument arg : arguments)
+		{
+			arg.setParentName(this.getName());
+			this.arguments.add(arg);
+		}
 	}
 
 	public Argument getArg(int i)
 	{
 		return arguments.get(i);
 
+	}
+
+	public List<Argument> getArgs()
+	{
+		return arguments;
 	}
 
 	public int size()

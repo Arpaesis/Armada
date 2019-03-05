@@ -8,6 +8,8 @@ import com.ccl.args.processed.ProcessedGroupArgument;
 public class Arguments
 {
 
+	private String branchUsed;
+
 	private final List<ProcessedArgument<?>> arguments;
 
 	private int counter;
@@ -15,6 +17,17 @@ public class Arguments
 	public Arguments(List<ProcessedArgument<?>> arguments)
 	{
 		this.arguments = arguments;
+	}
+
+	public String getBranchUsed()
+	{
+		return branchUsed;
+	}
+
+	public Arguments setBranchUsed(String branchUsed)
+	{
+		this.branchUsed = branchUsed;
+		return this;
 	}
 
 	public List<ProcessedArgument<?>> getArguments()

@@ -10,6 +10,8 @@ public abstract class Argument
 	private int min = Integer.MIN_VALUE;
 	private int max = Integer.MAX_VALUE;
 	
+	private String parentName = "";
+	
 	private boolean hasRange = false;
 	
 	public Argument(String argName, ParamType type)
@@ -58,5 +60,16 @@ public abstract class Argument
 	public boolean hasRange()
 	{
 		return hasRange;
+	}
+
+	public String getParentName()
+	{
+		return parentName;
+	}
+
+	public Argument setParentName(String parentName)
+	{
+		this.parentName = parentName;
+		return this;
 	}
 }

@@ -5,6 +5,7 @@ import com.ccl.args.Arguments;
 import com.ccl.args.GroupArgument;
 import com.ccl.args.OptionalArgument;
 import com.ccl.args.RequiredArgument;
+import com.ccl.args.logical.OrArgument;
 import com.ccl.args.processed.ProcessedGroupArgument;
 import com.ccl.enumerations.ParamType;
 
@@ -19,10 +20,13 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		this.addArgument(new RequiredArgument("registryName", ParamType.STRING));
 		this.addArgument(
-				new GroupArgument("coords", 
-						new RequiredArgument("xPos", ParamType.INT), 
-						new RequiredArgument("yPos", ParamType.INT), 
-						new RequiredArgument("zPos", ParamType.STRING)));
+				new OrArgument(
+					new GroupArgument("coords", 
+							new RequiredArgument("xPos", ParamType.INT), 
+							new RequiredArgument("yPos", ParamType.INT), 
+							new RequiredArgument("zPos", ParamType.INT)), 
+					
+					new RequiredArgument("playerName", ParamType.STRING)));
 
 		// Optional parameters
 		this.addArgument(new OptionalArgument("count", ParamType.INT).setRange(1, Integer.MAX_VALUE));
@@ -35,17 +39,25 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		String registryName = args.getString();
 
-		ProcessedGroupArgument coords = args.getGroup();
-
-		int posX = coords.getInt();
-		int posY = coords.getInt();
-		String test = coords.getString();
-
 		// optionals
 		int spawnCount = args.getIntFor("count", 1);
 		double health = args.getDoubleFor("health", 100d);
 
-		System.out.println("Spawning " + registryName + " at " + posX + ", " + posY + ", " + test + " with a spawn count of " + spawnCount + " with health " + health);
+		if (args.getBranchUsed().equals("coords"))
+		{
+			ProcessedGroupArgument coords = args.getGroup();
+
+			int posX = coords.getInt();
+			int posY = coords.getInt();
+			int posZ = coords.getInt();
+
+			System.out.println("Spawning " + registryName + " at " + posX + ", " + posY + ", " + posZ + " with a spawn count of " + spawnCount + " with health " + health);
+		}
+		else if(args.getBranchUsed().equals("playerName"))
+		{
+			String playerName = args.getString();
+			System.out.println("Spawning " + registryName + " at " + playerName + " with a spawn count of " + spawnCount + " with health " + health);
+		}
 		return null;
 	}
 }
