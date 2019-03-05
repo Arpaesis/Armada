@@ -61,27 +61,57 @@ public class Parser<T, R>
 			switch (command.arguments.get(i).getType())
 			{
 			case BOOLEAN:
-				if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
+				if (!rawArgs[i].contains(":"))
 				{
-					if (rawArgs[i].equals("1"))
+					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
 					{
-						rawArgs[i] = "true";
+						if (rawArgs[i].equals("1"))
+						{
+							rawArgs[i] = "true";
+						}
+						else if (rawArgs[i].equals("0"))
+						{
+							rawArgs[i] = "false";
+						}
+						arguments.add(new ProcessedArgument<Boolean>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Boolean.parseBoolean(rawArgs[i])));
 					}
-					else if (rawArgs[i].equals("0"))
+					else
 					{
-						rawArgs[i] = "false";
+						command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
 					}
-					arguments.add(new ProcessedArgument<Boolean>(command.arguments.get(i).getName(), command.arguments.get(i).getType(), rawArgs[i], Boolean.parseBoolean(rawArgs[i])));
+
 				}
 				else
 				{
-					command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+					String[] split = rawArgs[i].split(":");
+					String tag = split[0];
+					String bool = split[1];
+
+					if (bool.equals("true") || bool.equals("false") || bool.equals("1") || bool.equals("0"))
+					{
+						if (bool.equals("1"))
+						{
+							bool = "true";
+						}
+						else if (bool.equals("0"))
+						{
+							bool = "false";
+						}
+						arguments.add(new ProcessedArgument<Boolean>(tag, Boolean.parseBoolean(bool)));
+					}
+					else
+					{
+						command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
+					}
 				}
 				break;
 			case CHAR:
-				if (rawArgs[i].length() > 1)
+				if (!rawArgs[i].contains(":"))
 				{
-					command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
+					if (rawArgs[i].length() > 1)
+					{
+						command.shutdown(obj, Result.FAILURE, "Failed to parse argument " + rawArgs[i] + ", expected a single character!");
+					}
 				}
 				else if (rawArgs[i].contains(":"))
 				{
@@ -121,7 +151,7 @@ public class Parser<T, R>
 					String[] split = rawArgs[i].split(":", 2);
 					String tag = split[0];
 					String content = split[1];
-					
+
 					content = this.formatString(content);
 					arguments.add(new ProcessedArgument<String>(tag, content));
 				}
@@ -276,7 +306,7 @@ public class Parser<T, R>
 	public String formatString(String toFormat)
 	{
 		String result = toFormat;
-		
+
 		if (toFormat.startsWith("\""))
 		{
 			result = result.substring(1);
