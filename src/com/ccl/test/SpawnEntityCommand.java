@@ -18,7 +18,11 @@ public class SpawnEntityCommand extends Command<String, String>
 		Categories.ENTITIES.addToCategory(this);
 
 		this.addArgument(new RequiredArgument("registryName", ParamType.STRING));
-		this.addArgument(new GroupArgument("coords", new RequiredArgument("xPos", ParamType.INT), new RequiredArgument("yos", ParamType.INT), new RequiredArgument("zPos", ParamType.INT)));
+		this.addArgument(
+				new GroupArgument("coords", 
+						new RequiredArgument("xPos", ParamType.INT), 
+						new RequiredArgument("yPos", ParamType.INT), 
+						new RequiredArgument("zPos", ParamType.STRING)));
 
 		// Optional parameters
 		this.addArgument(new OptionalArgument("count", ParamType.INT).setRange(1, Integer.MAX_VALUE));
@@ -35,13 +39,13 @@ public class SpawnEntityCommand extends Command<String, String>
 
 		int posX = coords.getInt();
 		int posY = coords.getInt();
-		int posZ = coords.getInt();
+		String test = coords.getString();
 
 		// optionals
 		int spawnCount = args.getIntFor("count", 1);
 		double health = args.getDoubleFor("health", 100d);
 
-		System.out.println("Spawning " + registryName + " at " + posX + ", " + posY + ", " + posZ + " with a spawn count of " + spawnCount + " with health " + health);
+		System.out.println("Spawning " + registryName + " at " + posX + ", " + posY + ", " + test + " with a spawn count of " + spawnCount + " with health " + health);
 		return null;
 	}
 }

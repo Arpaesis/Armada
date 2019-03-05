@@ -149,9 +149,11 @@ public class Parser<T, R>
 				GroupArgument arg = (GroupArgument) command.arguments.get(i);
 
 				List<ProcessedArgument<Object>> temp = new ArrayList<>();
+
+				int k = 0;
 				for (int j = i; j < arg.size() + 1; j++)
 				{
-					if (command.arguments.get(i).getType() == ParamType.STRING)
+					if (arg.getArg(k).getType() == ParamType.STRING)
 					{
 						temp.add(new ProcessedArgument<Object>(group.getName(), rawArgs[j]));
 					}
@@ -160,6 +162,7 @@ public class Parser<T, R>
 						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatToNumber(rawArgs[j])));
 					}
 					i++;
+					k++;
 				}
 
 				group.setValues(temp);

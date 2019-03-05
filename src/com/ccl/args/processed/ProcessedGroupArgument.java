@@ -71,7 +71,7 @@ public class ProcessedGroupArgument<T> extends ProcessedArgument<T>
 
 	public String getString()
 	{
-		return (String) arguments.get(counter++).getValue();
+		return ((String) arguments.get(counter++).getValue());
 	}
 
 	public boolean getBooleanFor(String tag, boolean def)
