@@ -65,6 +65,8 @@ public final class ScheduleCommand<T, R> extends Command<T, R>
 	{
 		if (result == Status.SUCCESSFUL)
 			System.out.println("Successfully added command to tasks!");
+		else 
+			System.out.println(response);
 		super.result(result, response);
 	}
 
