@@ -96,6 +96,24 @@ public final class CommandManager<T, R>
 		REGISTRY.clear();
 	}
 
+	public Command<T, R> getCommand(String name)
+	{
+		for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
+		{
+			if (entry.getKey().equalsIgnoreCase(name))
+			{
+				return entry.getValue();
+			}
+		}
+
+		return null;
+	}
+
+	public Map<String, Command<T, R>> getRegistry()
+	{
+		return REGISTRY;
+	}
+
 	public String getPrefix()
 	{
 		return prefix;
