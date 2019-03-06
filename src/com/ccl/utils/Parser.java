@@ -334,12 +334,12 @@ public class Parser<T, R>
 	{
 		String result = toFormat;
 
-		if (toFormat.startsWith("\""))
+		if (result.startsWith("\""))
 		{
 			result = result.substring(1);
 		}
 
-		if (toFormat.endsWith("\""))
+		if (result.endsWith("\""))
 		{
 			result = StringUtils.removeLastCharOptional(result);
 		}
