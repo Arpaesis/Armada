@@ -9,9 +9,15 @@ public class GroupArgument extends Argument
 {
 	private List<Argument> arguments = new ArrayList<>();
 
-	public GroupArgument(String argName, Argument... arguments)
+	public GroupArgument(String argName, Argument enforcedArg1, Argument enforcedArg2, Argument... arguments)
 	{
 		super(argName, ParamType.GROUP);
+
+		enforcedArg1.setParentName(this.getName());
+		this.arguments.add(enforcedArg1);
+
+		enforcedArg2.setParentName(this.getName());
+		this.arguments.add(enforcedArg2);
 
 		for (Argument arg : arguments)
 		{
