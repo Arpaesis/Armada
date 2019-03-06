@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import com.ccl.Command;
 import com.ccl.args.Argument;
 import com.ccl.args.Arguments;
+import com.ccl.args.ContinuousArgument;
 import com.ccl.args.GroupArgument;
 import com.ccl.args.logical.OrArgument;
 import com.ccl.args.processed.ProcessedArgument;
@@ -61,7 +62,36 @@ public class Parser<T, R>
 				command.shutdown(obj, Status.FAILED, "The command has an invalid number of parameters!");
 				break;
 			}
-			
+
+			if (this.arguments.get(i) instanceof ContinuousArgument)
+			{
+
+				for (int j = i; j < rawArgs.length; j++)
+				{
+					ProcessedArgument<Object> arg = new ProcessedArgument<>(rawArgs[j], rawArgs[j]);
+
+					if (this.arguments.get(i).getType() == ParamType.STRING)
+					{
+						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), this.formatString(rawArgs[j])));
+					}
+					else if (this.arguments.get(i).getType() == ParamType.CHAR)
+					{
+						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), rawArgs[j]));
+					}
+					else if (this.arguments.get(i).getType() == ParamType.BOOLEAN)
+					{
+						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), this.formatToBoolean(rawArgs[j])));
+					}
+					else
+					{
+						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), this.formatToNumber(rawArgs[j])));
+					}
+				}
+
+				this.arguments.remove(i);
+				i--;
+				continue;
+			}
 			switch (this.arguments.get(i).getType())
 			{
 			case BOOLEAN:
@@ -131,17 +161,17 @@ public class Parser<T, R>
 				break;
 			case STRING:
 
-				if(this.command.arguments.size() == 1 && this.command.getOptArgCount() == 0)
+				if (this.command.arguments.size() == 1 && this.command.getOptArgCount() == 0 && !(command.arguments.get(0) instanceof ContinuousArgument))
 				{
 					String concat = "";
-					for(int j = 0; j < rawArgs.length; j++)
+					for (int j = 0; j < rawArgs.length; j++)
 					{
 						concat += rawArgs[j] + " ";
 					}
 					concat = concat.trim();
-					
+
 					concat = this.formatString(concat);
-					
+
 					arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), concat, concat));
 					break PARSER;
 				}
@@ -196,7 +226,7 @@ public class Parser<T, R>
 					}
 					else if (groupArg.getArg(k).getType() == ParamType.BOOLEAN)
 					{
-						temp.add(new ProcessedArgument<Object>(group.getName(), rawArgs[j]));
+						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatToBoolean(rawArgs[j])));
 					}
 					else
 					{
