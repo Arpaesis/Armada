@@ -65,7 +65,13 @@ public class Parser<T, R>
 
 			if (this.arguments.get(i) instanceof ContinuousArgument)
 			{
-
+				if(i != this.arguments.size() - 1)
+				{
+					System.out.println(i + " : " + (this.arguments.size() - 1));
+					command.shutdown(obj, Status.FAILED, "Continuous arguments can only be placed at the end of a command's argument structure!");
+					break;
+				}
+				
 				for (int j = i; j < rawArgs.length; j++)
 				{
 					ProcessedArgument<Object> arg = new ProcessedArgument<>(rawArgs[j], rawArgs[j]);
