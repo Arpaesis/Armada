@@ -19,7 +19,10 @@ public class SpawnEntityCommand extends Command<String, String>
 		Categories.ENTITIES.addToCategory(this);
 
 		this.addArgument(new RequiredArgument("registryName", ParamType.STRING));
-		this.addArgument(new OrArgument(new GroupArgument("coords", new RequiredArgument("xPos", ParamType.INT), new RequiredArgument("yPos", ParamType.INT), new RequiredArgument("zPos", ParamType.INT)),
+		this.addArgument(new OrArgument(new GroupArgument("coords", 
+				new RequiredArgument("xPos", ParamType.INT), 
+				new RequiredArgument("yPos", ParamType.INT), 
+				new RequiredArgument("zPos", ParamType.INT)),
 
 				new RequiredArgument("playerName", ParamType.STRING)));
 
