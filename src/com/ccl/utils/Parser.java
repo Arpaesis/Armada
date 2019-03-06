@@ -48,7 +48,7 @@ public class Parser<T, R>
 
 		String branchUsed = "";
 
-		for (int i = 0; i < rawArgs.length; i++)
+		PARSER: for (int i = 0; i < rawArgs.length; i++)
 		{
 			Matcher tm = command.getNumberPattern().matcher(rawArgs[i]);
 
@@ -61,7 +61,7 @@ public class Parser<T, R>
 				command.shutdown(obj, Status.FAILED, "The command has an invalid number of parameters!");
 				break;
 			}
-
+			
 			switch (this.arguments.get(i).getType())
 			{
 			case BOOLEAN:
@@ -131,6 +131,20 @@ public class Parser<T, R>
 				break;
 			case STRING:
 
+				if(this.command.arguments.size() == 1 && this.command.getOptArgCount() == 0)
+				{
+					String concat = "";
+					for(int j = 0; j < rawArgs.length; j++)
+					{
+						concat += rawArgs[j] + " ";
+					}
+					concat = concat.trim();
+					
+					concat = this.formatString(concat);
+					
+					arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), concat, concat));
+					break PARSER;
+				}
 				if (!rawArgs[i].contains(":"))
 				{
 

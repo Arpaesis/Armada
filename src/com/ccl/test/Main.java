@@ -17,6 +17,7 @@ public class Main
 		manager.register(new ResponsiveCommand());
 		manager.register(new SpawnEntityCommand());
 		manager.register(new ToggleDownfallCommand());
+		manager.register(new AddRoleCommand());
 
 		Scanner scanner = new Scanner(System.in);
 
