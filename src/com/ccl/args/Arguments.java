@@ -18,6 +18,11 @@ public class Arguments
 	{
 		this.arguments = arguments;
 	}
+	
+	public boolean hasNext()
+	{
+		return counter < this.arguments.size();
+	}
 
 	public String getBranchUsed()
 	{
