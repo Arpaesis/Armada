@@ -67,7 +67,6 @@ public class Parser<T, R>
 			{
 				if(i != this.arguments.size() - 1)
 				{
-					System.out.println(i + " : " + (this.arguments.size() - 1));
 					command.shutdown(obj, Status.FAILED, "Continuous arguments can only be placed at the end of a command's argument structure!");
 					break;
 				}
@@ -252,6 +251,7 @@ public class Parser<T, R>
 			case OR:
 				OrArgument orArg = ((OrArgument) this.arguments.get(i));
 
+				orArg.setPosition(i);
 				Argument usedArgSet = orArg.getLikelyBranch(rawArgs);
 				usedArgSet.setPosition(i);
 				this.arguments.set(i, usedArgSet);

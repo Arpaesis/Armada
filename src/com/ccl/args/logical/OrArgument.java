@@ -47,8 +47,6 @@ public class OrArgument extends Argument
 			// other operations
 		}
 
-		int j = 0;
-
 		for (Map.Entry<Argument, Integer> entry : this.arguments.entrySet())
 		{
 			if (entry.getKey() instanceof GroupArgument)
@@ -96,10 +94,22 @@ public class OrArgument extends Argument
 			}
 			else
 			{
-				Matcher stringMatcher = stringPattern.matcher(args.get(j));
-				Matcher numberMatcher = numberPattern.matcher(args.get(j));
+				int i = this.getPosition();
+				
+				Argument tempArg = entry.getKey();
 
-				if (numberMatcher.matches())
+				Matcher stringMatcher = stringPattern.matcher(args.get(i));
+				Matcher numberMatcher = numberPattern.matcher(args.get(i));
+				
+				if (numberMatcher.matches() && this.isNumber(tempArg))
+				{
+					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+				}
+				else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN)
+				{
+					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+				}
+				else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR)
 				{
 					this.arguments.put(entry.getKey(), entry.getValue() + 1);
 				}
@@ -117,7 +127,6 @@ public class OrArgument extends Argument
 					largest = entry.getValue();
 					mostMatchingArg = entry.getKey();
 				}
-				j++;
 			}
 			this.arguments.put(entry.getKey(), 0);
 		}
