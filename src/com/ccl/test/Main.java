@@ -19,6 +19,7 @@ public class Main
 		manager.register(new ToggleDownfallCommand());
 		manager.register(new AddRoleCommand());
 		manager.register(new AverageCommand());
+		manager.register(new TimeCommand());
 
 		Scanner scanner = new Scanner(System.in);
 

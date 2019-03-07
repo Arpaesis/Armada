@@ -2,7 +2,7 @@ package com.ccl.args;
 
 import com.ccl.enumerations.ParamType;
 
-public abstract class Argument
+public abstract class Argument implements Comparable<Argument>
 {
 
 	private final String argName;
@@ -92,5 +92,11 @@ public abstract class Argument
 	{
 		this.position = position;
 		return this;
+	}
+	
+	@Override
+	public int compareTo(Argument o)
+	{
+		return this.type.ordinal() - o.type.ordinal();
 	}
 }

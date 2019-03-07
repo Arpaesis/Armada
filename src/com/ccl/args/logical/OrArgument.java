@@ -2,10 +2,10 @@ package com.ccl.args.logical;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,14 +18,15 @@ public class OrArgument extends Argument
 	private static Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
 	private static Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
-	Map<Argument, Integer> arguments;
+	TreeMap<Argument, Number> sorted;
 
 	public OrArgument(Argument... arguments)
 	{
-		this.arguments = new HashMap<>();
+		sorted = new TreeMap<>();
+
 		for (Argument argument : arguments)
 		{
-			this.arguments.put(argument, 0);
+			this.sorted.put(argument, 0);
 		}
 	}
 
@@ -47,7 +48,7 @@ public class OrArgument extends Argument
 			// other operations
 		}
 
-		for (Map.Entry<Argument, Integer> entry : this.arguments.entrySet())
+		for (Entry<Argument, Number> entry : this.sorted.entrySet())
 		{
 			if (entry.getKey() instanceof GroupArgument)
 			{
@@ -66,28 +67,28 @@ public class OrArgument extends Argument
 
 					if (numberMatcher.matches() && this.isNumber(tempArg))
 					{
-						this.arguments.put(entry.getKey(), entry.getValue() + 1);
+						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 					}
 					else if (this.isBoolean(args.get(i + this.position)) && entry.getKey().getType() == ParamType.BOOLEAN)
 					{
-						this.arguments.put(entry.getKey(), entry.getValue() + 1);
+						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 					}
 					else if (this.isChar(args.get(i + this.position)) && entry.getKey().getType() == ParamType.CHAR)
 					{
-						this.arguments.put(entry.getKey(), entry.getValue() + 1);
+						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 					}
 					else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING)
 					{
-						this.arguments.put(entry.getKey(), entry.getValue() + 1);
+						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 					}
 					else
 					{
-						this.arguments.put(entry.getKey(), entry.getValue());
+						this.sorted.put(entry.getKey(), entry.getValue().intValue());
 					}
 
-					if (entry.getValue() > largest)
+					if (entry.getValue().intValue() > largest)
 					{
-						largest = entry.getValue();
+						largest = entry.getValue().intValue();
 						mostMatchingArg = entry.getKey();
 					}
 				}
@@ -95,47 +96,47 @@ public class OrArgument extends Argument
 			else
 			{
 				int i = this.getPosition();
-				
+
 				Argument tempArg = entry.getKey();
 
 				Matcher stringMatcher = stringPattern.matcher(args.get(i));
 				Matcher numberMatcher = numberPattern.matcher(args.get(i));
-				
+
 				if (numberMatcher.matches() && this.isNumber(tempArg))
 				{
-					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 				}
 				else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN)
 				{
-					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 				}
 				else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR)
 				{
-					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 				}
 				else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING)
 				{
-					this.arguments.put(entry.getKey(), entry.getValue() + 1);
+					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 				}
 				else
 				{
-					this.arguments.put(entry.getKey(), entry.getValue());
+					this.sorted.put(entry.getKey(), entry.getValue());
 				}
 
-				if (entry.getValue() > largest)
+				if (entry.getValue().intValue() > largest)
 				{
-					largest = entry.getValue();
+					largest = entry.getValue().intValue();
 					mostMatchingArg = entry.getKey();
 				}
 			}
-			this.arguments.put(entry.getKey(), 0);
+			this.sorted.put(entry.getKey(), 0);
 		}
 
 		largest = 0;
 
-		for (Map.Entry<Argument, Integer> entry : this.arguments.entrySet())
+		for (Entry<Argument, Number> entry : this.sorted.entrySet())
 		{
-			this.arguments.put(entry.getKey(), 0);
+			this.sorted.put(entry.getKey(), 0);
 		}
 
 		return mostMatchingArg;
