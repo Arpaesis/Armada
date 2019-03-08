@@ -348,13 +348,13 @@ public class Parser<T, R>
 			rawArgs = rawArgs.substring(1);
 		}
 
-		if (rawArgs.startsWith("0b"))
+		if (rawArgs.startsWith("0b") || rawArgs.startsWith("0B"))
 		{
-			num = Integer.parseInt(rawArgs.replace("0b", ""), 2);
+			num = Integer.parseInt(rawArgs.replace("0b", "").replace("0B", ""), 2);
 		}
-		else if (rawArgs.startsWith("0x") || rawArgs.startsWith("#"))
+		else if (rawArgs.startsWith("0x") || rawArgs.startsWith("0X") || rawArgs.startsWith("#"))
 		{
-			num = Integer.parseInt(rawArgs.replace("0x", "").replace("#", ""), 16);
+			num = Integer.parseInt(rawArgs.replace("0x", "").replace("0X", "").replace("#", ""), 16);
 		}
 		else if (rawArgs.startsWith("0") && rawArgs.length() != 1)
 		{
@@ -396,13 +396,13 @@ public class Parser<T, R>
 			rawArgs = rawArgs.substring(1);
 		}
 
-		if (rawArgs.startsWith("0b"))
+		if (rawArgs.startsWith("0b") || rawArgs.startsWith("0B"))
 		{
-			num = Integer.parseInt(rawArgs.replace("0b", ""), 2);
+			num = Integer.parseInt(rawArgs.replace("0b", "").replace("0B", ""), 2);
 		}
-		else if (rawArgs.startsWith("0x") || rawArgs.startsWith("#"))
+		else if (rawArgs.startsWith("0x") || rawArgs.startsWith("0X") || rawArgs.startsWith("#"))
 		{
-			num = Integer.parseInt(rawArgs.replace("0x", "").replace("#", ""), 16);
+			num = Integer.parseInt(rawArgs.replace("0x", "").replace("0X", "").replace("#", ""), 16);
 		}
 		else if (rawArgs.startsWith("0") && rawArgs.length() != 1)
 		{
