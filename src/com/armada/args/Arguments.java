@@ -11,12 +11,14 @@ public class Arguments
 	private String branchUsed;
 
 	private final List<ProcessedArgument<?>> arguments;
+	private final String[] rawArgs;
 
 	private int counter;
 
-	public Arguments(List<ProcessedArgument<?>> arguments)
+	public Arguments(List<ProcessedArgument<?>> arguments, String[] rawArgs)
 	{
 		this.arguments = arguments;
+		this.rawArgs = rawArgs;
 	}
 
 	public boolean hasNext()
@@ -206,5 +208,10 @@ public class Arguments
 	public int size()
 	{
 		return this.arguments.size();
+	}
+
+	public String[] getRawArguments()
+	{
+		return rawArgs;
 	}
 }

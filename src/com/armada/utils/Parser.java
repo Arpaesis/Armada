@@ -264,7 +264,7 @@ public class Parser<T, R>
 				break;
 			}
 		}
-		return new Arguments(arguments).setBranchUsed(branchUsed);
+		return new Arguments(arguments, rawArgs).setBranchUsed(branchUsed);
 	}
 
 	public List<ProcessedArgument<?>> parseNumber(List<ProcessedArgument<?>> arguments, String[] rawArgs, int i, Matcher tm) throws ParseException
