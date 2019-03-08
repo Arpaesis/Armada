@@ -65,19 +65,19 @@ public class Parser<T, R>
 
 			if (this.arguments.get(i) instanceof ContinuousArgument)
 			{
-				if(i != this.arguments.size() - 1)
+				if (i != this.arguments.size() - 1)
 				{
 					command.shutdown(obj, Status.FAILED, "Continuous arguments can only be placed at the end of a command's argument structure!");
 					break;
 				}
-				
+
 				for (int j = i; j < rawArgs.length; j++)
 				{
 					ProcessedArgument<Object> arg = new ProcessedArgument<>(rawArgs[j], rawArgs[j]);
 
 					if (this.arguments.get(i).getType() == ParamType.STRING)
 					{
-						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), this.formatString(rawArgs[j])));
+						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), formatString(rawArgs[j])));
 					}
 					else if (this.arguments.get(i).getType() == ParamType.CHAR)
 					{
@@ -85,11 +85,11 @@ public class Parser<T, R>
 					}
 					else if (this.arguments.get(i).getType() == ParamType.BOOLEAN)
 					{
-						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), this.formatToBoolean(rawArgs[j])));
+						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), formatToBoolean(rawArgs[j])));
 					}
 					else
 					{
-						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), this.formatToNumber(rawArgs[j])));
+						this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), arg.getName(), formatToNumber(rawArgs[j])));
 					}
 				}
 
@@ -104,7 +104,7 @@ public class Parser<T, R>
 				{
 					if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1") || rawArgs[i].equals("0"))
 					{
-						arguments.add(new ProcessedArgument<Boolean>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], this.formatToBoolean(rawArgs[i])));
+						arguments.add(new ProcessedArgument<Boolean>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], formatToBoolean(rawArgs[i])));
 					}
 					else
 					{
@@ -121,7 +121,7 @@ public class Parser<T, R>
 					if (bool.equals("true") || bool.equals("false") || bool.equals("1") || bool.equals("0"))
 					{
 
-						arguments.add(new ProcessedArgument<Boolean>(tag, this.formatToBoolean(bool)));
+						arguments.add(new ProcessedArgument<Boolean>(tag, formatToBoolean(bool)));
 					}
 					else
 					{
@@ -175,7 +175,7 @@ public class Parser<T, R>
 					}
 					concat = concat.trim();
 
-					concat = this.formatString(concat);
+					concat = formatString(concat);
 
 					arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), concat, concat));
 					break PARSER;
@@ -189,7 +189,7 @@ public class Parser<T, R>
 						break;
 					}
 
-					rawArgs[i] = this.formatString(rawArgs[i]);
+					rawArgs[i] = formatString(rawArgs[i]);
 					arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], rawArgs[i]));
 				}
 				else
@@ -205,7 +205,7 @@ public class Parser<T, R>
 						break;
 					}
 
-					content = this.formatString(content);
+					content = formatString(content);
 					arguments.add(new ProcessedArgument<String>(tag, content));
 				}
 				break;
@@ -223,7 +223,7 @@ public class Parser<T, R>
 				{
 					if (groupArg.getArg(k).getType() == ParamType.STRING)
 					{
-						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatString(rawArgs[j])));
+						temp.add(new ProcessedArgument<Object>(group.getName(), formatString(rawArgs[j])));
 					}
 					else if (groupArg.getArg(k).getType() == ParamType.CHAR)
 					{
@@ -231,11 +231,11 @@ public class Parser<T, R>
 					}
 					else if (groupArg.getArg(k).getType() == ParamType.BOOLEAN)
 					{
-						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatToBoolean(rawArgs[j])));
+						temp.add(new ProcessedArgument<Object>(group.getName(), formatToBoolean(rawArgs[j])));
 					}
 					else
 					{
-						temp.add(new ProcessedArgument<Object>(group.getName(), this.formatToNumber(rawArgs[j])));
+						temp.add(new ProcessedArgument<Object>(group.getName(), formatToNumber(rawArgs[j])));
 					}
 					this.arguments.add(j + 1, groupArg.getArg(k));
 					k++;
@@ -277,7 +277,7 @@ public class Parser<T, R>
 
 			if (!rawArgs[i].contains("%"))
 			{
-				num = this.formatToNumber(rawArgs[i]);
+				num = formatToNumber(rawArgs[i]);
 
 				rawArgs[i] = MathUtils.clampi(num.intValue(), this.arguments.get(i));
 				arguments.add(new ProcessedArgument<Number>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
@@ -290,7 +290,7 @@ public class Parser<T, R>
 				{
 					rawArgs[i] = rawArgs[i].replace("%", "");
 
-					double percentage = this.formatToNumber(rawArgs[i]).doubleValue() / 100d;
+					double percentage = formatToNumber(rawArgs[i]).doubleValue() / 100d;
 					rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage, this.arguments.get(i).getMin(), this.arguments.get(i).getMax()));
 					arguments.add(new ProcessedArgument<Number>(this.arguments.get(i).getName(), this.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
 					return arguments;
@@ -305,7 +305,7 @@ public class Parser<T, R>
 
 			if (!rawArgs[i].contains("%"))
 			{
-				Number tempNum = NumberFormat.getInstance().parse(MathUtils.clampd(this.formatToNumber(split[1]).doubleValue(), optionalArg));
+				Number tempNum = NumberFormat.getInstance().parse(MathUtils.clampd(formatToNumber(split[1]).doubleValue(), optionalArg));
 
 				arguments.add(new ProcessedArgument<Number>(tag, tempNum));
 				return arguments;
@@ -316,7 +316,7 @@ public class Parser<T, R>
 				{
 					rawArgs[i] = split[1].replace("%", "");
 
-					double percentage = NumberFormat.getInstance().parse(MathUtils.clampd(this.formatToNumber(rawArgs[i]).doubleValue(), optionalArg)).intValue() / 100d;
+					double percentage = NumberFormat.getInstance().parse(MathUtils.clampd(formatToNumber(rawArgs[i]).doubleValue(), optionalArg)).intValue() / 100d;
 					int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
 					arguments.add(new ProcessedArgument<Number>(split[0], temp));
 					return arguments;
@@ -332,7 +332,7 @@ public class Parser<T, R>
 		return arguments;
 	}
 
-	public Number formatToNumber(String rawArgs)
+	public static Number formatToNumber(String rawArgs)
 	{
 		Number num = 0;
 		boolean neg = false;
@@ -380,7 +380,55 @@ public class Parser<T, R>
 		return num;
 	}
 
-	public String formatString(String toFormat)
+	public static String formatNumberAsString(String rawArgs)
+	{
+		Number num = 0;
+		boolean neg = false;
+
+		if (rawArgs.startsWith("-"))
+		{
+			neg = true;
+			rawArgs = rawArgs.substring(1);
+		}
+
+		if (rawArgs.startsWith("+"))
+		{
+			rawArgs = rawArgs.substring(1);
+		}
+
+		if (rawArgs.startsWith("0b"))
+		{
+			num = Integer.parseInt(rawArgs.replace("0b", ""), 2);
+		}
+		else if (rawArgs.startsWith("0x") || rawArgs.startsWith("#"))
+		{
+			num = Integer.parseInt(rawArgs.replace("0x", "").replace("#", ""), 16);
+		}
+		else if (rawArgs.startsWith("0") && rawArgs.length() != 1)
+		{
+			num = Integer.parseInt(rawArgs.substring(1), 8);
+		}
+		else
+		{
+			try
+			{
+				num = NumberFormat.getInstance().parse(rawArgs);
+			}
+			catch (ParseException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		if (neg)
+		{
+			num = 0 - num.intValue();
+		}
+
+		return num.toString();
+	}
+
+	public static String formatString(String toFormat)
 	{
 		String result = toFormat;
 
@@ -397,15 +445,8 @@ public class Parser<T, R>
 		return result;
 	}
 
-	public boolean formatToBoolean(String toFormat)
+	public static boolean formatToBoolean(String toFormat)
 	{
-		if (toFormat.equals("true") || toFormat.equals("false") || toFormat.equals("1") || toFormat.equals("0"))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return toFormat.equals("true") || toFormat.equals("false") || toFormat.equals("1") || toFormat.equals("0");
 	}
 }

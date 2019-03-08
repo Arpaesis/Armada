@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import com.ccl.args.Argument;
 import com.ccl.args.GroupArgument;
 import com.ccl.enumerations.ParamType;
+import com.ccl.utils.Parser;
 
 public class OrArgument extends Argument
 {
@@ -99,8 +100,8 @@ public class OrArgument extends Argument
 
 				Argument tempArg = entry.getKey();
 
-				Matcher stringMatcher = stringPattern.matcher(args.get(i));
-				Matcher numberMatcher = numberPattern.matcher(args.get(i));
+				Matcher stringMatcher = stringPattern.matcher(Parser.formatString(args.get(i)));
+				Matcher numberMatcher = numberPattern.matcher(Parser.formatNumberAsString(args.get(i)));
 
 				if (numberMatcher.matches() && this.isNumber(tempArg))
 				{
