@@ -2,7 +2,6 @@ package com.armada;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import com.armada.args.Argument;
@@ -12,7 +11,6 @@ import com.armada.args.OptionalArgument;
 import com.armada.args.RequiredArgument;
 import com.armada.args.logical.OrArgument;
 import com.armada.enumerations.Status;
-import com.armada.schedule.Task;
 import com.armada.utils.Parser;
 
 public abstract class Command<T, R>
@@ -32,8 +30,6 @@ public abstract class Command<T, R>
 	private int maxUsage = -1;
 
 	private int level = 0;
-
-	private long delay = 0;
 
 	private Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
 	private Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
@@ -58,7 +54,7 @@ public abstract class Command<T, R>
 		{
 			Arguments processedInput = this.processInput(obj, in);
 
-			if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage && !this.hasDelay())
+			if (this.shouldExecute && this.isGlobalCooldownReady() && this.timesUsed != maxUsage)
 			{
 				result = this.onExecute(obj, processedInput);
 
@@ -73,10 +69,6 @@ public abstract class Command<T, R>
 			else if (this.timesUsed == maxUsage)
 			{
 				this.shutdown(obj, Status.FAILED, "The has reached the maximum amount of uses!");
-			}
-			else if (this.hasDelay())
-			{
-				this.getCommandManager().getScheduler().addTask(new Task<T, R>(obj, in, this.getDelay(), TimeUnit.SECONDS));
 			}
 
 			// reset the command for usage.
@@ -237,21 +229,6 @@ public abstract class Command<T, R>
 	public void setCommandManager(CommandManager<T, R> m)
 	{
 		manager = m;
-	}
-
-	public long getDelay()
-	{
-		return delay;
-	}
-
-	public void setDelay(long delay)
-	{
-		this.delay = delay;
-	}
-
-	public boolean hasDelay()
-	{
-		return this.delay > 0;
 	}
 
 	public boolean isDisabled()

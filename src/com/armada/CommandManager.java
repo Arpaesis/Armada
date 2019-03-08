@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.armada.impl.ScheduleCommand;
-import com.armada.schedule.Scheduler;
-
 public final class CommandManager<T, R>
 {
 	protected final Map<String, Command<T, R>> REGISTRY = new HashMap<>();
@@ -19,13 +16,8 @@ public final class CommandManager<T, R>
 
 	private boolean isEnabled = true;
 
-	private final Scheduler<T, R> scheduler;
-
 	public CommandManager()
 	{
-		scheduler = new Scheduler<T, R>(this);
-
-		this.register(new ScheduleCommand<T, R>());
 	}
 
 	public Command<T, R> register(Command<T, R> command)
@@ -214,11 +206,6 @@ public final class CommandManager<T, R>
 			}
 		}
 		return results;
-	}
-
-	public Scheduler<T, R> getScheduler()
-	{
-		return scheduler;
 	}
 
 	public void addWaitingResponse(CommandResponse<T> response)

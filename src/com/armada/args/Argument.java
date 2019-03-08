@@ -93,7 +93,7 @@ public abstract class Argument implements Comparable<Argument>
 		this.position = position;
 		return this;
 	}
-	
+
 	@Override
 	public int compareTo(Argument o)
 	{

@@ -26,12 +26,12 @@ public class AverageCommand extends Command<String, String>
 		{
 			i += args.getInt();
 		}
-		
-		System.out.println(i/args.size());
+
+		System.out.println(i / args.size());
 
 		return null;
 	}
-	
+
 	@Override
 	public void result(Status result, String response)
 	{

@@ -13,7 +13,6 @@ public class Main
 	{
 
 		manager.setPrefix("!");
-		manager.register(new DelayCommand());
 		manager.register(new ResponsiveCommand());
 		manager.register(new SpawnEntityCommand());
 		manager.register(new ToggleDownfallCommand());

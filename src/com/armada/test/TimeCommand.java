@@ -16,9 +16,7 @@ public class TimeCommand extends Command<String, String>
 
 		this.addArgument(new RequiredArgument("func", ParamType.STRING));
 
-		this.addArgument(new OrArgument(
-				new RequiredArgument("tickCount", ParamType.LONG).setRange(0, Integer.MAX_VALUE),
-				new RequiredArgument("word", ParamType.STRING)));
+		this.addArgument(new OrArgument(new RequiredArgument("tickCount", ParamType.LONG).setRange(0, Integer.MAX_VALUE), new RequiredArgument("word", ParamType.STRING)));
 	}
 
 	@Override
@@ -36,7 +34,7 @@ public class TimeCommand extends Command<String, String>
 			int ticks = args.getInt();
 
 			System.out.println(ticks);
-			
+
 			switch (func)
 			{
 			case "add":
