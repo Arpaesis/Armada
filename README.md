@@ -1,5 +1,5 @@
-# Cool Com Library
-The Cool Com Library is a library designed in Java 11 to make the creation and management of commands easier. The library simplifies handling arguments, has branching, and many more features.
+# Armada
+Armada is a library designed in Java 11 to make the creation and management of commands easier. The library simplifies handling arguments, has branching, and many more features.
 
 ## About
 The library was designed in response to the unscalable design of command parsing with libraries such as the Discord API's Java wrappers JDA and Discord4j. Not only was it incredibly messy to manage command arguments, it was also nearly impossible to manage command branches without creating massive chains of logical checks and an incredibly ugly amount of parsing the arguments.
