@@ -64,11 +64,14 @@ public class OrArgument extends Argument
 					Argument tempArg = ((GroupArgument) entry.getKey()).getArgs().get(i);
 
 					Matcher stringMatcher = stringPattern.matcher(args.get(i + this.position));
-					Matcher numberMatcher = numberPattern.matcher(args.get(i + this.position));
 
-					if (numberMatcher.matches() && this.isNumber(tempArg))
+					if (this.isNumber(tempArg))
 					{
-						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+						Matcher numberMatcher = numberPattern.matcher(args.get(i + this.position));
+						if (numberMatcher.matches())
+						{
+							this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+						}
 					}
 					else if (this.isBoolean(args.get(i + this.position)) && entry.getKey().getType() == ParamType.BOOLEAN)
 					{
@@ -101,11 +104,14 @@ public class OrArgument extends Argument
 				Argument tempArg = entry.getKey();
 
 				Matcher stringMatcher = stringPattern.matcher(Parser.formatString(args.get(i)));
-				Matcher numberMatcher = numberPattern.matcher(Parser.formatNumberAsString(args.get(i)));
-
-				if (numberMatcher.matches() && this.isNumber(tempArg))
+				
+				if (this.isNumber(tempArg))
 				{
-					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+					Matcher numberMatcher = numberPattern.matcher(args.get(i));
+					if (numberMatcher.matches())
+					{
+						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+					}
 				}
 				else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN)
 				{
