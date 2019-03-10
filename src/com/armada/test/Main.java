@@ -19,6 +19,7 @@ public class Main
 		manager.register(new AddRoleCommand());
 		manager.register(new AverageCommand());
 		manager.register(new TimeCommand());
+		manager.register(new BalanceCommand());
 
 		Scanner scanner = new Scanner(System.in);
 

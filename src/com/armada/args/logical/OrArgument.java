@@ -63,21 +63,21 @@ public class OrArgument extends Argument
 				{
 					Argument tempArg = ((GroupArgument) entry.getKey()).getArgs().get(i);
 
-					Matcher stringMatcher = stringPattern.matcher(args.get(i + this.position));
+					Matcher stringMatcher = stringPattern.matcher(args.get(i));
 
 					if (this.isNumber(tempArg))
 					{
-						Matcher numberMatcher = numberPattern.matcher(args.get(i + this.position));
+						Matcher numberMatcher = numberPattern.matcher(args.get(i));
 						if (numberMatcher.matches())
 						{
 							this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 						}
 					}
-					else if (this.isBoolean(args.get(i + this.position)) && entry.getKey().getType() == ParamType.BOOLEAN)
+					else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN)
 					{
 						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 					}
-					else if (this.isChar(args.get(i + this.position)) && entry.getKey().getType() == ParamType.CHAR)
+					else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR)
 					{
 						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
 					}
