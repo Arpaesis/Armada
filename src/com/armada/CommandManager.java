@@ -119,93 +119,39 @@ public final class CommandManager<T, R>
 		this.prefix = prefix;
 	}
 
-	public List<R> execute(T obj, String in)
+	public R execute(T obj, String in)
 	{
 		if (!this.isEnabled())
 			return null;
-
-		List<R> results = new ArrayList<>();
 
 		this.handleCallbacks(obj, in);
 
 		if (!in.startsWith(this.getPrefix()))
 			return null;
 
-		String[] commands = in.split("&&");
+		String registryName = in.split(" ")[0].substring(prefix.length()).toLowerCase();
 
-		for (String cmdIn : commands)
+		if (REGISTRY.containsKey(registryName))
 		{
-			String cmdInFormatted = cmdIn.trim();
-
-			String registryName = cmdInFormatted.split(" ")[0].substring(prefix.length()).toLowerCase();
-
-			if (REGISTRY.containsKey(registryName))
+			return REGISTRY.get(registryName).execute(obj, in);
+		}
+		else
+		{
+			for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
 			{
-				results.add(REGISTRY.get(registryName).execute(obj, cmdInFormatted));
-			}
-			else
-			{
-				for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
+				if (entry.getValue().getAliases() != null)
 				{
-					if (entry.getValue().getAliases() != null)
+					for (String alias : entry.getValue().getAliases())
 					{
-						for (String alias : entry.getValue().getAliases())
+						if (registryName.equals(alias))
 						{
-							if (registryName.equals(alias))
-							{
-								results.add(entry.getValue().execute(obj, cmdInFormatted));
-							}
+							return entry.getValue().execute(obj, in);
 						}
 					}
 				}
 			}
 		}
-		return results;
-	}
-
-	public List<R> executeNoDelay(T obj, String in)
-	{
-		if (!this.isEnabled())
-			return null;
-
-		List<R> results = new ArrayList<>();
-
-		this.handleCallbacks(obj, in);
-
-		if (!in.startsWith(this.getPrefix()))
-			return null;
-
-		String[] commands = in.split("&&");
-
-		for (String cmdIn : commands)
-		{
-			String cmdInFormatted = cmdIn.trim();
-
-			String registryName = cmdInFormatted.split(" ")[0].substring(prefix.length()).toLowerCase();
-
-			if (REGISTRY.containsKey(registryName))
-			{
-				results.add(REGISTRY.get(registryName).executeNoDelay(obj, cmdInFormatted));
-			}
-			else
-			{
-				for (Map.Entry<String, Command<T, R>> entry : REGISTRY.entrySet())
-				{
-					if (entry.getValue().getAliases() != null)
-					{
-						for (String alias : entry.getValue().getAliases())
-						{
-							if (registryName.equals(alias))
-							{
-								results.add(entry.getValue().executeNoDelay(obj, cmdInFormatted));
-							}
-						}
-					}
-				}
-
-			}
-		}
-		return results;
+		return null;
 	}
 
 	public void addWaitingResponse(CommandResponse<T> response)
