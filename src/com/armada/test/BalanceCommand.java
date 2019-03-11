@@ -50,7 +50,6 @@ public class BalanceCommand extends Command<String, String>
 
 			if (func.equalsIgnoreCase("add"))
 			{
-				int value = group.getInt();
 				System.out.println("add");
 			}
 		}
