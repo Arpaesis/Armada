@@ -2,101 +2,84 @@ package com.armada.args;
 
 import com.armada.enumerations.ParamType;
 
-public abstract class Argument implements Comparable<Argument>
-{
+public abstract class Argument implements Comparable<Argument> {
 
-	private final String argName;
-	private final ParamType type;
-	private int min = Integer.MIN_VALUE;
-	private int max = Integer.MAX_VALUE;
+    private final String argName;
+    private final ParamType type;
+    private int min = Integer.MIN_VALUE;
+    private int max = Integer.MAX_VALUE;
 
-	protected int position = 0;
+    protected int position = 0;
 
-	private String parentName = "";
+    private String parentName = "";
 
-	private boolean hasRange = false;
+    private boolean hasRange = false;
 
-	public Argument(String argName, ParamType type)
-	{
-		this.argName = argName;
-		this.type = type;
+    public Argument(String argName, ParamType type) {
+	this.argName = argName;
+	this.type = type;
+    }
+
+    public Argument() {
+	this.argName = null;
+	this.type = null;
+    }
+
+    public ParamType getType() {
+	return type;
+    }
+
+    public Argument setRange(int min, int max) {
+	if (this.getType() != ParamType.STRING) {
+	    this.min = min;
+	    this.max = max;
+	} else {
+	    this.min = 0;
+	    this.max = max;
 	}
 
-	public Argument()
-	{
-		this.argName = null;
-		this.type = null;
-	}
+	if (min != Integer.MIN_VALUE || max != Integer.MAX_VALUE)
+	    this.hasRange = true;
 
-	public ParamType getType()
-	{
-		return type;
-	}
+	return this;
+    }
 
-	public Argument setRange(int min, int max)
-	{
-		if (this.getType() != ParamType.STRING)
-		{
-			this.min = min;
-			this.max = max;
-		}
-		else
-		{
-			this.min = 0;
-			this.max = max;
-		}
+    public int getMin() {
+	return min;
+    }
 
-		if (min != Integer.MIN_VALUE || max != Integer.MAX_VALUE)
-			this.hasRange = true;
+    public int getMax() {
+	return max;
+    }
 
-		return this;
-	}
+    public String getName() {
+	return argName;
+    }
 
-	public int getMin()
-	{
-		return min;
-	}
+    public boolean hasRange() {
+	return hasRange;
+    }
 
-	public int getMax()
-	{
-		return max;
-	}
+    public String getParentName() {
+	return parentName;
+    }
 
-	public String getName()
-	{
-		return argName;
-	}
+    public Argument setParentName(String parentName) {
+	this.parentName = parentName;
+	return this;
+    }
 
-	public boolean hasRange()
-	{
-		return hasRange;
-	}
+    public int getPosition() {
+	return this.position;
+    }
 
-	public String getParentName()
-	{
-		return parentName;
-	}
+    public Argument setPosition(int position) {
+	this.position = position;
+	return this;
+    }
 
-	public Argument setParentName(String parentName)
-	{
-		this.parentName = parentName;
-		return this;
-	}
-
-	public int getPosition()
-	{
-		return this.position;
-	}
-
-	public Argument setPosition(int position)
-	{
-		this.position = position;
-		return this;
-	}
-
-	@Override
-	public int compareTo(Argument o)
-	{
-		return this.type.ordinal() - o.type.ordinal();
-	}
+    @Override
+    public int compareTo(Argument o) {
+	return this.type.ordinal() - o.type.ordinal();
+    }
 }

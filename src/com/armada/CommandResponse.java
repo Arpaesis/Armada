@@ -1,7 +1,13 @@
 package com.armada;
 
-public interface CommandResponse<T>
-{
+/**
+ * A special interface used in handling command responses.
+ * 
+ * @author Arpaesis
+ *
+ * @param <T> The type of object to be used in the response.
+ */
+public interface CommandResponse<T> {
 
-	public abstract boolean onResponse(T inputType, String input);
+    public abstract boolean onResponse(T inputType, String input);
 }

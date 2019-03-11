@@ -14,171 +14,130 @@ import com.armada.args.GroupArgument;
 import com.armada.enumerations.ParamType;
 import com.armada.utils.Parser;
 
-public class OrArgument extends Argument
-{
-	private static Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
-	private static Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+public class OrArgument extends Argument {
+    private static Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
+    private static Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
-	TreeMap<Argument, Number> sorted;
+    TreeMap<Argument, Number> sorted;
 
-	public OrArgument(Argument... arguments)
-	{
-		sorted = new TreeMap<>();
+    public OrArgument(Argument... arguments) {
+	sorted = new TreeMap<>();
 
-		for (Argument argument : arguments)
-		{
-			this.sorted.put(argument, 0);
-		}
+	for (Argument argument : arguments) {
+	    this.sorted.put(argument, 0);
+	}
+    }
+
+    public Argument getLikelyBranch(String[] rawArgs) {
+
+	int largest = 0;
+	Argument mostMatchingArg = null;
+
+	List<String> args = new ArrayList<String>(Arrays.asList(rawArgs));
+	Iterator<String> iterator = args.iterator();
+	while (iterator.hasNext()) {
+	    String current = iterator.next();
+	    if (current.contains(":")) {
+		iterator.remove();
+	    }
+	    // other operations
 	}
 
-	public Argument getLikelyBranch(String[] rawArgs)
-	{
+	for (Entry<Argument, Number> entry : this.sorted.entrySet()) {
+	    if (entry.getKey() instanceof GroupArgument) {
 
-		int largest = 0;
-		Argument mostMatchingArg = null;
-
-		List<String> args = new ArrayList<String>(Arrays.asList(rawArgs));
-		Iterator<String> iterator = args.iterator();
-		while (iterator.hasNext())
-		{
-			String current = iterator.next();
-			if (current.contains(":"))
-			{
-				iterator.remove();
-			}
-			// other operations
-		}
-
-		for (Entry<Argument, Number> entry : this.sorted.entrySet())
-		{
-			if (entry.getKey() instanceof GroupArgument)
-			{
-
-				if (((GroupArgument) entry.getKey()).getArgs().size() > args.size())
-				{
-					continue; // Don't bother dealing with the group, it doesn't fit!!!
-				}
-
-				for (int i = 0; i < ((GroupArgument) entry.getKey()).getArgs().size(); i++)
-				{
-					Argument tempArg = ((GroupArgument) entry.getKey()).getArgs().get(i);
-
-					Matcher stringMatcher = stringPattern.matcher(args.get(i));
-
-					if (this.isNumber(tempArg))
-					{
-						Matcher numberMatcher = numberPattern.matcher(args.get(i));
-						if (numberMatcher.matches())
-						{
-							this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-						}
-					}
-					else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN)
-					{
-						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-					}
-					else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR)
-					{
-						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-					}
-					else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING)
-					{
-						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-					}
-					else
-					{
-						this.sorted.put(entry.getKey(), entry.getValue().intValue());
-					}
-
-					if (entry.getValue().intValue() > largest)
-					{
-						largest = entry.getValue().intValue();
-						mostMatchingArg = entry.getKey();
-					}
-				}
-			}
-			else
-			{
-				int i = this.getPosition();
-
-				Argument tempArg = entry.getKey();
-
-				Matcher stringMatcher = stringPattern.matcher(Parser.formatString(args.get(i)));
-				
-				if (this.isNumber(tempArg))
-				{
-					Matcher numberMatcher = numberPattern.matcher(args.get(i));
-					if (numberMatcher.matches())
-					{
-						this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-					}
-				}
-				else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN)
-				{
-					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-				}
-				else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR)
-				{
-					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-				}
-				else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING)
-				{
-					this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-				}
-				else
-				{
-					this.sorted.put(entry.getKey(), entry.getValue());
-				}
-
-				if (entry.getValue().intValue() > largest)
-				{
-					largest = entry.getValue().intValue();
-					mostMatchingArg = entry.getKey();
-				}
-			}
-			this.sorted.put(entry.getKey(), 0);
+		if (((GroupArgument) entry.getKey()).getArgs().size() > args.size()) {
+		    continue; // Don't bother dealing with the group, it doesn't fit!!!
 		}
 
-		largest = 0;
+		for (int i = 0; i < ((GroupArgument) entry.getKey()).getArgs().size(); i++) {
+		    Argument tempArg = ((GroupArgument) entry.getKey()).getArgs().get(i);
 
-		for (Entry<Argument, Number> entry : this.sorted.entrySet())
-		{
-			this.sorted.put(entry.getKey(), 0);
+		    Matcher stringMatcher = stringPattern.matcher(args.get(i));
+
+		    if (this.isNumber(tempArg)) {
+			Matcher numberMatcher = numberPattern.matcher(args.get(i));
+			if (numberMatcher.matches()) {
+			    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+			}
+		    } else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN) {
+			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+		    } else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR) {
+			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+		    } else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING) {
+			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+		    } else {
+			this.sorted.put(entry.getKey(), entry.getValue().intValue());
+		    }
+
+		    if (entry.getValue().intValue() > largest) {
+			largest = entry.getValue().intValue();
+			mostMatchingArg = entry.getKey();
+		    }
+		}
+	    } else {
+		int i = this.getPosition();
+
+		Argument tempArg = entry.getKey();
+
+		Matcher stringMatcher = stringPattern.matcher(Parser.formatString(args.get(i)));
+
+		if (this.isNumber(tempArg)) {
+		    Matcher numberMatcher = numberPattern.matcher(args.get(i));
+		    if (numberMatcher.matches()) {
+			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+		    }
+		} else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN) {
+		    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+		} else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR) {
+		    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+		} else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING) {
+		    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
+		} else {
+		    this.sorted.put(entry.getKey(), entry.getValue());
 		}
 
-		return mostMatchingArg;
-	}
-
-	private boolean isChar(String arg)
-	{
-		return arg.length() == 1;
-	}
-
-	private boolean isBoolean(String arg)
-	{
-		if (arg.equals("true") || arg.equals("false") || arg.equals("1") || arg.equals("0"))
-		{
-			if (arg.equals("1"))
-			{
-				arg = "true";
-			}
-			else if (arg.equals("0"))
-			{
-				arg = "false";
-			}
-			return true;
+		if (entry.getValue().intValue() > largest) {
+		    largest = entry.getValue().intValue();
+		    mostMatchingArg = entry.getKey();
 		}
-		return false;
+	    }
+	    this.sorted.put(entry.getKey(), 0);
 	}
 
-	private boolean isNumber(Argument arg)
-	{
-		return arg.getType() == ParamType.BYTE || arg.getType() == ParamType.DOUBLE || arg.getType() == ParamType.FLOAT || arg.getType() == ParamType.INT || arg.getType() == ParamType.LONG || arg.getType() == ParamType.SHORT;
+	largest = 0;
+
+	for (Entry<Argument, Number> entry : this.sorted.entrySet()) {
+	    this.sorted.put(entry.getKey(), 0);
 	}
 
-	@Override
-	public ParamType getType()
-	{
-		return ParamType.OR;
+	return mostMatchingArg;
+    }
+
+    private boolean isChar(String arg) {
+	return arg.length() == 1;
+    }
+
+    private boolean isBoolean(String arg) {
+	if (arg.equals("true") || arg.equals("false") || arg.equals("1") || arg.equals("0")) {
+	    if (arg.equals("1")) {
+		arg = "true";
+	    } else if (arg.equals("0")) {
+		arg = "false";
+	    }
+	    return true;
 	}
+	return false;
+    }
+
+    private boolean isNumber(Argument arg) {
+	return arg.getType() == ParamType.BYTE || arg.getType() == ParamType.DOUBLE || arg.getType() == ParamType.FLOAT
+		|| arg.getType() == ParamType.INT || arg.getType() == ParamType.LONG
+		|| arg.getType() == ParamType.SHORT;
+    }
+
+    @Override
+    public ParamType getType() {
+	return ParamType.OR;
+    }
 }

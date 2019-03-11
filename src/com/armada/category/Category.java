@@ -5,22 +5,18 @@ import java.util.List;
 
 import com.armada.Command;
 
-public class Category
-{
+public class Category {
 
-	private final List<Command<?, ?>> commands = new ArrayList<>();
+    private final List<Command<?, ?>> commands = new ArrayList<>();
 
-	public List<Command<?, ?>> getCommands()
-	{
-		return commands;
+    public List<Command<?, ?>> getCommands() {
+	return commands;
+    }
+
+    public void addToCategory(Command<?, ?>... command) {
+	for (Command<?, ?> com : command) {
+	    commands.add(com);
 	}
-
-	public void addToCategory(Command<?, ?>... command)
-	{
-		for (Command<?, ?> com : command)
-		{
-			commands.add(com);
-		}
-	}
+    }
 
 }

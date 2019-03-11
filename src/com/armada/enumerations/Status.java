@@ -1,6 +1,5 @@
 package com.armada.enumerations;
 
-public enum Status
-{
-	SUCCESSFUL, FAILED;
+public enum Status {
+    SUCCESSFUL, FAILED;
 }
