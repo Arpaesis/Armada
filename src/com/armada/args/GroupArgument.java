@@ -5,6 +5,12 @@ import java.util.List;
 
 import com.armada.enumerations.ParamType;
 
+/**
+ * A class used in grouping arguments together.
+ * 
+ * @author Arpaesis
+ *
+ */
 public class GroupArgument extends Argument {
     private List<Argument> arguments = new ArrayList<>();
 
@@ -23,15 +29,27 @@ public class GroupArgument extends Argument {
 	}
     }
 
+    /**
+     * Retrieves an argument within the group by the given index.
+     * 
+     * @param i The index to fetch the argument with.
+     * @return The argument at the given index.
+     */
     public Argument getArg(int i) {
 	return arguments.get(i);
 
     }
 
+    /**
+     * @return All arguments within the group as a collection.
+     */
     public List<Argument> getArgs() {
 	return arguments;
     }
 
+    /**
+     * @return The number of arguments within the group.
+     */
     public int size() {
 	return arguments.size();
     }

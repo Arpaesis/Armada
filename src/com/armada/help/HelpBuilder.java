@@ -5,6 +5,12 @@ import com.armada.args.Argument;
 import com.armada.args.OptionalArgument;
 import com.armada.args.RequiredArgument;
 
+/**
+ * A builder class to construct a help message for a given command.
+ * 
+ * @author Arpaesis
+ *
+ */
 public class HelpBuilder {
 
     private boolean displayArgTypes = true;
@@ -13,20 +19,36 @@ public class HelpBuilder {
     private HelpBuilder() {
     }
 
+    /**
+     * @return A new help builder instance.
+     */
     public static HelpBuilder builder() {
 	return new HelpBuilder();
     }
 
+    /**
+     * @return Whether or not the help message should display the argument types.
+     */
     public HelpBuilder disableArgTypes() {
 	this.displayArgTypes = false;
 	return this;
     }
 
+    /**
+     * @return Whether or not the help message should display the optional
+     *         arguments.
+     */
     public HelpBuilder disableOptionals() {
 	this.showOptionals = false;
 	return this;
     }
 
+    /**
+     * Builds the help builder and returns a neat help message for the command.
+     * 
+     * @param command The command to build the help message for.
+     * @return The help message.
+     */
     public String build(Command<?, ?> command) {
 	StringBuilder builder = new StringBuilder();
 

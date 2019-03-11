@@ -5,6 +5,12 @@ import java.util.List;
 
 import com.armada.Command;
 
+/**
+ * A category class to contain {@link Command}s.
+ * 
+ * @author Arpaesis
+ *
+ */
 public class Category {
 
     private final List<Command<?, ?>> commands = new ArrayList<>();
@@ -13,6 +19,11 @@ public class Category {
 	return commands;
     }
 
+    /**
+     * Adds the specified {@link Command} to the category.
+     * 
+     * @param command The command to add to the category.
+     */
     public void addToCategory(Command<?, ?>... command) {
 	for (Command<?, ?> com : command) {
 	    commands.add(com);

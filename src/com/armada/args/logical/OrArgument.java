@@ -14,6 +14,12 @@ import com.armada.args.GroupArgument;
 import com.armada.enumerations.ParamType;
 import com.armada.utils.Parser;
 
+/**
+ * A class representing argument branches.
+ * 
+ * @author Arpaesis
+ *
+ */
 public class OrArgument extends Argument {
     private static Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
     private static Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
@@ -28,6 +34,12 @@ public class OrArgument extends Argument {
 	}
     }
 
+    /**
+     * Gets the likely branch used from given input.
+     * 
+     * @param rawArgs The raw arguments used to determine the likely branch.
+     * @return The argument that is likely being used in the input.
+     */
     public Argument getLikelyBranch(String[] rawArgs) {
 
 	int largest = 0;
@@ -114,10 +126,22 @@ public class OrArgument extends Argument {
 	return mostMatchingArg;
     }
 
+    /**
+     * Gets whether or not the given String is a char.
+     * 
+     * @param arg The String to check.
+     * @return Whether or not the String is a character.
+     */
     private boolean isChar(String arg) {
 	return arg.length() == 1;
     }
 
+    /**
+     * Gets whether or not the given String represents a boolean value.
+     * 
+     * @param arg The String to check.
+     * @return Whether or not the String value is indeed a boolean.
+     */
     private boolean isBoolean(String arg) {
 	if (arg.equals("true") || arg.equals("false") || arg.equals("1") || arg.equals("0")) {
 	    if (arg.equals("1")) {
@@ -130,6 +154,11 @@ public class OrArgument extends Argument {
 	return false;
     }
 
+    /**
+     * Gets whether or not the given {@link Argument} is has a numeric {@link ParamType}.
+     * @param arg The argument to check.
+     * @return Whether or not the argument is of the param type of a number.
+     */
     private boolean isNumber(Argument arg) {
 	return arg.getType() == ParamType.BYTE || arg.getType() == ParamType.DOUBLE || arg.getType() == ParamType.FLOAT
 		|| arg.getType() == ParamType.INT || arg.getType() == ParamType.LONG
