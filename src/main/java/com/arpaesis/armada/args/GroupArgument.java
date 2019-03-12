@@ -12,7 +12,7 @@ import com.arpaesis.armada.enumerations.ParamType;
  *
  */
 public class GroupArgument extends Argument {
-    private List<Argument> arguments = new ArrayList<>();
+    private final List<Argument> arguments = new ArrayList<>();
 
     public GroupArgument(String argName, Argument enforcedArg1, Argument enforcedArg2, Argument... arguments) {
 	super(argName, ParamType.GROUP);

@@ -16,7 +16,7 @@ import com.arpaesis.armada.enumerations.ParamType;
 public class ProcessedGroupArgument extends ProcessedArgument<Object> {
 
     private List<ProcessedArgument<Object>> arguments;
-    private String[] rawValues;
+    private final String[] rawValues;
 
     private int counter = 0;
 
@@ -114,7 +114,7 @@ public class ProcessedGroupArgument extends ProcessedArgument<Object> {
     public boolean getBooleanFor(String tag, boolean def) {
 	for (ProcessedArgument<?> argument : arguments) {
 	    if (argument.getRawValue().matches(tag)) {
-		return (boolean) argument.getValue();
+		return (Boolean) argument.getValue();
 	    }
 	}
 	return def;
@@ -148,7 +148,7 @@ public class ProcessedGroupArgument extends ProcessedArgument<Object> {
     public char getCharacterFor(String tag, char def) {
 	for (ProcessedArgument<?> argument : arguments) {
 	    if (argument.getRawValue().matches(tag)) {
-		return (char) argument.getValue();
+		return (Character) argument.getValue();
 	    }
 	}
 	return def;

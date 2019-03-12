@@ -25,7 +25,7 @@ public class Main {
 	do {
 	    in = scanner.nextLine();
 
-	    manager.execute(new String(), in);
+	    manager.execute("", in);
 	} while (!in.equalsIgnoreCase("END"));
 
 	scanner.close();

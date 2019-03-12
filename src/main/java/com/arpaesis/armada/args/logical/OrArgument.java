@@ -2,7 +2,6 @@ package com.arpaesis.armada.args.logical;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -21,10 +20,10 @@ import com.arpaesis.armada.utils.Parser;
  *
  */
 public class OrArgument extends Argument {
-    private static Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
-    private static Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+    private static final Pattern numberPattern = Pattern.compile("[\\-+]?[0-9]+[0-9,_]*");
+    private static final Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
-    TreeMap<Argument, Number> sorted;
+    final TreeMap<Argument, Number> sorted;
 
     public OrArgument(Argument... arguments) {
 	sorted = new TreeMap<>();
@@ -46,14 +45,7 @@ public class OrArgument extends Argument {
 	Argument mostMatchingArg = null;
 
 	List<String> args = new ArrayList<String>(Arrays.asList(rawArgs));
-	Iterator<String> iterator = args.iterator();
-	while (iterator.hasNext()) {
-	    String current = iterator.next();
-	    if (current.contains(":")) {
-		iterator.remove();
-	    }
-	    // other operations
-	}
+	args.removeIf(current -> current.contains(":"));
 
 	for (Entry<Argument, Number> entry : this.sorted.entrySet()) {
 	    if (entry.getKey() instanceof GroupArgument) {
@@ -117,8 +109,6 @@ public class OrArgument extends Argument {
 	    this.sorted.put(entry.getKey(), 0);
 	}
 
-	largest = 0;
-
 	for (Entry<Argument, Number> entry : this.sorted.entrySet()) {
 	    this.sorted.put(entry.getKey(), 0);
 	}
@@ -143,15 +133,7 @@ public class OrArgument extends Argument {
      * @return Whether or not the String value is indeed a boolean.
      */
     private boolean isBoolean(String arg) {
-	if (arg.equals("true") || arg.equals("false") || arg.equals("1") || arg.equals("0")) {
-	    if (arg.equals("1")) {
-		arg = "true";
-	    } else if (arg.equals("0")) {
-		arg = "false";
-	    }
-	    return true;
-	}
-	return false;
+	return arg.equals("true") || arg.equals("false") || arg.equals("1") || arg.equals("0");
     }
 
     /**

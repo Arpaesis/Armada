@@ -209,9 +209,7 @@ public final class CommandManager<T, R> {
 
 	List<CommandResponse<T>> toRemove = new ArrayList<>();
 
-	for (int i = 0; i < responses.size(); i++) {
-	    CommandResponse<T> current = responses.get(i);
-
+    for(CommandResponse<T> current : responses) {
 	    boolean flag = current.onResponse(obj, in);
 
 	    if (flag) {

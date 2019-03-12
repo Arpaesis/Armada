@@ -9,5 +9,5 @@ package com.arpaesis.armada;
  */
 public interface CommandResponse<T> {
 
-    public abstract boolean onResponse(T inputType, String input);
+    boolean onResponse(T inputType, String input);
 }

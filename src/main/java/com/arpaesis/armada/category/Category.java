@@ -1,6 +1,7 @@
 package com.arpaesis.armada.category;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.arpaesis.armada.Command;
@@ -25,9 +26,7 @@ public class Category {
      * @param command The command to add to the category.
      */
     public void addToCategory(Command<?, ?>... command) {
-	for (Command<?, ?> com : command) {
-	    commands.add(com);
-	}
+	    Collections.addAll(commands, command);
     }
 
 }

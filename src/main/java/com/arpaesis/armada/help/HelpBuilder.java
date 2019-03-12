@@ -52,17 +52,17 @@ public class HelpBuilder {
     public String build(Command<?, ?> command) {
 	StringBuilder builder = new StringBuilder();
 
-	builder.append(command.getCommandManager().getPrefix() + command.getName() + " ");
+	builder.append(command.getCommandManager().getPrefix()).append(command.getName()).append(" ");
 
-	String argType = "";
+	String argType;
 
 	for (Argument arg : command.arguments) {
 	    argType = this.displayArgTypes ? "(" + arg.getType().toString().toLowerCase() + ")" : "";
 
 	    if (arg instanceof RequiredArgument)
-		builder.append(arg.getName() + argType + " ");
+		builder.append(arg.getName()).append(argType).append(" ");
 	    else if (arg instanceof OptionalArgument && this.showOptionals)
-		builder.append("[" + arg.getName() + "]" + argType + " ");
+		builder.append("[").append(arg.getName()).append("]").append(argType).append(" ");
 	}
 
 	builder.append("\n");

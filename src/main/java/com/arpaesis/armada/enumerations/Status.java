@@ -8,5 +8,5 @@ package com.arpaesis.armada.enumerations;
  *
  */
 public enum Status {
-    SUCCESSFUL, FAILED;
+    SUCCESSFUL, FAILED
 }

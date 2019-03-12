@@ -21,17 +21,20 @@ public class ToggleDownfallCommand extends Command<String, String> {
     @Override
     public String onExecute(String obj, Arguments args) {
 
-	String flag = "";
 	if (!args.isEmpty()) {
-	    flag = args.getString();
-
-	    if (flag.equals("on") || flag.equals("1")) {
-		this.isRaining = true;
-	    } else if (flag.equals("off") || flag.equals("0")) {
-		this.isRaining = false;
-	    } else {
-		this.isRaining = Boolean.parseBoolean(flag);
-	    }
+		String flag = args.getString();
+		switch(flag) {
+			case "on":
+			case "1":
+				this.isRaining = true;
+				break;
+			case "off":
+			case "0":
+				this.isRaining = false;
+				break;
+			default:
+				this.isRaining = Boolean.parseBoolean(flag);
+		}
 	}
 
 	else {

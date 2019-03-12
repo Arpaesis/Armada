@@ -33,14 +33,9 @@ public class TimeCommand extends Command<String, String> {
 
 	    System.out.println(ticks);
 
-	    switch (func) {
-	    case "add":
-		System.out.println("adding...");
-		break;
-
-	    default:
-
-	    }
+		if("add".equals(func)) {
+			System.out.println("adding...");
+		}
 	} else if (args.getBranchUsed().equalsIgnoreCase("word")) {
 	    String keyword = args.getString();
 	}

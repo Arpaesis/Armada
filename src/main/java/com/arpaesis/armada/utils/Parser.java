@@ -19,10 +19,10 @@ import com.arpaesis.armada.enumerations.ParamType;
 import com.arpaesis.armada.enumerations.Status;
 
 public class Parser<T, R> {
-    private Command<T, R> command;
-    private T obj;
-    private String input;
-    private List<Argument> arguments;
+    private final Command<T, R> command;
+    private final T obj;
+    private final String input;
+    private final List<Argument> arguments;
 
     public Parser(Command<T, R> command, T obj, String input) {
 	this.command = command;
@@ -144,13 +144,11 @@ public class Parser<T, R> {
 
 		if (this.command.arguments.size() == 1 && this.command.getOptArgCount() == 0
 			&& !(command.arguments.get(0) instanceof ContinuousArgument)) {
-		    String concat = "";
-		    for (int j = 0; j < rawArgs.length; j++) {
-			concat += rawArgs[j] + " ";
-		    }
-		    concat = concat.trim();
-
-		    concat = formatString(concat);
+			StringBuilder concatBuilder = new StringBuilder();
+			for(String rawArg : rawArgs) {
+				concatBuilder.append(rawArg).append(" ");
+			}
+		    String concat = formatString(concatBuilder.toString().trim());
 
 		    arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(),
 			    this.arguments.get(i).getType(), concat, concat));
@@ -238,12 +236,10 @@ public class Parser<T, R> {
     public List<ProcessedArgument<?>> parseNumber(List<ProcessedArgument<?>> arguments, String[] rawArgs, int i,
 	    Matcher tm) throws ParseException {
 	if (tm.find() && !rawArgs[i].contains(":")) {
-	    Number num = 0;
-
 	    rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
 
 	    if (!rawArgs[i].contains("%")) {
-		num = formatToNumber(rawArgs[i]);
+	    Number num = formatToNumber(rawArgs[i]);
 
 		rawArgs[i] = MathUtils.clampi(num.intValue(), this.arguments.get(i));
 		arguments.add(new ProcessedArgument<Number>(this.arguments.get(i).getName(),

@@ -39,8 +39,8 @@ public abstract class Command<T, R> {
 
     private int level = 0;
 
-    private Pattern numberPattern = Pattern.compile("[\\-+]{0,1}[0-9]+[0-9,_]*");
-    private Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+    private final Pattern numberPattern = Pattern.compile("[\\-+]?[0-9]+[0-9,_]*");
+    private final Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
     private boolean shouldExecute = true;
 
@@ -174,11 +174,8 @@ public abstract class Command<T, R> {
     public boolean isNotUnderCooldown() {
 	long currentTime = System.currentTimeMillis();
 
-	if (((currentTime - lastUsage) / 1000) >= this.globalGlobalCooldown) {
-	    return true;
-	}
+	return ((currentTime - lastUsage) / 1000) >= this.globalGlobalCooldown;
 
-	return false;
     }
 
     /**
@@ -296,7 +293,7 @@ public abstract class Command<T, R> {
     /**
      * Sets the {@link CommandManager} for the command.
      * 
-     * @param The command manager to set for the command.
+     * @param manager The command manager to set for the command.
      */
     public void setCommandManager(CommandManager<T, R> manager) {
 	this.manager = manager;
