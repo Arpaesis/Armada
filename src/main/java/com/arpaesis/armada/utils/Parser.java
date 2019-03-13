@@ -373,6 +373,6 @@ public class Parser<T, R> {
     }
 
     public static boolean formatToBoolean(String toFormat) {
-	return toFormat.equals("true") || toFormat.equals("false") || toFormat.equals("1") || toFormat.equals("0");
+	return toFormat.equals("true") || toFormat.equals("1");
     }
 }
