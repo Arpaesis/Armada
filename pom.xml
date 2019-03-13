@@ -2,11 +2,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.ccl</groupId>
-	<artifactId>com.ccl</artifactId>
+	<groupId>com.arpaesis</groupId>
+	<artifactId>armada</artifactId>
 	<version>1.0</version>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>src/main/java</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -67,17 +67,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -90,9 +79,9 @@
 
 	<packaging>jar</packaging>
 
-	<name>Cool Com Library</name>
+	<name>Armada</name>
 	<description>An advanced library for designing command systems.</description>
-	<url>https://github.com/Arpaesis/Cool-Com-Library</url>
+	<url>https://github.com/Arpaesis/Armada</url>
 
 	<licenses>
 		<license>
@@ -113,9 +102,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git:git://github.com/Arpaesis/Cool-Com-Library.git</connection>
-		<developerConnection>scm:git:ssh://github.com:Arpaesis/Cool-Com-Library.git</developerConnection>
-		<url>https://github.com/Arpaesis/Cool-Com-Library</url>
+		<connection>scm:git:git://github.com/Arpaesis/Armada.git</connection>
+		<developerConnection>scm:git:ssh://github.com:Arpaesis/Armada.git</developerConnection>
+		<url>https://github.com/Arpaesis/Armada</url>
 	</scm>
 
 	<developers>
