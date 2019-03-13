@@ -18,20 +18,10 @@ import com.arpaesis.armada.args.processed.ProcessedGroupArgument;
 import com.arpaesis.armada.enumerations.ParamType;
 import com.arpaesis.armada.enumerations.Status;
 
-public class Parser<T, R> {
-    private final Command<T, R> command;
-    private final T obj;
-    private final String input;
-    private final List<Argument> arguments;
+public class Parser {
 
-    public Parser(Command<T, R> command, T obj, String input) {
-	this.command = command;
-	this.obj = obj;
-	this.input = input;
-	this.arguments = new ArrayList<>(command.arguments);
-    }
-
-    public Arguments processInput() {
+    public static <T, R> Arguments processInput(Command<T, R> command, T obj, String input) {
+	List<Argument> arguments = new ArrayList<>(command.arguments);
 	List<String> list = new ArrayList<>();
 	Matcher m = command.getStringPattern().matcher(input);
 	while (m.find())
@@ -42,7 +32,7 @@ public class Parser<T, R> {
 
 	String[] rawArgs = Arrays.copyOfRange(preArgs, 1, preArgs.length);
 
-	List<ProcessedArgument<?>> arguments = new ArrayList<>();
+	List<ProcessedArgument<?>> processedArguments = new ArrayList<>();
 
 	String branchUsed = "";
 
@@ -51,13 +41,13 @@ public class Parser<T, R> {
 
 	    if (!command.isShouldExecute()) {
 		break;
-	    } else if (rawArgs.length < this.arguments.size() - command.getOptArgCount()) {
+	    } else if (rawArgs.length < arguments.size() - command.getOptArgCount()) {
 		command.shutdown(obj, Status.FAILED, "The command has an invalid number of parameters!");
 		break;
 	    }
 
-	    if (this.arguments.get(i) instanceof ContinuousArgument) {
-		if (i != this.arguments.size() - 1) {
+	    if (arguments.get(i) instanceof ContinuousArgument) {
+		if (i != arguments.size() - 1) {
 		    command.shutdown(obj, Status.FAILED,
 			    "Continuous arguments can only be placed at the end of a command's argument structure!");
 		    break;
@@ -66,32 +56,32 @@ public class Parser<T, R> {
 		for (int j = i; j < rawArgs.length; j++) {
 		    ProcessedArgument<Object> arg = new ProcessedArgument<>(rawArgs[j], rawArgs[j]);
 
-		    if (this.arguments.get(i).getType() == ParamType.STRING) {
-			this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(),
-				this.arguments.get(i).getType(), arg.getName(), formatString(rawArgs[j])));
-		    } else if (this.arguments.get(i).getType() == ParamType.CHAR) {
-			this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(),
-				this.arguments.get(i).getType(), arg.getName(), rawArgs[j]));
-		    } else if (this.arguments.get(i).getType() == ParamType.BOOLEAN) {
-			this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(),
-				this.arguments.get(i).getType(), arg.getName(), formatToBoolean(rawArgs[j])));
+		    if (arguments.get(i).getType() == ParamType.STRING) {
+			arguments.add(j + 1, new ProcessedArgument<Object>(arguments.get(i).getName(),
+				arguments.get(i).getType(), arg.getName(), formatString(rawArgs[j])));
+		    } else if (arguments.get(i).getType() == ParamType.CHAR) {
+			arguments.add(j + 1, new ProcessedArgument<Object>(arguments.get(i).getName(),
+				arguments.get(i).getType(), arg.getName(), rawArgs[j]));
+		    } else if (arguments.get(i).getType() == ParamType.BOOLEAN) {
+			arguments.add(j + 1, new ProcessedArgument<Object>(arguments.get(i).getName(),
+				arguments.get(i).getType(), arg.getName(), formatToBoolean(rawArgs[j])));
 		    } else {
-			this.arguments.add(j + 1, new ProcessedArgument<Object>(this.arguments.get(i).getName(),
-				this.arguments.get(i).getType(), arg.getName(), formatToNumber(rawArgs[j])));
+			arguments.add(j + 1, new ProcessedArgument<Object>(arguments.get(i).getName(),
+				arguments.get(i).getType(), arg.getName(), formatToNumber(rawArgs[j])));
 		    }
 		}
 
-		this.arguments.remove(i);
+		arguments.remove(i);
 		i--;
 		continue;
 	    }
-	    switch (this.arguments.get(i).getType()) {
+	    switch (arguments.get(i).getType()) {
 	    case BOOLEAN:
 		if (!rawArgs[i].contains(":")) {
 		    if (rawArgs[i].equals("true") || rawArgs[i].equals("false") || rawArgs[i].equals("1")
 			    || rawArgs[i].equals("0")) {
-			arguments.add(new ProcessedArgument<Boolean>(this.arguments.get(i).getName(),
-				this.arguments.get(i).getType(), rawArgs[i], formatToBoolean(rawArgs[i])));
+			processedArguments.add(new ProcessedArgument<Boolean>(arguments.get(i).getName(),
+				arguments.get(i).getType(), rawArgs[i], formatToBoolean(rawArgs[i])));
 		    } else {
 			command.shutdown(obj, Status.FAILED,
 				"Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
@@ -104,7 +94,7 @@ public class Parser<T, R> {
 
 		    if (bool.equals("true") || bool.equals("false") || bool.equals("1") || bool.equals("0")) {
 
-			arguments.add(new ProcessedArgument<Boolean>(tag, formatToBoolean(bool)));
+			processedArguments.add(new ProcessedArgument<Boolean>(tag, formatToBoolean(bool)));
 		    } else {
 			command.shutdown(obj, Status.FAILED,
 				"Failed to parse argument " + rawArgs[i] + ", expected a boolean!");
@@ -121,11 +111,11 @@ public class Parser<T, R> {
 		    String[] split = rawArgs[i].split(":", 2);
 		    String tag = split[0];
 		    char cValue = split[1].charAt(0);
-		    arguments.add(new ProcessedArgument<Character>(this.arguments.get(i).getName(),
-			    this.arguments.get(i).getType(), tag, cValue));
+		    processedArguments.add(new ProcessedArgument<Character>(arguments.get(i).getName(),
+			    arguments.get(i).getType(), tag, cValue));
 		} else {
-		    arguments.add(new ProcessedArgument<Character>(this.arguments.get(i).getName(),
-			    this.arguments.get(i).getType(), rawArgs[i], rawArgs[i].charAt(0)));
+		    processedArguments.add(new ProcessedArgument<Character>(arguments.get(i).getName(),
+			    arguments.get(i).getType(), rawArgs[i], rawArgs[i].charAt(0)));
 		}
 		break;
 	    case BYTE:
@@ -135,14 +125,64 @@ public class Parser<T, R> {
 	    case LONG:
 	    case SHORT:
 		try {
-		    arguments = this.parseNumber(arguments, rawArgs, i, tm);
+			if (tm.find() && !rawArgs[i].contains(":")) {
+				rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
+
+				if (!rawArgs[i].contains("%")) {
+					Number num = formatToNumber(rawArgs[i]);
+
+					rawArgs[i] = MathUtils.clampi(num.intValue(), arguments.get(i));
+					processedArguments.add(new ProcessedArgument<Number>(arguments.get(i).getName(),
+						arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
+					break;
+
+				} else {
+					if (arguments.get(i).hasRange()) {
+						rawArgs[i] = rawArgs[i].replace("%", "");
+
+						double percentage = formatToNumber(rawArgs[i]).doubleValue() / 100d;
+						rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage,
+							arguments.get(i).getMin(), arguments.get(i).getMax()));
+						processedArguments.add(new ProcessedArgument<Number>(arguments.get(i).getName(),
+							arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
+						break;
+					}
+				}
+			} else if (rawArgs[i].contains(":")) {
+				String[] split = rawArgs[i].split(":", 2);
+				Argument optionalArg = command.getArgumentFor(split[0]);
+				String tag = split[0];
+
+				if (!rawArgs[i].contains("%")) {
+					Number tempNum = NumberFormat.getInstance()
+						.parse(MathUtils.clampd(formatToNumber(split[1]).doubleValue(), optionalArg));
+
+					processedArguments.add(new ProcessedArgument<Number>(tag, tempNum));
+					break;
+				} else {
+					if (optionalArg.hasRange()) {
+						rawArgs[i] = split[1].replace("%", "");
+
+						double percentage = NumberFormat.getInstance()
+							.parse(MathUtils.clampd(formatToNumber(rawArgs[i]).doubleValue(), optionalArg)).intValue()
+							/ 100d;
+						int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
+						processedArguments.add(new ProcessedArgument<Number>(split[0], temp));
+						break;
+						//
+					}
+				}
+			} else {
+				command.shutdown(obj, Status.FAILED,
+					"Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
+			}
 		} catch (ParseException e) {
 		    e.printStackTrace();
 		}
 		break;
 	    case STRING:
 
-		if (this.command.arguments.size() == 1 && this.command.getOptArgCount() == 0
+		if (command.arguments.size() == 1 && command.getOptArgCount() == 0
 			&& !(command.arguments.get(0) instanceof ContinuousArgument)) {
 			StringBuilder concatBuilder = new StringBuilder();
 			for(String rawArg : rawArgs) {
@@ -150,22 +190,22 @@ public class Parser<T, R> {
 			}
 		    String concat = formatString(concatBuilder.toString().trim());
 
-		    arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(),
-			    this.arguments.get(i).getType(), concat, concat));
+		    processedArguments.add(new ProcessedArgument<String>(arguments.get(i).getName(),
+			    arguments.get(i).getType(), concat, concat));
 		    break PARSER;
 		}
 		if (!rawArgs[i].contains(":")) {
 
-		    if (rawArgs[i].length() > this.arguments.get(i).getMax()) {
+		    if (rawArgs[i].length() > arguments.get(i).getMax()) {
 			command.shutdown(obj, Status.FAILED,
 				"A string parameter (" + rawArgs[i] + ") was given that exceed its maximum value of "
-					+ this.arguments.get(i).getMax() + "!");
+					+ arguments.get(i).getMax() + "!");
 			break;
 		    }
 
 		    rawArgs[i] = formatString(rawArgs[i]);
-		    arguments.add(new ProcessedArgument<String>(this.arguments.get(i).getName(),
-			    this.arguments.get(i).getType(), rawArgs[i], rawArgs[i]));
+		    processedArguments.add(new ProcessedArgument<String>(arguments.get(i).getName(),
+			    arguments.get(i).getType(), rawArgs[i], rawArgs[i]));
 		} else {
 		    String[] split = rawArgs[i].split(":", 2);
 		    String tag = split[0];
@@ -179,15 +219,15 @@ public class Parser<T, R> {
 		    }
 
 		    content = formatString(content);
-		    arguments.add(new ProcessedArgument<String>(tag, content));
+		    processedArguments.add(new ProcessedArgument<String>(tag, content));
 		}
 		break;
 	    case GROUP:
 
-		ProcessedGroupArgument group = new ProcessedGroupArgument(this.arguments.get(i).getName(),
-			this.arguments.get(i).getType(), rawArgs, null);
+		ProcessedGroupArgument group = new ProcessedGroupArgument(arguments.get(i).getName(),
+			arguments.get(i).getType(), rawArgs, null);
 
-		GroupArgument groupArg = (GroupArgument) this.arguments.get(i);
+		GroupArgument groupArg = (GroupArgument) arguments.get(i);
 
 		List<ProcessedArgument<Object>> temp = new ArrayList<>();
 
@@ -203,24 +243,24 @@ public class Parser<T, R> {
 		    } else {
 			temp.add(new ProcessedArgument<Object>(group.getName(), formatToNumber(rawArgs[j])));
 		    }
-		    this.arguments.add(j + 1, groupArg.getArg(k));
+		    arguments.add(j + 1, groupArg.getArg(k));
 		    k++;
 		}
 
-		this.arguments.remove(groupArg.getPosition());
+		arguments.remove(groupArg.getPosition());
 		i++;
 
 		group.setValues(temp);
 
-		arguments.add(group);
+		processedArguments.add(group);
 		break;
 	    case OR:
-		OrArgument orArg = ((OrArgument) this.arguments.get(i));
+		OrArgument orArg = ((OrArgument) arguments.get(i));
 
 		orArg.setPosition(i);
 		Argument usedArgSet = orArg.getLikelyBranch(rawArgs);
 		usedArgSet.setPosition(i);
-		this.arguments.set(i, usedArgSet);
+		arguments.set(i, usedArgSet);
 
 		branchUsed = usedArgSet.getName();
 
@@ -230,67 +270,10 @@ public class Parser<T, R> {
 		break;
 	    }
 	}
-	return new Arguments(arguments, rawArgs).setBranchUsed(branchUsed);
+	return new Arguments(processedArguments, rawArgs).setBranchUsed(branchUsed);
     }
 
-    public List<ProcessedArgument<?>> parseNumber(List<ProcessedArgument<?>> arguments, String[] rawArgs, int i,
-	    Matcher tm) throws ParseException {
-	if (tm.find() && !rawArgs[i].contains(":")) {
-	    rawArgs[i] = rawArgs[i].replaceAll("_", "").replaceAll(",", "");
-
-	    if (!rawArgs[i].contains("%")) {
-	    Number num = formatToNumber(rawArgs[i]);
-
-		rawArgs[i] = MathUtils.clampi(num.intValue(), this.arguments.get(i));
-		arguments.add(new ProcessedArgument<Number>(this.arguments.get(i).getName(),
-			this.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
-		return arguments;
-
-	    } else {
-		if (this.arguments.get(i).hasRange()) {
-		    rawArgs[i] = rawArgs[i].replace("%", "");
-
-		    double percentage = formatToNumber(rawArgs[i]).doubleValue() / 100d;
-		    rawArgs[i] = Integer.toString(MathUtils.getPercentageValue(percentage,
-			    this.arguments.get(i).getMin(), this.arguments.get(i).getMax()));
-		    arguments.add(new ProcessedArgument<Number>(this.arguments.get(i).getName(),
-			    this.arguments.get(i).getType(), rawArgs[i], NumberFormat.getInstance().parse(rawArgs[i])));
-		    return arguments;
-		}
-	    }
-	} else if (rawArgs[i].contains(":")) {
-	    String[] split = rawArgs[i].split(":", 2);
-	    Argument optionalArg = command.getArgumentFor(split[0]);
-	    String tag = split[0];
-
-	    if (!rawArgs[i].contains("%")) {
-		Number tempNum = NumberFormat.getInstance()
-			.parse(MathUtils.clampd(formatToNumber(split[1]).doubleValue(), optionalArg));
-
-		arguments.add(new ProcessedArgument<Number>(tag, tempNum));
-		return arguments;
-	    } else {
-		if (optionalArg.hasRange()) {
-		    rawArgs[i] = split[1].replace("%", "");
-
-		    double percentage = NumberFormat.getInstance()
-			    .parse(MathUtils.clampd(formatToNumber(rawArgs[i]).doubleValue(), optionalArg)).intValue()
-			    / 100d;
-		    int temp = MathUtils.getPercentageValue(percentage, optionalArg.getMin(), optionalArg.getMax());
-		    arguments.add(new ProcessedArgument<Number>(split[0], temp));
-		    return arguments;
-		    //
-		}
-	    }
-	} else {
-	    command.shutdown(this.obj, Status.FAILED,
-		    "Given parameter (" + rawArgs[i] + ") is not a valid integer value!");
-	}
-
-	return arguments;
-    }
-
-    public static Number formatToNumber(String rawArgs) {
+	private static Number formatToNumber(String rawArgs) {
 	Number num = 0;
 	boolean neg = false;
 
@@ -324,41 +307,7 @@ public class Parser<T, R> {
 	return num;
     }
 
-    public static String formatNumberAsString(String rawArgs) {
-	Number num = 0;
-	boolean neg = false;
-
-	if (rawArgs.startsWith("-")) {
-	    neg = true;
-	    rawArgs = rawArgs.substring(1);
-	}
-
-	if (rawArgs.startsWith("+")) {
-	    rawArgs = rawArgs.substring(1);
-	}
-
-	if (rawArgs.startsWith("0b") || rawArgs.startsWith("0B")) {
-	    num = Integer.parseInt(rawArgs.replace("0b", "").replace("0B", ""), 2);
-	} else if (rawArgs.startsWith("0x") || rawArgs.startsWith("0X") || rawArgs.startsWith("#")) {
-	    num = Integer.parseInt(rawArgs.replace("0x", "").replace("0X", "").replace("#", ""), 16);
-	} else if (rawArgs.startsWith("0") && rawArgs.length() != 1) {
-	    num = Integer.parseInt(rawArgs.substring(1), 8);
-	} else {
-	    try {
-		num = NumberFormat.getInstance().parse(rawArgs);
-	    } catch (ParseException e) {
-		e.printStackTrace();
-	    }
-	}
-
-	if (neg) {
-	    num = 0 - num.intValue();
-	}
-
-	return num.toString();
-    }
-
-    public static String formatString(String toFormat) {
+	private static String formatString(String toFormat) {
 	String result = toFormat;
 
 	if (result.startsWith("\"")) {
@@ -372,7 +321,7 @@ public class Parser<T, R> {
 	return result;
     }
 
-    public static boolean formatToBoolean(String toFormat) {
+    private static boolean formatToBoolean(String toFormat) {
 	return toFormat.equals("true") || toFormat.equals("1");
     }
 }

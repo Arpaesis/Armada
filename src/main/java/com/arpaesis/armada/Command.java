@@ -275,8 +275,7 @@ public abstract class Command<T, R> {
      * @return A collection of {@link Arguments} that can be navigated through.
      */
     private Arguments processInput(T obj, String input) {
-	Parser<T, R> parser = new Parser<>(this, obj, input);
-	return parser.processInput();
+	return Parser.processInput(this, obj, input);
     }
 
     /**
