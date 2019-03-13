@@ -1,17 +1,14 @@
 package com.arpaesis.armada.args.logical;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.arpaesis.armada.args.Argument;
 import com.arpaesis.armada.args.GroupArgument;
 import com.arpaesis.armada.enumerations.ParamType;
-import com.arpaesis.armada.utils.Parser;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * A class representing argument branches.
@@ -23,14 +20,11 @@ public class OrArgument extends Argument {
     private static final Pattern numberPattern = Pattern.compile("[\\-+]?[0-9]+[0-9,_]*");
     private static final Pattern stringPattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
-    final TreeMap<Argument, Number> sorted;
+    private final List<Argument> arguments;
 
     public OrArgument(Argument... arguments) {
-	sorted = new TreeMap<>();
-
-	for (Argument argument : arguments) {
-	    this.sorted.put(argument, 0);
-	}
+    this.arguments = Arrays.asList(arguments);
+    this.arguments.sort(Comparator.naturalOrder());
     }
 
     /**
@@ -44,107 +38,70 @@ public class OrArgument extends Argument {
 	int largest = 0;
 	Argument mostMatchingArg = null;
 
-	List<String> args = new ArrayList<String>(Arrays.asList(rawArgs));
+	List<String> args = new ArrayList<>(Arrays.asList(rawArgs));
 	args.removeIf(current -> current.contains(":"));
 
-	for (Entry<Argument, Number> entry : this.sorted.entrySet()) {
-	    if (entry.getKey() instanceof GroupArgument) {
+	for (Argument argument : this.arguments) {
+		int weight = 0;
 
-		if (((GroupArgument) entry.getKey()).getArgs().size() > args.size()) {
+	    if (argument instanceof GroupArgument) {
+
+	    List<Argument> groupArguments = ((GroupArgument) argument).getArgs();
+	    int groupArgumentsSize = groupArguments.size();
+		if (groupArgumentsSize > args.size()) {
 		    continue; // Don't bother dealing with the group, it doesn't fit!!!
 		}
 
-		for (int i = 0; i < ((GroupArgument) entry.getKey()).getArgs().size(); i++) {
-		    Argument tempArg = ((GroupArgument) entry.getKey()).getArgs().get(i);
+		for (int i = 0; i < groupArgumentsSize; i++) {
+		    weight = this.handleArg(weight, groupArguments.get(i).getType(), args.get(i));
 
-		    Matcher stringMatcher = stringPattern.matcher(args.get(i));
-
-		    if (this.isNumber(tempArg)) {
-			Matcher numberMatcher = numberPattern.matcher(args.get(i));
-			if (numberMatcher.matches()) {
-			    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-			}
-		    } else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN) {
-			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-		    } else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR) {
-			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-		    } else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING) {
-			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-		    } else {
-			this.sorted.put(entry.getKey(), entry.getValue().intValue());
-		    }
-
-		    if (entry.getValue().intValue() > largest) {
-			largest = entry.getValue().intValue();
-			mostMatchingArg = entry.getKey();
+		    if (weight > largest) {
+			largest = weight;
+			mostMatchingArg = argument;
 		    }
 		}
 	    } else {
-		int i = this.getPosition();
 
-		Argument tempArg = entry.getKey();
+	    weight = this.handleArg(weight, argument.getType(), args.get(this.getPosition()));
 
-		Matcher stringMatcher = stringPattern.matcher(Parser.formatString(args.get(i)));
-
-		if (this.isNumber(tempArg)) {
-		    Matcher numberMatcher = numberPattern.matcher(args.get(i));
-		    if (numberMatcher.matches()) {
-			this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-		    }
-		} else if (this.isBoolean(args.get(i)) && entry.getKey().getType() == ParamType.BOOLEAN) {
-		    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-		} else if (this.isChar(args.get(i)) && entry.getKey().getType() == ParamType.CHAR) {
-		    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-		} else if (stringMatcher.matches() && entry.getKey().getType() == ParamType.STRING) {
-		    this.sorted.put(entry.getKey(), entry.getValue().intValue() + 1);
-		} else {
-		    this.sorted.put(entry.getKey(), entry.getValue());
-		}
-
-		if (entry.getValue().intValue() > largest) {
-		    largest = entry.getValue().intValue();
-		    mostMatchingArg = entry.getKey();
+		if (weight > largest) {
+		    largest = weight;
+		    mostMatchingArg = argument;
 		}
 	    }
-	    this.sorted.put(entry.getKey(), 0);
-	}
-
-	for (Entry<Argument, Number> entry : this.sorted.entrySet()) {
-	    this.sorted.put(entry.getKey(), 0);
 	}
 
 	return mostMatchingArg;
     }
 
-    /**
-     * Gets whether or not the given String is a char.
-     * 
-     * @param arg The String to check.
-     * @return Whether or not the String is a character.
-     */
-    private boolean isChar(String arg) {
-	return arg.length() == 1;
-    }
-
-    /**
-     * Gets whether or not the given String represents a boolean value.
-     * 
-     * @param arg The String to check.
-     * @return Whether or not the String value is indeed a boolean.
-     */
-    private boolean isBoolean(String arg) {
-	return arg.equals("true") || arg.equals("false") || arg.equals("1") || arg.equals("0");
-    }
-
-    /**
-     * Gets whether or not the given {@link Argument} is has a numeric {@link ParamType}.
-     * @param arg The argument to check.
-     * @return Whether or not the argument is of the param type of a number.
-     */
-    private boolean isNumber(Argument arg) {
-	return arg.getType() == ParamType.BYTE || arg.getType() == ParamType.DOUBLE || arg.getType() == ParamType.FLOAT
-		|| arg.getType() == ParamType.INT || arg.getType() == ParamType.LONG
-		|| arg.getType() == ParamType.SHORT;
+    private int handleArg(int weight, ParamType type, String argValue) {
+	    switch(type) {
+		    case BYTE:
+		    case SHORT:
+		    case INT:
+		    case LONG:
+		    case FLOAT:
+		    case DOUBLE:
+			    if (numberPattern.matcher(argValue).matches()) {
+				    return weight + 1;
+			    }
+			    break;
+		    case BOOLEAN:
+			    if (argValue.equals("true") || argValue.equals("false") || argValue.equals("1") || argValue.equals("0")) {
+				    return weight + 1;
+			    }
+			    break;
+		    case CHAR:
+			    if (argValue.length() == 1) {
+				    return weight + 1;
+			    }
+			    break;
+		    case STRING:
+			    if (stringPattern.matcher(argValue).matches()) {
+				    return weight + 1;
+			    }
+	    }
+	    return weight;
     }
 
     @Override
