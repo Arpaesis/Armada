@@ -80,6 +80,14 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
+			<version>4.8.14</version>
+		</dependency>
+	</dependencies>
+
 	<packaging>jar</packaging>
 
 	<name>Cool Com Library</name>
