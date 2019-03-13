@@ -129,6 +129,6 @@ public abstract class Argument implements Comparable<Argument> {
 
     @Override
     public int compareTo(Argument o) {
-	return this.type.ordinal() - o.type.ordinal();
+	return Integer.compare(this.type.ordinal(), o.type.ordinal());
     }
 }
