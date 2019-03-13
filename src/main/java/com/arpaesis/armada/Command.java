@@ -259,11 +259,7 @@ public abstract class Command<T, R> {
      * @param argument The argument to add to the command's argument chain.
      */
     public void addArgument(Argument argument) {
-	if (argument instanceof RequiredArgument)
-	    this.reqArgCount++;
-	else if (argument instanceof OrArgument)
-	    this.reqArgCount++;
-	else if (argument instanceof GroupArgument)
+	if (argument instanceof RequiredArgument || argument instanceof OrArgument || argument instanceof GroupArgument)
 	    this.reqArgCount++;
 	else if (argument instanceof OptionalArgument)
 	    this.optArgCount++;
