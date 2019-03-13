@@ -1,14 +1,14 @@
 package com.arpaesis.armada.args.logical;
 
-import com.arpaesis.armada.args.Argument;
-import com.arpaesis.armada.args.GroupArgument;
-import com.arpaesis.armada.enumerations.ParamType;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.arpaesis.armada.args.Argument;
+import com.arpaesis.armada.args.GroupArgument;
+import com.arpaesis.armada.enumerations.ParamType;
 
 /**
  * A class representing argument branches.
