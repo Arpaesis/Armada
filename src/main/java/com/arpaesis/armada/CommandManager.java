@@ -8,6 +8,9 @@ import java.util.Map;
 
 import com.arpaesis.armada.utils.Parser;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
+
 /**
  * 
  * @author Arpaesis
@@ -26,7 +29,22 @@ public final class CommandManager<T, R> {
 
     private boolean isEnabled = true;
 
-    public CommandManager() {
+    public CommandManager(boolean shouldAutoRegister) {
+	if (shouldAutoRegister) {
+	    List<Class<?>> commands;
+
+	    try (ScanResult scanResult = new ClassGraph().enableAllInfo().scan()) {
+		commands = scanResult.getSubclasses(Command.class.getName()).loadClasses();
+	    }
+
+	    for (Class<?> commandClass : commands) {
+		try {
+		    this.register((Command<T, R>) commandClass.getConstructor().newInstance());
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	    }
+	}
     }
 
     /**

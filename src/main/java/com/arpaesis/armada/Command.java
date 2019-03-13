@@ -28,9 +28,9 @@ public abstract class Command<T, R> {
     private int reqArgCount = 0;
     private int optArgCount = 0;
 
-    private String name = "";
-    private String help = "";
-    private String[] aliases;
+    protected String name = "";
+    protected String help = "";
+    protected String[] aliases;
 
     private int globalGlobalCooldown = 0;
     private long lastUsage = 0;

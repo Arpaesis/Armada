@@ -6,18 +6,11 @@ import com.arpaesis.armada.CommandManager;
 
 public class Main {
 
-    private static final CommandManager<String, String> manager = new CommandManager<>();
+    private static final CommandManager<String, String> manager = new CommandManager<>(true);
 
     public static void main(String[] arguments) {
 
 	manager.setPrefix("!");
-	manager.register(new ResponsiveCommand());
-	manager.register(new SpawnEntityCommand());
-	manager.register(new ToggleDownfallCommand());
-	manager.register(new AddRoleCommand());
-	manager.register(new AverageCommand());
-	manager.register(new TimeCommand());
-	manager.register(new BalanceCommand());
 
 	Scanner scanner = new Scanner(System.in);
 
