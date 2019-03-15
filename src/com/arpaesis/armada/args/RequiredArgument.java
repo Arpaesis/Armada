@@ -8,10 +8,12 @@ import com.arpaesis.armada.enumerations.ParamType;
  * @author Arpaesis
  *
  */
-public class RequiredArgument extends Argument {
+public class RequiredArgument extends Argument
+{
 
-    public RequiredArgument(String argName, ParamType type) {
-	super(argName, type);
-    }
+	public RequiredArgument(String argName, ParamType type)
+	{
+		super(argName, type);
+	}
 
 }

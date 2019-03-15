@@ -6,31 +6,36 @@ import com.arpaesis.armada.args.ContinuousArgument;
 import com.arpaesis.armada.enumerations.ParamType;
 import com.arpaesis.armada.enumerations.Status;
 
-public class AverageCommand extends Command<String, String> {
+public class AverageCommand extends Command<String, String>
+{
 
-    public AverageCommand() {
-	this.setName("average");
-	this.setHelp("Gets the average from the given numbers.");
+	public AverageCommand()
+	{
+		this.setName("average");
+		this.setHelp("Gets the average from the given numbers.");
 
-	this.addArgument(new ContinuousArgument("roleName", ParamType.INT));
-    }
-
-    @Override
-    public String onExecute(String obj, Arguments args) {
-
-	int i = 0;
-	while (args.hasNext()) {
-	    i += args.getInt();
+		this.addArgument(new ContinuousArgument("roleName", ParamType.INT));
 	}
 
-	System.out.println(i / args.size());
+	@Override
+	public String onExecute(String obj, Arguments args)
+	{
 
-	return null;
-    }
+		int i = 0;
+		while (args.hasNext())
+		{
+			i += args.getInt();
+		}
 
-    @Override
-    public void result(Status result, String response) {
-	System.out.println(response);
-	super.result(result, response);
-    }
+		System.out.println(i / args.size());
+
+		return null;
+	}
+
+	@Override
+	public void result(Status result, String response)
+	{
+		System.out.println(response);
+		super.result(result, response);
+	}
 }

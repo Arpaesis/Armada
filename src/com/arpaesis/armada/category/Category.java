@@ -12,21 +12,25 @@ import com.arpaesis.armada.Command;
  * @author Arpaesis
  *
  */
-public class Category {
+public class Category
+{
 
-    private final List<Command<?, ?>> commands = new ArrayList<>();
+	private final List<Command<?, ?>> commands = new ArrayList<>();
 
-    public List<Command<?, ?>> getCommands() {
-	return commands;
-    }
+	public List<Command<?, ?>> getCommands()
+	{
+		return commands;
+	}
 
-    /**
-     * Adds the specified {@link Command} to the category.
-     * 
-     * @param command The command to add to the category.
-     */
-    public void addToCategory(Command<?, ?>... command) {
-	    Collections.addAll(commands, command);
-    }
+	/**
+	 * Adds the specified {@link Command} to the category.
+	 * 
+	 * @param command
+	 *            The command to add to the category.
+	 */
+	public void addToCategory(Command<?, ?>... command)
+	{
+		Collections.addAll(commands, command);
+	}
 
 }

@@ -4,23 +4,27 @@ import java.util.Scanner;
 
 import com.arpaesis.armada.CommandManager;
 
-public class Main {
+public class Main
+{
 
-    private static final CommandManager<String, String> manager = new CommandManager<>(true);
+	private static final CommandManager<String, String> manager = new CommandManager<>(true);
 
-    public static void main(String[] arguments) {
+	public static void main(String[] arguments)
+	{
 
-	manager.setPrefix("!");
+		manager.setPrefix("!");
 
-	Scanner scanner = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
 
-	String in;
-	do {
-	    in = scanner.nextLine();
+		String in;
+		do
+		{
+			in = scanner.nextLine();
 
-	    manager.execute("", in);
-	} while (!in.equalsIgnoreCase("END"));
+			manager.execute("", in);
+		}
+		while (!in.equalsIgnoreCase("END"));
 
-	scanner.close();
-    }
+		scanner.close();
+	}
 }

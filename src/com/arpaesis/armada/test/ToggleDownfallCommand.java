@@ -6,24 +6,29 @@ import com.arpaesis.armada.args.OptionalArgument;
 import com.arpaesis.armada.enumerations.ParamType;
 import com.arpaesis.armada.enumerations.Status;
 
-public class ToggleDownfallCommand extends Command<String, String> {
+public class ToggleDownfallCommand extends Command<String, String>
+{
 
-    boolean isRaining;
+	boolean isRaining;
 
-    public ToggleDownfallCommand() {
-	this.setName("toggleDownfall");
-	this.setAliases(new String[] { "isRaining" });
-	this.setGlobalCooldown(3);
-	this.addArgument(new OptionalArgument("flag", ParamType.STRING)); // is raining
-	Categories.WORLD.addToCategory(this);
-    }
+	public ToggleDownfallCommand()
+	{
+		this.setName("toggleDownfall");
+		this.setAliases(new String[] { "isRaining" });
+		this.setGlobalCooldown(3);
+		this.addArgument(new OptionalArgument("flag", ParamType.STRING)); // is raining
+		Categories.WORLD.addToCategory(this);
+	}
 
-    @Override
-    public String onExecute(String obj, Arguments args) {
+	@Override
+	public String onExecute(String obj, Arguments args)
+	{
 
-	if (!args.isEmpty()) {
-		String flag = args.getString();
-		switch(flag) {
+		if (!args.isEmpty())
+		{
+			String flag = args.getString();
+			switch (flag)
+			{
 			case "on":
 			case "1":
 				this.isRaining = true;
@@ -34,21 +39,23 @@ public class ToggleDownfallCommand extends Command<String, String> {
 				break;
 			default:
 				this.isRaining = Boolean.parseBoolean(flag);
+			}
 		}
+
+		else
+		{
+			this.isRaining = !this.isRaining;
+		}
+
+		System.out.println(isRaining);
+
+		return null;
 	}
 
-	else {
-	    this.isRaining = !this.isRaining;
+	@Override
+	public void result(String obj, Status result, String response)
+	{
+		if (result == Status.FAILED)
+			System.err.println(response);
 	}
-
-	System.out.println(isRaining);
-
-	return null;
-    }
-
-    @Override
-    public void result(String obj, Status result, String response) {
-	if (result == Status.FAILED)
-	    System.err.println(response);
-    }
 }

@@ -5,9 +5,11 @@ package com.arpaesis.armada;
  * 
  * @author Arpaesis
  *
- * @param <T> The type of object to be used in the response.
+ * @param <T>
+ *            The type of object to be used in the response.
  */
-public interface CommandResponse<T> {
+public interface CommandResponse<T>
+{
 
-    boolean onResponse(T inputType, String input);
+	boolean onResponse(T inputType, String input);
 }

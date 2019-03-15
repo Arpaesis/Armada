@@ -8,10 +8,12 @@ import com.arpaesis.armada.enumerations.ParamType;
  * @author Arpaesis
  *
  */
-public class ContinuousArgument extends Argument {
+public class ContinuousArgument extends Argument
+{
 
-    public ContinuousArgument(String name, ParamType type) {
-	super(name, type);
-    }
+	public ContinuousArgument(String name, ParamType type)
+	{
+		super(name, type);
+	}
 
 }
