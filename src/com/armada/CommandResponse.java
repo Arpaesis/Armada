@@ -1,4 +1,4 @@
-package com.arpaesis.armada;
+package com.armada;
 
 /**
  * A special interface used in handling command responses.

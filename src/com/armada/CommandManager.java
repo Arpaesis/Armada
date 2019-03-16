@@ -1,4 +1,4 @@
-package com.arpaesis.armada;
+package com.armada;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.arpaesis.armada.utils.Parser;
+import com.armada.utils.Parser;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;

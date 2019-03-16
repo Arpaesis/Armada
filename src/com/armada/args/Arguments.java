@@ -1,9 +1,9 @@
-package com.arpaesis.armada.args;
+package com.armada.args;
 
 import java.util.List;
 
-import com.arpaesis.armada.args.processed.ProcessedArgument;
-import com.arpaesis.armada.args.processed.ProcessedGroupArgument;
+import com.armada.args.processed.ProcessedArgument;
+import com.armada.args.processed.ProcessedGroupArgument;
 
 /**
  * A wrapper class to make managing arguments easier.

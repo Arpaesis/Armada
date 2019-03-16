@@ -1,17 +1,17 @@
-package com.arpaesis.armada;
+package com.armada;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.arpaesis.armada.args.Argument;
-import com.arpaesis.armada.args.Arguments;
-import com.arpaesis.armada.args.GroupArgument;
-import com.arpaesis.armada.args.OptionalArgument;
-import com.arpaesis.armada.args.RequiredArgument;
-import com.arpaesis.armada.args.logical.OrArgument;
-import com.arpaesis.armada.enumerations.Status;
-import com.arpaesis.armada.utils.Parser;
+import com.armada.args.Argument;
+import com.armada.args.Arguments;
+import com.armada.args.GroupArgument;
+import com.armada.args.OptionalArgument;
+import com.armada.args.RequiredArgument;
+import com.armada.args.logical.OrArgument;
+import com.armada.enumerations.Status;
+import com.armada.utils.Parser;
 
 /**
  * A class designed to represent a command.

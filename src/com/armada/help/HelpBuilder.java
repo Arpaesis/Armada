@@ -1,9 +1,9 @@
-package com.arpaesis.armada.help;
+package com.armada.help;
 
-import com.arpaesis.armada.Command;
-import com.arpaesis.armada.args.Argument;
-import com.arpaesis.armada.args.OptionalArgument;
-import com.arpaesis.armada.args.RequiredArgument;
+import com.armada.Command;
+import com.armada.args.Argument;
+import com.armada.args.OptionalArgument;
+import com.armada.args.RequiredArgument;
 
 /**
  * A builder class to construct a help message for a given command.

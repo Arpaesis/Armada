@@ -1,4 +1,4 @@
-package com.arpaesis.armada.enumerations;
+package com.armada.enumerations;
 
 /**
  * An enumeration representing whether or not a command has failed during execution.

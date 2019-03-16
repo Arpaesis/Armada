@@ -1,6 +1,6 @@
-package com.arpaesis.armada.utils;
+package com.armada.utils;
 
-import com.arpaesis.armada.args.Argument;
+import com.armada.args.Argument;
 
 /**
  * A helper class for some math.

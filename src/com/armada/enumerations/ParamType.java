@@ -1,4 +1,4 @@
-package com.arpaesis.armada.enumerations;
+package com.armada.enumerations;
 
 /**
  * The types that can possibly be used for {@link @Argument]s.

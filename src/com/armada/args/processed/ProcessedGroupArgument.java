@@ -1,10 +1,10 @@
-package com.arpaesis.armada.args.processed;
+package com.armada.args.processed;
 
 import java.util.List;
 
-import com.arpaesis.armada.args.Arguments;
-import com.arpaesis.armada.args.GroupArgument;
-import com.arpaesis.armada.enumerations.ParamType;
+import com.armada.args.Arguments;
+import com.armada.args.GroupArgument;
+import com.armada.enumerations.ParamType;
 
 /**
  * A processed version of the {@link GroupArgument} class. Functions similarly to the {@link Arguments} class.

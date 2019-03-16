@@ -1,7 +1,7 @@
-package com.arpaesis.armada.args.processed;
+package com.armada.args.processed;
 
-import com.arpaesis.armada.args.Argument;
-import com.arpaesis.armada.enumerations.ParamType;
+import com.armada.args.Argument;
+import com.armada.enumerations.ParamType;
 
 /**
  * A processed version of the {@link Argument} class.

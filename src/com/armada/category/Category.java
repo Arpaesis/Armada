@@ -1,10 +1,10 @@
-package com.arpaesis.armada.category;
+package com.armada.category;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.arpaesis.armada.Command;
+import com.armada.Command;
 
 /**
  * A category class to contain {@link Command}s.

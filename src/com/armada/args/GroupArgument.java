@@ -1,9 +1,9 @@
-package com.arpaesis.armada.args;
+package com.armada.args;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.arpaesis.armada.enumerations.ParamType;
+import com.armada.enumerations.ParamType;
 
 /**
  * A class used in grouping arguments together.

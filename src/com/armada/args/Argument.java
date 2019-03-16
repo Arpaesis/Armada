@@ -1,6 +1,6 @@
-package com.arpaesis.armada.args;
+package com.armada.args;
 
-import com.arpaesis.armada.enumerations.ParamType;
+import com.armada.enumerations.ParamType;
 
 /**
  * The base class class for all arguments.

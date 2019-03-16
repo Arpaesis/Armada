@@ -1,4 +1,4 @@
-package com.arpaesis.armada.utils;
+package com.armada.utils;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -7,16 +7,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import com.arpaesis.armada.Command;
-import com.arpaesis.armada.args.Argument;
-import com.arpaesis.armada.args.Arguments;
-import com.arpaesis.armada.args.ContinuousArgument;
-import com.arpaesis.armada.args.GroupArgument;
-import com.arpaesis.armada.args.logical.OrArgument;
-import com.arpaesis.armada.args.processed.ProcessedArgument;
-import com.arpaesis.armada.args.processed.ProcessedGroupArgument;
-import com.arpaesis.armada.enumerations.ParamType;
-import com.arpaesis.armada.enumerations.Status;
+import com.armada.Command;
+import com.armada.args.Argument;
+import com.armada.args.Arguments;
+import com.armada.args.ContinuousArgument;
+import com.armada.args.GroupArgument;
+import com.armada.args.logical.OrArgument;
+import com.armada.args.processed.ProcessedArgument;
+import com.armada.args.processed.ProcessedGroupArgument;
+import com.armada.enumerations.ParamType;
+import com.armada.enumerations.Status;
 
 public class Parser
 {
